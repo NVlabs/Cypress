@@ -1,15 +1,15 @@
 /**
- * @file   density_overflow_cuda_by_node.cpp
+ * @file   density_map.cpp
  * @author Yibo Lin
- * @date   Nov 2018
- * @brief  Compute density overflow with cell-by-cell parallelization on CUDA 
+ * @date   Jun 2018
+ * @brief  Compute density map on GPU 
  */
 #include "utility/src/torch.h"
 #include "utility/src/Msg.h"
 
 DREAMPLACE_BEGIN_NAMESPACE
 
-/// @brief compute density overflow map 
+/// @brief compute density map 
 /// @param x_tensor cell x locations
 /// @param y_tensor cell y locations 
 /// @param node_size_x_tensor cell width array
@@ -27,7 +27,7 @@ DREAMPLACE_BEGIN_NAMESPACE
 /// @param bin_size_y bin height 
 /// @param density_map_tensor 2D density map in column-major to write 
 template <typename T>
-int computeDensityOverflowMapCudaByNodeLauncher(
+int computeDensityMapCudaLauncher(
         const T* x_tensor, const T* y_tensor, 
         const T* node_size_x_tensor, const T* node_size_y_tensor, 
         const T* bin_center_x_tensor, const T* bin_center_y_tensor, 
@@ -42,14 +42,13 @@ int computeDensityOverflowMapCudaByNodeLauncher(
 #define CHECK_EVEN(x) AT_ASSERTM((x.numel()&1) == 0, #x "must have even number of elements")
 #define CHECK_CONTIGUOUS(x) AT_ASSERTM(x.is_contiguous(), #x "must be contiguous")
 
-/// @brief Compute density overflow map. 
+/// @brief Compute density map. 
 /// @param pos cell locations, array of x locations and then y locations 
 /// @param node_size_x_tensor cell width array
 /// @param node_size_y_tensor cell height array 
 /// @param bin_center_x_tensor bin center x locations 
 /// @param bin_center_y_tensor bin center y locations 
 /// @param initial_density_map initial density map 
-/// @param target_density target density 
 /// @param xl left boundary 
 /// @param yl bottom boundary 
 /// @param xh right boundary 
@@ -58,15 +57,14 @@ int computeDensityOverflowMapCudaByNodeLauncher(
 /// @param bin_size_y bin height 
 /// @param num_movable_nodes number of movable cells 
 /// @param num_filler_nodes number of filler cells 
-/// @return density overflow map, total density overflow, maximum density 
-std::vector<at::Tensor> density_overflow_forward(
+/// @return density map
+at::Tensor density_map_forward(
         at::Tensor pos,
         at::Tensor node_size_x,
         at::Tensor node_size_y,
         at::Tensor bin_center_x, 
         at::Tensor bin_center_y, 
         at::Tensor initial_density_map, 
-        double target_density, 
         double xl, 
         double yl, 
         double xh, 
@@ -83,17 +81,14 @@ std::vector<at::Tensor> density_overflow_forward(
 
     int num_bins_x = int(ceil((xh-xl)/bin_size_x));
     int num_bins_y = int(ceil((yh-yl)/bin_size_y));
-    at::Tensor density_map = initial_density_map.clone(); 
-    double density_area = target_density*bin_size_x*bin_size_y;
-    int num_nodes = pos.numel()/2; 
+    at::Tensor density_map = initial_density_map.clone();
 
-    // Call the cuda kernel launcher
-    DREAMPLACE_DISPATCH_FLOATING_TYPES(pos.type(), "computeDensityOverflowMapCudaByNodeLauncher", [&] {
-            computeDensityOverflowMapCudaByNodeLauncher<scalar_t>(
-                    pos.data<scalar_t>(), pos.data<scalar_t>()+num_nodes, 
+    DREAMPLACE_DISPATCH_FLOATING_TYPES(pos.type(), "computeDensityMapCudaLauncher", [&] {
+            computeDensityMapCudaLauncher<scalar_t>(
+                    pos.data<scalar_t>(), pos.data<scalar_t>()+pos.numel()/2, 
                     node_size_x.data<scalar_t>(), node_size_y.data<scalar_t>(), 
                     bin_center_x.data<scalar_t>(), bin_center_y.data<scalar_t>(), 
-                    num_movable_nodes, // only need to compute for movable nodes 
+                    num_movable_nodes, // only compute that for movable cells 
                     num_bins_x, num_bins_y, 
                     xl, yl, xh, yh, 
                     bin_size_x, bin_size_y, 
@@ -102,12 +97,12 @@ std::vector<at::Tensor> density_overflow_forward(
             });
     if (num_filler_nodes)
     {
-        DREAMPLACE_DISPATCH_FLOATING_TYPES(pos.type(), "computeDensityOverflowMapCudaByNodeLauncher", [&] {
-                computeDensityOverflowMapCudaByNodeLauncher<scalar_t>(
-                        pos.data<scalar_t>()+num_nodes-num_filler_nodes, pos.data<scalar_t>()+num_nodes*2-num_filler_nodes, 
-                        node_size_x.data<scalar_t>()+num_nodes-num_filler_nodes, node_size_y.data<scalar_t>()+num_nodes-num_filler_nodes, 
+        DREAMPLACE_DISPATCH_FLOATING_TYPES(pos.type(), "computeDensityMapCudaLauncher", [&] {
+                computeDensityMapCudaLauncher<scalar_t>(
+                        pos.data<scalar_t>()+pos.numel()/2-num_filler_nodes, pos.data<scalar_t>()+pos.numel()-num_filler_nodes, 
+                        node_size_x.data<scalar_t>()+pos.numel()/2-num_filler_nodes, node_size_y.data<scalar_t>()+pos.numel()/2-num_filler_nodes, 
                         bin_center_x.data<scalar_t>(), bin_center_y.data<scalar_t>(), 
-                        num_filler_nodes, // only need to compute for filler nodes 
+                        num_filler_nodes, // only compute that for movable cells 
                         num_bins_x, num_bins_y, 
                         xl, yl, xh, yh, 
                         bin_size_x, bin_size_y, 
@@ -116,18 +111,65 @@ std::vector<at::Tensor> density_overflow_forward(
                 });
     }
 
-    // max(0, density-density_area)  
-    auto delta = (density_map-density_area).clamp_min(0); 
-    auto density_cost = at::sum(delta);
+    return density_map; 
+}
 
-    auto max_density = density_map.max().div(bin_size_x*bin_size_y);
+/// @brief Compute the density overflow for fixed cells. 
+/// This map can be used as the initial density map since it only needs to be computed once.  
+/// @param bin_center_x_tensor bin center x locations 
+/// @param bin_center_y_tensor bin center y locations 
+/// @param xl left boundary 
+/// @param yl bottom boundary 
+/// @param xh right boundary 
+/// @param yh top boundary 
+/// @param bin_size_x bin width 
+/// @param bin_size_y bin height 
+/// @param num_movable_nodes number of movable cells 
+/// @param num_terminals number of fixed cells 
+/// @return a density map for fixed cells 
+at::Tensor fixed_density_map(
+        at::Tensor pos, 
+        at::Tensor node_size_x, 
+        at::Tensor node_size_y, 
+        at::Tensor bin_center_x, 
+        at::Tensor bin_center_y, 
+        double xl, 
+        double yl, 
+        double xh, 
+        double yh, 
+        double bin_size_x, 
+        double bin_size_y, 
+        int num_movable_nodes, 
+        int num_terminals
+        ) 
+{
+    int num_bins_x = int(ceil((xh-xl)/bin_size_x));
+    int num_bins_y = int(ceil((yh-yl)/bin_size_y));
+    at::Tensor density_map = at::zeros({num_bins_x, num_bins_y}, pos.options());
 
-    return {density_cost, density_map, max_density}; 
+    if (num_terminals)
+    {
+        // Call the cuda kernel launcher
+        DREAMPLACE_DISPATCH_FLOATING_TYPES(pos.type(), "computeDensityMapCudaLauncher", [&] {
+                computeDensityMapCudaLauncher<scalar_t>(
+                        pos.data<scalar_t>() + num_movable_nodes, pos.data<scalar_t>() + pos.numel()/2 + num_movable_nodes, 
+                        node_size_x.data<scalar_t>() + num_movable_nodes, node_size_y.data<scalar_t>() + num_movable_nodes, 
+                        bin_center_x.data<scalar_t>(), bin_center_y.data<scalar_t>(), 
+                        num_terminals, 
+                        num_bins_x, num_bins_y, 
+                        xl, yl, xh, yh, 
+                        bin_size_x, bin_size_y, 
+                        density_map.data<scalar_t>()
+                        );
+                });
+    }
+
+    return density_map;
 }
 
 DREAMPLACE_END_NAMESPACE
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
-  m.def("forward", &DREAMPLACE_NAMESPACE::density_overflow_forward, "DensityOverflow forward (CUDA)");
-  //m.def("backward", &DREAMPLACE_NAMESPACE::density_overflow_backward, "DensityOverflow backward (CUDA)");
+  m.def("forward", &DREAMPLACE_NAMESPACE::density_map_forward, "DensityMap forward (CUDA)");
+  m.def("fixed_density_map", &DREAMPLACE_NAMESPACE::fixed_density_map, "DensityMap Map for Fixed Cells (CUDA)");
 }
