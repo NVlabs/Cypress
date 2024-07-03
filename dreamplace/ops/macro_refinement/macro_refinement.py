@@ -64,7 +64,7 @@ class MacroRefinement(nn.Module):
 
         # macro orientations
         self.macro_orient = [
-            o.decode("ascii")
+            o.decode("ascii") if not isinstance(o, int) else o
             for o in self.node_orient[self.macros_indexes.detach().cpu()]
         ]
         # search sequence: vflip -> hflip -> vflip
