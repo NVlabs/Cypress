@@ -1,8 +1,8 @@
 ##
-# @file   density_map.py
-# @author Yibo Lin
-# @date   Jun 2018
-# @brief  Compute density map
+# @file   net_crossing.py
+# @author Niansong Zhang
+# @date   Jul 2024
+# @brief  Compute net crossing
 #
 
 import math
