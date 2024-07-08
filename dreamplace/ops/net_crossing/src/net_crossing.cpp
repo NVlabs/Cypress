@@ -52,31 +52,31 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
 
           // Bell function
           // lambda = 2, mu = 2, sigma = 1
-          auto bell = [](T x) {
-            if std::abs(x) <= 0.5 {
+          auto bell = [&](T x) {
+            if (std::abs(x) <= 0.5) {
               return 1 - lambda * x * x;
-            } else if std::abs(x) <= 1 {
+            } else if (std::abs(x) <= 1) {
               return mu * (sigma - std::abs(x)) * (sigma - std::abs(x));
             } else {
-              return 0.0;
+              return (T) 0.0;
             }
           };
 
           net_crossing[i] += bell(t - 0.5) * bell(u - 0.5);
 
           // compute gradient
-          auto bell_gradient = [](T x) {
-            if std::abs(x) <= 0.5 {
+          auto bell_gradient = [&](T x) {
+            if (std::abs(x) <= 0.5) {
               return -2 * lambda * x;
-            } else if std::abs(x) <= 1 {
+            } else if (std::abs(x) <= 1) {
               return 2 * mu * x * (std::abs(x) - sigma) / std::abs(x);
             } else {
-              return 0.0;
+              return (T) 0.0;
             }
           };
 
           T dt_dx1 = ((y3 - y4) * (x4 * (y3 - y2) + x3 * (y2 - y4) + x2 * (y4 - y3))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-          T dt_dy1 = ((x3 - x4) * (-x4 * (y3 - y2) - x3 * (y2 - y4) + x2 * (y3 - y4))) / std:pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
+          T dt_dy1 = ((x3 - x4) * (-x4 * (y3 - y2) - x3 * (y2 - y4) + x2 * (y3 - y4))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
           T dt_dx2 = -((y4 - y3) * ((x1 - x3) * (y3 - y4) - (x3 - x4) * (y1 - y3))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
           T dt_dy2 = -((x3 - x4) * ((x1 - x3) * (y3 - y4) - (x3 - x4) * (y1 - y3))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
           T dt_dx3 = ((y4 - y3) * (-x4 * (y2 - y1) - x2 * (y1 - y4) + x1 * (y2 - y4))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
@@ -90,8 +90,8 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
           T du_dy2 = -((x1 - x2) * (x4 * (y1 - y3) + x1 * (y3 - y4) + x3 * (y4 - y1))) / std::pow((x3 - x4) * (y1 - y2) - (x1 - x2) * (y3 - y4), 2);
           T du_dx3 = ((y1 - y2) * (x4 * (y2 - y1) + x2 * (y1 - y4) + x1 * (y4 - y2))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
           T du_dy3 = ((x1 - x2) * (x4 * (y1 - y2) + x1 * (y2 - y4) + x2 * (y4 - y1))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-          T du_dx4 = ((y1 - y2) * ((x1 - x2) (y1 - y3) - (x1 - x3) (y1 - y2))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
-          T du_dy4 = ((x2 - x1) * ((x1 - x2) (y1 - y3) - (x1 - x3) (y1 - y2))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
+          T du_dx4 = ((y1 - y2) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
+          T du_dy4 = ((x2 - x1) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
 
           // NC = f * g
           T df_dx1 = bell_gradient(t) * dt_dx1;
@@ -180,7 +180,7 @@ std::vector<at::Tensor> net_crossing_forward(at::Tensor pos, at::Tensor flat_net
         DREAMPLACE_TENSOR_DATA_PTR(sigma, scalar_t),
         DREAMPLACE_TENSOR_DATA_PTR(grad_intermediate, scalar_t),
         DREAMPLACE_TENSOR_DATA_PTR(grad_intermediate, scalar_t) + num_pins,
-        at::get_num_threads()
+        at::get_num_threads());
   });
 
   return {net_crossing.sum(), grad_intermediate};
