@@ -29,6 +29,8 @@ add_subdirectory(pin_utilization)
 add_subdirectory(rudy)
 add_subdirectory(nctugr_binary)
 add_subdirectory(adjust_node_area)
+# PCB related operators
+add_subdirectory(net_crossing)
 
 file(GLOB INSTALL_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/*.py")
 install(
