@@ -17,6 +17,27 @@ import dreamplace.configure as configure
 
 import pdb
 
+class NetCrossingFunction(Function):
+    @staticmethod
+    def forward(ctx, pos, flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma):
+        if pos.is_cuda:
+            assert 0, "CUDA version NOT IMPLEMENTED"
+        else:
+            output = net_crossing_cpp.forward(pos.view(pos.numel()), flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma)
+
+        ctx.net_mask = net_mask
+        ctx.grad_intermediate = output[1]
+        return output[0]
+
+    @staticmethod
+    def backward(ctx, grad_pos):
+        if grad_pos.is_cuda:
+            assert 0, "CUDA version NOT IMPLEMENTED"
+        else:
+            output = net_crossing_cpp.backward(grad_pos, ctx.grad_intermediate)
+
+        return output
+
 class NetCrossing(nn.Module):
 
     def __init__(self,
