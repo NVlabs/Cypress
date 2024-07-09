@@ -49,8 +49,7 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
                     t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
                     u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
                     # print(f"x1={x1}, y1={y1}, x2={x2}, y2={y2}, x3={x3}, y3={y3}, x4={x4}, y4={y4}")
-                    # print("t = ", t)
-                    # print("u = ", u)
+                    print(f"golden t = {t}, u = {u}")
                     net_crossing += bell_func(t, _lambda, _mu, _sigma) * bell_func(u, _lambda, _mu, _sigma)
     
     return net_crossing.sum()
@@ -111,7 +110,7 @@ golden = golden_netcrossing(pin_pos_var[:pin_pos_var.numel() // 2],
 print("golden=", golden)
 golden.backward()
 golden_grad = pin_pos_var.grad.clone()
-# print(golden_grad)
+print("golden_grad=", golden_grad)
 
 
 pin_pos_var.grad.zero_()

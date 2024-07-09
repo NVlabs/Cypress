@@ -17,7 +17,7 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
                                T *lambda_, T *mu_, T *sigma_,
                                T *grad_intermediate_x, T *grad_intermediate_y,
                                int num_threads) {
-#pragma omp parallel for num_threads(num_threads)
+// #pragma omp parallel for num_threads(num_threads)
   for (int i = 0; i < num_nets; ++i) {
     for (int j = 0; j < num_nets; ++j) {
       if (i == j) continue;
@@ -47,8 +47,9 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
 
            // Bezier curve intersection
           T t = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
-          T u = (x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
-          u = -u;
+          T u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+
+          std::cout << "custom t: " << t << " u: " << u << "\n";
 
           // Bell function
           // lambda = 2, mu = 2, sigma = 1
