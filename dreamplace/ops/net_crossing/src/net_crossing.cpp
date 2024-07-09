@@ -14,7 +14,7 @@ template <typename T>
 void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
                                const int* netpin_start, const unsigned char* net_mask,
                                int num_nets, T* net_crossing,
-                               T lambda, T mu, T sigma,
+                               T *lambda_, T *mu_, T *sigma_,
                                T *grad_intermediate_x, T *grad_intermediate_y,
                                int num_threads) {
 #pragma omp parallel for num_threads(num_threads)
@@ -52,6 +52,9 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
 
           // Bell function
           // lambda = 2, mu = 2, sigma = 1
+          T lambda = lambda_[0];
+          T mu = mu_[0];
+          T sigma = sigma_[0];
           auto bell = [&](T x) {
             if (std::abs(x) <= 0.5) {
               return 1 - lambda * x * x;
