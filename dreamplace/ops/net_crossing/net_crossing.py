@@ -27,6 +27,7 @@ class NetCrossingFunction(Function):
 
         ctx.net_mask = net_mask
         ctx.grad_intermediate = output[1]
+        ctx.pos = pos
         return output[0]
 
     @staticmethod
@@ -34,9 +35,9 @@ class NetCrossingFunction(Function):
         if grad_pos.is_cuda:
             assert 0, "CUDA version NOT IMPLEMENTED"
         else:
-            output = net_crossing_cpp.backward(grad_pos, ctx.grad_intermediate)
+            output = net_crossing_cpp.backward(grad_pos, ctx.pos, ctx.grad_intermediate)
 
-        return output
+        return output, None, None, None, None, None, None
 
 class NetCrossing(nn.Module):
 

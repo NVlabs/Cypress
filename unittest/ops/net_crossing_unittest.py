@@ -12,11 +12,11 @@ import unittest
 import torch
 from torch.autograd import Function, Variable
 
-# sys.path.append(
-#     os.path.dirname(os.path.dirname(os.path.dirname(
-#         os.path.abspath(__file__)))))
-# from dreamplace.ops.net_crossing import net_crossing
-# sys.path.pop()
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__)))))
+from dreamplace.ops.net_crossing import net_crossing
+sys.path.pop()
 
 
 def bell_func(x, lambda_, mu_, sigma_):
@@ -108,9 +108,26 @@ golden = golden_netcrossing(pin_pos_var[:pin_pos_var.numel() // 2],
                             pin_pos_var[pin_pos_var.numel() // 2:],
                             pin2net_map, net2pin_map,
                             _lambda, _mu, _sigma)
-print(golden)
+print("golden=", golden)
 golden.backward()
 golden_grad = pin_pos_var.grad.clone()
-print(golden_grad)
+# print(golden_grad)
+
+
+pin_pos_var.grad.zero_()
+custom = net_crossing.NetCrossing(
+    flat_netpin=Variable(torch.from_numpy(flat_net2pin_map)),
+    netpin_start=Variable(torch.from_numpy(flat_net2pin_start_map)),
+    net_mask=torch.from_numpy(net_mask),
+    _lambda=torch.tensor(_lambda, dtype=dtype),
+    _mu=torch.tensor(_mu, dtype=dtype),
+    _sigma=torch.tensor(_sigma, dtype=dtype)
+)
+result = custom.forward(pin_pos_var)
+print("custom=", result)
+result.backward()
+grad = pin_pos_var.grad.clone()
+print("custom_grad=", grad)
+
 # if __name__ == '__main__':
 #     unittest.main()
