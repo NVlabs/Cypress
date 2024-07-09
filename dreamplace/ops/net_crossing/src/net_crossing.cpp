@@ -98,41 +98,49 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
           T du_dy4 = ((x2 - x1) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
 
           // NC = f * g
-          T df_dx1 = bell_gradient(t) * dt_dx1;
-          T df_dy1 = bell_gradient(t) * dt_dy1;
-          T df_dx2 = bell_gradient(t) * dt_dx2;
-          T df_dy2 = bell_gradient(t) * dt_dy2;
-          T df_dx3 = bell_gradient(t) * dt_dx3;
-          T df_dy3 = bell_gradient(t) * dt_dy3;
-          T df_dx4 = bell_gradient(t) * dt_dx4;
-          T df_dy4 = bell_gradient(t) * dt_dy4;
+          T df_dx1 = bell_gradient(t - 0.5) * dt_dx1;
+          T df_dy1 = bell_gradient(t - 0.5) * dt_dy1;
+          T df_dx2 = bell_gradient(t - 0.5) * dt_dx2;
+          T df_dy2 = bell_gradient(t - 0.5) * dt_dy2;
+          T df_dx3 = bell_gradient(t - 0.5) * dt_dx3;
+          T df_dy3 = bell_gradient(t - 0.5) * dt_dy3;
+          T df_dx4 = bell_gradient(t - 0.5) * dt_dx4;
+          T df_dy4 = bell_gradient(t - 0.5) * dt_dy4;
 
-          T dg_dx1 = bell_gradient(u) * du_dx1;
-          T dg_dy1 = bell_gradient(u) * du_dy1;
-          T dg_dx2 = bell_gradient(u) * du_dx2;
-          T dg_dy2 = bell_gradient(u) * du_dy2;
-          T dg_dx3 = bell_gradient(u) * du_dx3;
-          T dg_dy3 = bell_gradient(u) * du_dy3;
-          T dg_dx4 = bell_gradient(u) * du_dx4;
-          T dg_dy4 = bell_gradient(u) * du_dy4;
+          T dg_dx1 = bell_gradient(u - 0.5) * du_dx1;
+          T dg_dy1 = bell_gradient(u - 0.5) * du_dy1;
+          T dg_dx2 = bell_gradient(u - 0.5) * du_dx2;
+          T dg_dy2 = bell_gradient(u - 0.5) * du_dy2;
+          T dg_dx3 = bell_gradient(u - 0.5) * du_dx3;
+          T dg_dy3 = bell_gradient(u - 0.5) * du_dy3;
+          T dg_dx4 = bell_gradient(u - 0.5) * du_dx4;
+          T dg_dy4 = bell_gradient(u - 0.5) * du_dy4;
 
-          T dx1 = df_dx1 * bell(u) + bell(t) * dg_dx1;
-          T dy1 = df_dy1 * bell(u) + bell(t) * dg_dy1;
-          T dx2 = df_dx2 * bell(u) + bell(t) * dg_dx2;
-          T dy2 = df_dy2 * bell(u) + bell(t) * dg_dy2;
-          T dx3 = df_dx3 * bell(u) + bell(t) * dg_dx3;
-          T dy3 = df_dy3 * bell(u) + bell(t) * dg_dy3;
-          T dx4 = df_dx4 * bell(u) + bell(t) * dg_dx4;
-          T dy4 = df_dy4 * bell(u) + bell(t) * dg_dy4;
+          T dx1 = df_dx1 * bell(u - 0.5) + bell(t - 0.5) * dg_dx1;
+          T dy1 = df_dy1 * bell(u - 0.5) + bell(t - 0.5) * dg_dy1;
+          T dx2 = df_dx2 * bell(u - 0.5) + bell(t - 0.5) * dg_dx2;
+          T dy2 = df_dy2 * bell(u - 0.5) + bell(t - 0.5) * dg_dy2;
+          T dx3 = df_dx3 * bell(u - 0.5) + bell(t - 0.5) * dg_dx3;
+          T dy3 = df_dy3 * bell(u - 0.5) + bell(t - 0.5) * dg_dy3;
+          T dx4 = df_dx4 * bell(u - 0.5) + bell(t - 0.5) * dg_dx4;
+          T dy4 = df_dy4 * bell(u - 0.5) + bell(t - 0.5) * dg_dy4;
           
-          grad_intermediate_x[net_i_src_pin_id] = dx1;
-          grad_intermediate_y[net_i_src_pin_id] = dy1;
-          grad_intermediate_x[net_i_sink_pin_id] = dx2;
-          grad_intermediate_y[net_i_sink_pin_id] = dy2;
-          grad_intermediate_x[net_j_src_pin_id] = dx3;
-          grad_intermediate_y[net_j_src_pin_id] = dy3;
-          grad_intermediate_x[net_j_sink_pin_id] = dx4;
-          grad_intermediate_y[net_j_sink_pin_id] = dy4;
+          #pragma omp atomic
+          grad_intermediate_x[net_i_src_pin_id] += dx1;
+          #pragma omp atomic
+          grad_intermediate_y[net_i_src_pin_id] += dy1;
+          #pragma omp atomic
+          grad_intermediate_x[net_i_sink_pin_id] += dx2;
+          #pragma omp atomic
+          grad_intermediate_y[net_i_sink_pin_id] += dy2;
+          #pragma omp atomic
+          grad_intermediate_x[net_j_src_pin_id] += dx3;
+          #pragma omp atomic
+          grad_intermediate_y[net_j_src_pin_id] += dy3;
+          #pragma omp atomic
+          grad_intermediate_x[net_j_sink_pin_id] += dx4;
+          #pragma omp atomic
+          grad_intermediate_y[net_j_sink_pin_id] += dy4;
         }
       }
     }

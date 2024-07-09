@@ -408,6 +408,7 @@ class PlaceObj(nn.Module):
             )
 
         # initial test for adding net crossing
+        #TODO(Niansong): factor * weights
         result = torch.add(result, self.net_crossing, alpha=1)
 
         return result
