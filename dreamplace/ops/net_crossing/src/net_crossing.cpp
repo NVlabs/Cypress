@@ -19,11 +19,8 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
                                int num_threads) {
 #pragma omp parallel for num_threads(num_threads)
   for (int i = 0; i < num_nets; ++i) {
-    for (int j = 0; j < num_nets; ++j) {
-      if (i == j) continue;
+    for (int j = i + 1; j < num_nets; ++j) {
       if (!net_mask[i] || !net_mask[j]) continue;
-
-      // TODO(Niansong): if j > i directly read from previous computation results
 
       // skip if net i/j has only one pin
       if (netpin_start[i + 1] - netpin_start[i] <= 1 || netpin_start[j + 1] - netpin_start[j] <= 1) {

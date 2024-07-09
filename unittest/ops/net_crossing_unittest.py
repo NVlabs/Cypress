@@ -33,9 +33,7 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
     num_nets = len(net2pin_map)
     net_crossing = torch.zeros(num_nets, dtype=pin_x.dtype)
     for i in range(num_nets):
-        for j in range(num_nets):
-            if i == j:
-                continue
+        for j in range(i+1, num_nets):
             pins_i_idx = net2pin_map[i]
             pins_j_idx = net2pin_map[j]
             for i_sink_pin_idx in pins_i_idx[1:]:
