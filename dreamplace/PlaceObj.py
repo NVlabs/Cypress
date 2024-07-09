@@ -38,6 +38,7 @@ else:
     import _pickle as pickle
 import dreamplace.ops.weighted_average_wirelength.weighted_average_wirelength as weighted_average_wirelength
 import dreamplace.ops.logsumexp_wirelength.logsumexp_wirelength as logsumexp_wirelength
+import dreamplace.ops.net_crossing.net_crossing as net_crossing
 import dreamplace.ops.density_overflow.density_overflow as density_overflow
 import dreamplace.ops.electric_potential.electric_overflow as electric_overflow
 import dreamplace.ops.electric_potential.electric_potential as electric_potential
@@ -272,7 +273,10 @@ class PlaceObj(nn.Module):
             assert 0, "unknown wirelength model %s" % (
                 global_place_params["wirelength"]
             )
-
+        # net crossing 
+        self.op_collections.net_crossing_op = self.build_net_crossing(
+            params, placedb, self.data_collections, self.op_collections.pin_pos_op
+        )
         self.op_collections.density_overflow_op = self.build_electric_overflow(
             params, placedb, self.data_collections, self.num_bins_x, self.num_bins_y
         )
