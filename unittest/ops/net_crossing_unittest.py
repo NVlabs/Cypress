@@ -2,7 +2,7 @@
 # @file  net_crossing.py
 # @author Niansong Zhang
 # @date  Jul 2024
-# 
+#
 
 import os
 import sys
@@ -13,9 +13,10 @@ import torch
 from torch.autograd import Function, Variable
 
 sys.path.append(
-    os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.abspath(__file__)))))
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 from dreamplace.ops.net_crossing import net_crossing
+
 sys.path.pop()
 
 
@@ -33,7 +34,8 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
     net_crossing = torch.zeros(num_nets, dtype=pin_x.dtype)
     for i in range(num_nets):
         for j in range(num_nets):
-            if i == j: continue
+            if i == j:
+                continue
             pins_i_idx = net2pin_map[i]
             pins_j_idx = net2pin_map[j]
             for i_sink_pin_idx in pins_i_idx[1:]:
@@ -46,17 +48,26 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
                     y3 = pin_y[pins_j_idx[0]]
                     x4 = pin_x[j_sink_pin_idx]
                     y4 = pin_y[j_sink_pin_idx]
-                    t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
-                    u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+                    t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / (
+                        (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+                    )
+                    u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / (
+                        (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+                    )
                     # print(f"x1={x1}, y1={y1}, x2={x2}, y2={y2}, x3={x3}, y3={y3}, x4={x4}, y4={y4}")
                     # print(f"golden t = {t}, u = {u}")
-                    net_crossing += bell_func(t, _lambda, _mu, _sigma) * bell_func(u, _lambda, _mu, _sigma)
+                    net_crossing[i] += bell_func(
+                        t - 0.5, _lambda, _mu, _sigma
+                    ) * bell_func(u - 0.5, _lambda, _mu, _sigma)
+                    # f = bell_func(t - 0.5, _lambda, _mu, _sigma)
+                    # g = bell_func(u - 0.5, _lambda, _mu, _sigma)
     return net_crossing.sum()
+
 
 dtype = torch.float32
 pin_pos = np.array(
-    [[0.0, 0.0], [0.0, 1.0], [1.0, 2.0], [1.0, 3.0], [1.0, 4.0]],
-    dtype=np.float32)
+    [[0.0, 0.0], [0.0, 1.0], [1.0, 2.0], [1.0, 3.0], [1.0, 4.0]], dtype=np.float32
+)
 net2pin_map = np.array([np.array([1, 2]), np.array([0, 3, 4])])
 pin2net_map = np.zeros(len(pin_pos), dtype=np.int32)
 for net_id, pins in enumerate(net2pin_map):
@@ -82,8 +93,7 @@ flat_net2pin_map = np.zeros(len(pin_pos), dtype=np.int32)
 flat_net2pin_start_map = np.zeros(len(net2pin_map) + 1, dtype=np.int32)
 count = 0
 for i in range(len(net2pin_map)):
-    flat_net2pin_map[count:count +
-                        len(net2pin_map[i])] = net2pin_map[i]
+    flat_net2pin_map[count : count + len(net2pin_map[i])] = net2pin_map[i]
     flat_net2pin_start_map[i] = count
     count += len(net2pin_map[i])
 flat_net2pin_start_map[len(net2pin_map)] = len(pin_pos)
@@ -92,20 +102,25 @@ print("flat_net2pin_map = ", flat_net2pin_map)
 print("flat_net2pin_start_map = ", flat_net2pin_start_map)
 
 print(np.transpose(pin_pos))
-pin_pos_var = Variable(torch.from_numpy(np.transpose(pin_pos)).reshape(
-    [-1]),
-                        requires_grad=True)
-#pin_pos_var = torch.nn.Parameter(torch.from_numpy(np.transpose(pin_pos)).reshape([-1]))
+pin_pos_var = Variable(
+    torch.from_numpy(np.transpose(pin_pos)).reshape([-1]), requires_grad=True
+)
+# pin_pos_var = torch.nn.Parameter(torch.from_numpy(np.transpose(pin_pos)).reshape([-1]))
 print(pin_pos_var)
 
 _lambda = 2
 _mu = 2
 _sigma = 1
 
-golden = golden_netcrossing(pin_pos_var[:pin_pos_var.numel() // 2],
-                            pin_pos_var[pin_pos_var.numel() // 2:],
-                            pin2net_map, net2pin_map,
-                            _lambda, _mu, _sigma)
+golden = golden_netcrossing(
+    pin_pos_var[: pin_pos_var.numel() // 2],
+    pin_pos_var[pin_pos_var.numel() // 2 :],
+    pin2net_map,
+    net2pin_map,
+    _lambda,
+    _mu,
+    _sigma,
+)
 print("golden=", golden)
 golden.backward()
 golden_grad = pin_pos_var.grad.clone()
@@ -119,7 +134,7 @@ custom = net_crossing.NetCrossing(
     net_mask=torch.from_numpy(net_mask),
     _lambda=torch.tensor(_lambda, dtype=dtype),
     _mu=torch.tensor(_mu, dtype=dtype),
-    _sigma=torch.tensor(_sigma, dtype=dtype)
+    _sigma=torch.tensor(_sigma, dtype=dtype),
 )
 result = custom.forward(pin_pos_var)
 print("custom=", result)
