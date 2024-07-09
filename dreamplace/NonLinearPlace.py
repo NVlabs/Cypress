@@ -975,11 +975,13 @@ class NonLinearPlace(BasicPlace.BasicPlace):
         hpwls = [metric.hpwl.data.item() for metric in metrics]
         overflows = [metric.overflow.data.item() for metric in metrics]
         densities = [metric.max_density.data.item() for metric in metrics]
+        net_crossing = [metric.net_crossing.data.item() for metric in metrics]
         processed_metrics = {
             "objective": objectives,
             "hpwl": hpwls,
             "overflow": overflows,
             "density": densities,
+            "net_crossing": net_crossing,
         }
 
         # plot losses
@@ -1004,8 +1006,10 @@ class NonLinearPlace(BasicPlace.BasicPlace):
             axis[1].set_title("HPWL")
             axis[2].plot(epochs, overflows, color="green")
             axis[2].set_title("Ovflw")
-            axis[3].plot(epochs, densities, color="orange")
-            axis[3].set_title("MaxDens")
+            # axis[3].plot(epochs, densities, color="orange")
+            # axis[3].set_title("MaxDens")
+            axis[3].plot(epochs, net_crossing, color="orange")
+            axis[3].set_title("NetCross")
             plotted = 4
             if len(lrs) >= len(epochs):
                 axis[plotted].plot(
