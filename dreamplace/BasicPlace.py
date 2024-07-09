@@ -354,6 +354,7 @@ class PlaceOpCollection(object):
         self.macro_overlap_op = None
         self.update_macro_overlap_weight_op = None
         self.macro_refinement_op = None
+        self.net_crossing_op = None
 
 
 class BasicPlace(nn.Module):
