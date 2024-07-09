@@ -108,6 +108,7 @@ class PlacementEngine:
 
         self.rsmt = float("inf")
         self.hpwl = float("inf")
+        self.net_crossing = float("inf")
         self.congestion = float("inf")
         self.density = float("inf")
         self.metrics = None

@@ -53,6 +53,7 @@ class EvalMetrics(object):
         self.weight_hpwl = None
         self.macro_overlap = None
         self.macro_overlap_weight = None
+        self.net_crossing = None
 
     def __str__(self):
         """
@@ -71,6 +72,8 @@ class EvalMetrics(object):
             content += ", Obj %.6E" % (self.objective)
         if self.wirelength is not None:
             content += ", WL %.3E" % (self.wirelength)
+        if self.net_crossing is not None:
+            content += ", NetCrossing %.3E" % (self.net_crossing)
         if self.density is not None:
             if self.density.numel() == 1:
                 content += ", Density %.3E" % (self.density)
@@ -150,6 +153,8 @@ class EvalMetrics(object):
                 self.weight_hpwl = ops["weight_hpwl"](var).data
             if "rsmt_wl" in ops:
                 self.rsmt_wl = ops["rsmt_wl"](var).data
+            if "net_crossing" in ops:
+                self.net_crossing = ops["net_crossing"](var).data
             if "overflow" in ops:
                 overflow, max_density = ops["overflow"](var)
                 if overflow.numel() == 1:

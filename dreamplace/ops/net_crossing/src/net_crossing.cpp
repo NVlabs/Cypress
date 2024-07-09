@@ -17,7 +17,7 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
                                T *lambda_, T *mu_, T *sigma_,
                                T *grad_intermediate_x, T *grad_intermediate_y,
                                int num_threads) {
-// #pragma omp parallel for num_threads(num_threads)
+#pragma omp parallel for num_threads(num_threads)
   for (int i = 0; i < num_nets; ++i) {
     for (int j = 0; j < num_nets; ++j) {
       if (i == j) continue;

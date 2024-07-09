@@ -373,6 +373,7 @@ class PlaceObj(nn.Module):
         @return objective value
         """
         self.wirelength = self.op_collections.wirelength_op(pos)
+        self.net_crossing = self.op_collections.net_crossing_op(pos)
         if len(self.placedb.regions) > 0:
             self.density = self.op_collections.fence_region_density_merged_op(pos)
         else:
@@ -405,6 +406,9 @@ class PlaceObj(nn.Module):
             result = torch.add(
                 result, self.macro_overlap, alpha=self.macro_overlap_weight.item()
             )
+
+        # initial test for adding net crossing
+        result = torch.add(result, self.net_crossing, alpha=1)
 
         return result
 
@@ -663,6 +667,7 @@ class PlaceObj(nn.Module):
         @param data_collections a collection of data and variables required for constructing ops
         @param pin_pos_op the op to compute pin locations according to cell locations
         """
+        dtype = data_collections.pos[0].dtype
         return net_crossing.NetCrossing(
             flat_netpin=data_collections.flat_net2pin_map,
             netpin_start=data_collections.flat_net2pin_start_map,

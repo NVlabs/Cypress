@@ -70,7 +70,6 @@ class NonLinearPlace(BasicPlace.BasicPlace):
         lrs = []
         scheduler = None
         plot_frequency = 100
-
         # global placement
         if params.global_place_flag:
             # global placement may run in multiple stages according to user specification
@@ -134,6 +133,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     # "objective" : model.obj_fn,
                     # "weight_hpwl": self.op_collections.weight_hpwl_op,
                     "hpwl": self.op_collections.hpwl_op,
+                    "net_crossing": self.op_collections.net_crossing_op,
                     "overflow": self.op_collections.density_overflow_op,
                 }
                 if params.routability_opt_flag:
