@@ -53,8 +53,6 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
                     net_crossing[i] += bell_func(t - 0.5, _lambda, _mu, _sigma) * bell_func(u - 0.5, _lambda, _mu, _sigma)
                     # f = bell_func(t - 0.5, _lambda, _mu, _sigma)
                     # g = bell_func(u - 0.5, _lambda, _mu, _sigma)
-                    # print(f"golden f = {f}, g = {g}")
-                    # net_crossing[i] += f * g
     return net_crossing.sum()
 
 dtype = torch.float32
