@@ -650,6 +650,30 @@ class PlaceObj(nn.Module):
 
         return build_wirelength_op, build_update_gamma_op
 
+
+    def build_net_crossing(self, params, placedb, data_collections, pin_pos_op):
+        """
+        @brief build the op to compute net crossing
+        @param params parameters
+        @param placedb placement database
+        @param data_collections a collection of data and variables required for constructing ops
+        @param pin_pos_op the op to compute pin locations according to cell locations
+        """
+        return net_crossing.NetCrossing(
+            flat_netpin=data_collections.flat_net2pin_map,
+            netpin_start=data_collections.flat_net2pin_start_map,
+            net_mask=data_collections.net_mask_ignore_large_degrees,
+            _lambda=torch.tensor(2, dtype=dtype),
+            _mu=torch.tensor(2, dtype=dtype),
+            _sigma=torch.tensor(1, dtype=dtype),
+        )
+
+        # net crossing for pos
+        def build_net_crossing_op(pos):
+            return net_crossing_op(pin_pos_op(pos))
+
+        return build_net_crossing_op
+
     def build_density_overflow(
         self, params, placedb, data_collections, num_bins_x, num_bins_y
     ):
