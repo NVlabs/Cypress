@@ -409,7 +409,7 @@ class PlaceObj(nn.Module):
 
         # initial test for adding net crossing
         #TODO(Niansong): factor * weights
-        result = torch.add(result, self.net_crossing, alpha=1)
+        # result = torch.add(result, self.net_crossing, alpha=1)
 
         return result
 
@@ -669,13 +669,14 @@ class PlaceObj(nn.Module):
         @param pin_pos_op the op to compute pin locations according to cell locations
         """
         dtype = data_collections.pos[0].dtype
+        device = self.data_collections.pos[0].device
         return net_crossing.NetCrossing(
             flat_netpin=data_collections.flat_net2pin_map,
             netpin_start=data_collections.flat_net2pin_start_map,
             net_mask=data_collections.net_mask_ignore_large_degrees,
-            _lambda=torch.tensor(2, dtype=dtype),
-            _mu=torch.tensor(2, dtype=dtype),
-            _sigma=torch.tensor(1, dtype=dtype),
+            _lambda=torch.tensor(2, dtype=dtype, device=device),
+            _mu=torch.tensor(2, dtype=dtype, device=device),
+            _sigma=torch.tensor(1, dtype=dtype, device=device),
         )
 
         # net crossing for pos
