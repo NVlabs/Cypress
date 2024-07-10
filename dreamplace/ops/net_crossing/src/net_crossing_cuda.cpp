@@ -11,7 +11,7 @@
 DREAMPLACE_BEGIN_NAMESPACE
 
 template <typename T>
-int computeNetCrossingCudaLauncher<T>(
+int computeNetCrossingCudaLauncher(
     const T* x, const T* y, const int* flat_netpin,
     const int* netpin_start, const unsigned char* net_mask,
     int num_nets, T* net_crossing,
