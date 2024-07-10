@@ -21,7 +21,7 @@ install(TARGETS
 if(TORCH_ENABLE_CUDA)
 add_pytorch_extension(${TARGET_NAME}_cuda 
   src/net_crossing_cuda.cpp
-  src/dnet_crossing_cuda_kernel.cu 
+  src/net_crossing_cuda_kernel.cu 
   EXTRA_INCLUDE_DIRS ${INCLUDE_DIRS}
   EXTRA_LINK_LIBRARIES ${LINK_LIBS})
 install(TARGETS 
