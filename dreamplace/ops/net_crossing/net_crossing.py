@@ -12,8 +12,8 @@ from torch.autograd import Function
 
 import dreamplace.ops.net_crossing.net_crossing_cpp as net_crossing_cpp
 import dreamplace.configure as configure
-# if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
-#     import dreamplace.ops.density_map.density_map_cuda as density_map_cuda
+if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+    import dreamplace.ops.net_crossing.net_crossing_cuda as net_crossing_cuda
 
 import pdb
 
@@ -21,21 +21,26 @@ class NetCrossingFunction(Function):
     @staticmethod
     def forward(ctx, pos, flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma):
         if pos.is_cuda:
-            assert 0, "CUDA version NOT IMPLEMENTED"
+            output = net_crossing_cuda.forward(pos.view(pos.numel()), flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma)
         else:
             output = net_crossing_cpp.forward(pos.view(pos.numel()), flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma)
 
         ctx.net_mask = net_mask
         ctx.grad_intermediate = output[1]
         ctx.pos = pos
+        if pos.is_cuda:
+            torch.cuda.synchronize()
         return output[0]
 
     @staticmethod
     def backward(ctx, grad_pos):
         if grad_pos.is_cuda:
-            assert 0, "CUDA version NOT IMPLEMENTED"
+            output = net_crossing_cuda.backward(grad_pos, ctx.pos, ctx.grad_intermediate)
         else:
             output = net_crossing_cpp.backward(grad_pos, ctx.pos, ctx.grad_intermediate)
+
+        if grad_pos.is_cuda:
+            torch.cuda.synchronize()
 
         return output, None, None, None, None, None, None
 
@@ -63,8 +68,5 @@ class NetCrossing(nn.Module):
         self._sigma = _sigma
 
     def forward(self, pos):
-        if pos.is_cuda:
-            assert 0, "CUDA version NOT IMPLEMENTED"
-        else:
-            return NetCrossingFunction.apply(
-                pos, self.flat_netpin, self.netpin_start, self.net_mask, self._lambda, self._mu, self._sigma)
+        NetCrossingFunction.apply(
+            pos, self.flat_netpin, self.netpin_start, self.net_mask, self._lambda, self._mu, self._sigma)
