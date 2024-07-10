@@ -23,14 +23,14 @@ std::vector<at::Tensor> net_crossing_forward(at::Tensor pos, at::Tensor flat_net
                                at::Tensor netpin_start, at::Tensor net_mask,
                                at::Tensor lambda, at::Tensor mu, at::Tensor sigma // scalar Tensors
 ) {
-  CHECK_FLAT_CPU(pos);
+  CHECK_FLAT_CUDA(pos);
   CHECK_EVEN(pos);
   CHECK_CONTIGUOUS(pos);
-  CHECK_FLAT_CPU(flat_netpin);
+  CHECK_FLAT_CUDA(flat_netpin);
   CHECK_CONTIGUOUS(flat_netpin);
-  CHECK_FLAT_CPU(netpin_start);
+  CHECK_FLAT_CUDA(netpin_start);
   CHECK_CONTIGUOUS(netpin_start);
-  CHECK_FLAT_CPU(net_mask);
+  CHECK_FLAT_CUDA(net_mask);
   CHECK_CONTIGUOUS(net_mask);
 
   int num_nets = netpin_start.numel() - 1;
@@ -62,10 +62,10 @@ at::Tensor net_crossing_backward(
   at::Tensor grad_pos, at::Tensor pos, at::Tensor grad_intermediate
 ) {
 
-  CHECK_FLAT_CPU(pos);
+  CHECK_FLAT_CUDA(pos);
   CHECK_EVEN(pos);
   CHECK_CONTIGUOUS(pos);
-  CHECK_FLAT_CPU(grad_intermediate);
+  CHECK_FLAT_CUDA(grad_intermediate);
   CHECK_EVEN(grad_intermediate);
   CHECK_CONTIGUOUS(grad_intermediate);
 

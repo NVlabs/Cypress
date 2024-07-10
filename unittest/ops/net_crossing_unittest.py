@@ -122,8 +122,8 @@ golden = golden_netcrossing(
 golden.backward()
 golden_grad = pin_pos_var.grad.clone()
 
-print("golden: ", golden)
-print("golden_grad: ", golden_grad)
+# print("golden: ", golden)
+# print("golden_grad: ", golden_grad)
 
 
 pin_pos_var.grad.zero_()
@@ -145,7 +145,7 @@ grad = pin_pos_var.grad.clone()
 np.testing.assert_allclose(result.data.numpy(), golden.data.detach().numpy(), atol=1e-5)
 np.testing.assert_allclose(grad.data.numpy(), golden_grad.data.numpy(), atol=1e-5)
 
-print("CPU test passed!")
+print("\033[92mCPU test passed!\033[0m")
 
 # test gpu
 if torch.cuda.device_count():
@@ -159,10 +159,14 @@ if torch.cuda.device_count():
         _sigma=torch.tensor(_sigma, dtype=dtype).cuda(),
     )
     result_cuda = custom_cuda.forward(pin_pos_var.cuda())
-    print("custom_cuda_result = ", result_cuda.data.cpu())
+    # print("custom_cuda_result = ", result_cuda.data.cpu())
     result_cuda.backward()
     grad_cuda = pin_pos_var.grad.clone()
-    print("custom_cuda_grad = ", grad_cuda.data.cpu())
+    # print("custom_cuda_grad = ", grad_cuda.data.cpu())
+
+    np.testing.assert_allclose(result_cuda.data.cpu().numpy(), golden.data.detach().numpy(), atol=1e-5)
+    np.testing.assert_allclose(grad_cuda.data.cpu().numpy(), grad.data.numpy(), atol=1e-5)
+    print("\033[92mGPU test passed!\033[0m")
 
 # if __name__ == '__main__':
 #     unittest.main()
