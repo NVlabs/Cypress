@@ -173,7 +173,7 @@ int computeNetCrossingCudaLauncher(
             const int* netpin_start, const unsigned char* net_mask, \
             int num_nets, T* net_crossing, \
             T *lambda_, T *mu_, T *sigma_, \
-            T *grad_intermediate_x, T *grad_intermediate_y, \
+            T *grad_intermediate_x, T *grad_intermediate_y \
             );
 
 REGISTER_KERNEL_LAUNCHER(float);
