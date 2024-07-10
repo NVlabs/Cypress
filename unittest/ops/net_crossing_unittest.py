@@ -96,15 +96,15 @@ for i in range(len(net2pin_map)):
     count += len(net2pin_map[i])
 flat_net2pin_start_map[len(net2pin_map)] = len(pin_pos)
 
-print("flat_net2pin_map = ", flat_net2pin_map)
-print("flat_net2pin_start_map = ", flat_net2pin_start_map)
+# print("flat_net2pin_map = ", flat_net2pin_map)
+# print("flat_net2pin_start_map = ", flat_net2pin_start_map)
 
-print(np.transpose(pin_pos))
+# print(np.transpose(pin_pos))
 pin_pos_var = Variable(
     torch.from_numpy(np.transpose(pin_pos)).reshape([-1]), requires_grad=True
 )
 # pin_pos_var = torch.nn.Parameter(torch.from_numpy(np.transpose(pin_pos)).reshape([-1]))
-print(pin_pos_var)
+# print(pin_pos_var)
 
 _lambda = 2
 _mu = 2
@@ -119,10 +119,11 @@ golden = golden_netcrossing(
     _mu,
     _sigma,
 )
-print("golden=", golden)
 golden.backward()
 golden_grad = pin_pos_var.grad.clone()
-print("golden_grad=", golden_grad)
+
+print("golden: ", golden)
+print("golden_grad: ", golden_grad)
 
 
 pin_pos_var.grad.zero_()
@@ -135,10 +136,33 @@ custom = net_crossing.NetCrossing(
     _sigma=torch.tensor(_sigma, dtype=dtype),
 )
 result = custom.forward(pin_pos_var)
-print("custom=", result)
 result.backward()
 grad = pin_pos_var.grad.clone()
-print("custom_grad=", grad)
+
+# print("custom_result = ", result)
+# print("custom_grad = ", grad)
+
+np.testing.assert_allclose(result.data.numpy(), golden.data.detach().numpy(), atol=1e-5)
+np.testing.assert_allclose(grad.data.numpy(), golden_grad.data.numpy(), atol=1e-5)
+
+print("CPU test passed!")
+
+# test gpu
+if torch.cuda.device_count():
+    pin_pos_var.grad.zero_()
+    custom_cuda = net_crossing.NetCrossing(
+        flat_netpin=Variable(torch.from_numpy(flat_net2pin_map)).cuda(),
+        netpin_start=Variable(torch.from_numpy(flat_net2pin_start_map)).cuda(),
+        net_mask=torch.from_numpy(net_mask).cuda(),
+        _lambda=torch.tensor(_lambda, dtype=dtype).cuda(),
+        _mu=torch.tensor(_mu, dtype=dtype).cuda(),
+        _sigma=torch.tensor(_sigma, dtype=dtype).cuda(),
+    )
+    result_cuda = custom_cuda.forward(pin_pos_var.cuda())
+    print("custom_cuda_result = ", result_cuda.data.cpu())
+    result_cuda.backward()
+    grad_cuda = pin_pos_var.grad.clone()
+    print("custom_cuda_grad = ", grad_cuda.data.cpu())
 
 # if __name__ == '__main__':
 #     unittest.main()

@@ -68,5 +68,5 @@ class NetCrossing(nn.Module):
         self._sigma = _sigma
 
     def forward(self, pos):
-        NetCrossingFunction.apply(
+        return NetCrossingFunction.apply(
             pos, self.flat_netpin, self.netpin_start, self.net_mask, self._lambda, self._mu, self._sigma)
