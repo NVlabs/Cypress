@@ -33,7 +33,7 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
     num_nets = len(net2pin_map)
     net_crossing = torch.zeros(num_nets, dtype=pin_x.dtype)
     for i in range(num_nets):
-        for j in range(i+1, num_nets):
+        for j in range(i + 1, num_nets):
             pins_i_idx = net2pin_map[i]
             pins_j_idx = net2pin_map[j]
             for i_sink_pin_idx in pins_i_idx[1:]:
@@ -61,11 +61,13 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
                     # g = bell_func(u - 0.5, _lambda, _mu, _sigma)
     return net_crossing.sum()
 
+
 class NetCrossingOpTest(unittest.TestCase):
     def test_net_crossing_random(self):
         dtype = torch.float32
         pin_pos = np.array(
-            [[0.0, 0.0], [0.0, 1.0], [1.0, 2.0], [1.0, 3.0], [1.0, 4.0]], dtype=np.float32
+            [[0.0, 0.0], [0.0, 1.0], [1.0, 2.0], [1.0, 3.0], [1.0, 4.0]],
+            dtype=np.float32,
         )
         net2pin_map = np.array([np.array([1, 2]), np.array([0, 3, 4])])
         pin2net_map = np.zeros(len(pin_pos), dtype=np.int32)
@@ -126,7 +128,6 @@ class NetCrossingOpTest(unittest.TestCase):
         # print("golden: ", golden)
         # print("golden_grad: ", golden_grad)
 
-
         pin_pos_var.grad.zero_()
         custom = net_crossing.NetCrossing(
             flat_netpin=Variable(torch.from_numpy(flat_net2pin_map)),
@@ -143,8 +144,12 @@ class NetCrossingOpTest(unittest.TestCase):
         # print("custom_result = ", result)
         # print("custom_grad = ", grad)
 
-        np.testing.assert_allclose(result.data.numpy(), golden.data.detach().numpy(), atol=1e-5)
-        np.testing.assert_allclose(grad.data.numpy(), golden_grad.data.numpy(), atol=1e-5)
+        np.testing.assert_allclose(
+            result.data.numpy(), golden.data.detach().numpy(), atol=1e-5
+        )
+        np.testing.assert_allclose(
+            grad.data.numpy(), golden_grad.data.numpy(), atol=1e-5
+        )
 
         print("\033[92mCPU test passed!\033[0m")
 
@@ -165,9 +170,14 @@ class NetCrossingOpTest(unittest.TestCase):
             grad_cuda = pin_pos_var.grad.clone()
             # print("custom_cuda_grad = ", grad_cuda.data.cpu())
 
-            np.testing.assert_allclose(result_cuda.data.cpu().numpy(), golden.data.detach().numpy(), atol=1e-5)
-            np.testing.assert_allclose(grad_cuda.data.cpu().numpy(), grad.data.numpy(), atol=1e-5)
+            np.testing.assert_allclose(
+                result_cuda.data.cpu().numpy(), golden.data.detach().numpy(), atol=1e-5
+            )
+            np.testing.assert_allclose(
+                grad_cuda.data.cpu().numpy(), grad.data.numpy(), atol=1e-5
+            )
             print("\033[92mGPU test passed!\033[0m")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
