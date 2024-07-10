@@ -12,7 +12,7 @@
 
 DREAMPLACE_BEGIN_NAMESPACE
 
-template <typename T>
+template <typename T> // choose diff bell functions
 __global__ void computeNetCrossing(
         const T* x, const T* y, 
         const int* flat_netpin, 
@@ -151,6 +151,7 @@ int computeNetCrossingCudaLauncher(
 {
     int thread_count = 256; 
     int total_pairs = num_nets * num_nets;
+    // int total_pairs = num_net * (num_nets - 1) / 2; // TODO: use this to avoid launching more than needed
     int block_count = ceilDiv(total_pairs, thread_count);
 
     computeNetCrossing<<<block_count, thread_count>>>(
