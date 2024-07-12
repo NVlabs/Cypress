@@ -43,10 +43,10 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
           T y4 = y[net_j_sink_pin_id];
 
            // Bezier curve intersection
-          T t = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+          T t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));          
           T u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
 
-          // std::cout << "custom t: " << t << " u: " << u << "\n";
+          std::cout << "custom t: " << t << " u: " << u << "\n";
 
           // Bell function
           // lambda = 2, mu = 2, sigma = 1
