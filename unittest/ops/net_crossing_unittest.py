@@ -23,7 +23,7 @@ sys.path.pop()
 def bell_func(x, lambda_, mu_, sigma_):
     if torch.abs(x) <= 0.5:
         return 1 - lambda_ * torch.pow(x, 2)
-    elif torch.abs(x) <= 1.5:
+    elif torch.abs(x) <= 1:
         return mu_ * torch.pow(torch.abs(x) - sigma_, 2)
     else:
         return 0
@@ -57,8 +57,9 @@ def golden_netcrossing(pin_x, pin_y, pin2net_map, net2pin_map, _lambda, _mu, _si
                     net_crossing[i] += bell_func(
                         t - 0.5, _lambda, _mu, _sigma
                     ) * bell_func(u - 0.5, _lambda, _mu, _sigma)
-                    # f = bell_func(t - 0.5, _lambda, _mu, _sigma)
-                    # g = bell_func(u - 0.5, _lambda, _mu, _sigma)
+                    f = bell_func(t - 0.5, _lambda, _mu, _sigma)
+                    g = bell_func(u - 0.5, _lambda, _mu, _sigma)
+                    # print(f"golden f = {f}, g = {g}")
     return net_crossing.sum()
 
 
@@ -69,11 +70,21 @@ class NetCrossingOpTest(unittest.TestCase):
         #     [[0.0, 0.0], [0.0, 1.0], [1.0, 2.0], [1.0, 3.0], [1.0, 4.0]],
         #     dtype=np.float32,
         # )
+        
+        # pin_pos = np.array(
+        #     [[-1, 0], [0, -1], [1, 0], [0, 1]],
+        #     dtype=np.float32,
+        # )
+        # net2pin_map = np.array([np.array([0, 2]), np.array([1, 3])])
+        
+        
         pin_pos = np.array(
-            [[-1, 0], [0, -1], [1, 0], [0, 1]],
-            dtype=np.float32,
+            [[0, 0], [2, 2], [2, -1], [-2, -2], [-1, 1], [2, 1], [-1, -2]],
+            dtype=np.float32
         )
-        net2pin_map = np.array([np.array([0, 2]), np.array([1, 3])])
+        net2pin_map = np.array([np.array([0, 1, 2, 3]), np.array([4, 5, 6])])
+
+
         pin2net_map = np.zeros(len(pin_pos), dtype=np.int32)
         for net_id, pins in enumerate(net2pin_map):
             for pin in pins:
@@ -81,7 +92,7 @@ class NetCrossingOpTest(unittest.TestCase):
 
         pin_x = pin_pos[:, 0]
         pin_y = pin_pos[:, 1]
-        ignore_net_degree = 4
+        ignore_net_degree = 5
         pin_mask = np.zeros(len(pin2net_map), dtype=np.uint8)
 
         # net mask
@@ -147,12 +158,12 @@ class NetCrossingOpTest(unittest.TestCase):
         print("custom_result = ", result)
         print("custom_grad = ", grad)
 
-        # np.testing.assert_allclose(
-        #     result.data.numpy(), golden.data.detach().numpy(), atol=1e-5
-        # )
-        # np.testing.assert_allclose(
-        #     grad.data.numpy(), golden_grad.data.numpy(), atol=1e-5
-        # )
+        np.testing.assert_allclose(
+            result.data.numpy(), golden.data.detach().numpy(), atol=1e-5
+        )
+        np.testing.assert_allclose(
+            grad.data.numpy(), golden_grad.data.numpy(), atol=1e-5
+        )
 
         print("\033[92mCPU test passed!\033[0m")
 
@@ -173,12 +184,12 @@ class NetCrossingOpTest(unittest.TestCase):
             grad_cuda = pin_pos_var.grad.clone()
             print("custom_cuda_grad = ", grad_cuda.data.cpu())
 
-            # np.testing.assert_allclose(
-            #     result_cuda.data.cpu().numpy(), golden.data.detach().numpy(), atol=1e-5
-            # )
-            # np.testing.assert_allclose(
-            #     grad_cuda.data.cpu().numpy(), grad.data.numpy(), atol=1e-5
-            # )
+            np.testing.assert_allclose(
+                result_cuda.data.cpu().numpy(), golden.data.detach().numpy(), atol=1e-5
+            )
+            np.testing.assert_allclose(
+                grad_cuda.data.cpu().numpy(), grad.data.numpy(), atol=1e-5
+            )
             print("\033[92mGPU test passed!\033[0m")
 
 
