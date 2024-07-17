@@ -48,6 +48,10 @@
         "description": "initial weight of density cost",
         "default": 8e-5
     },
+    "net_crossing_weight": {
+        "description": "weight of net crossing cost",
+        "default": 0.0
+    },
     "random_seed": {
         "description": "random seed",
         "default": 1000
