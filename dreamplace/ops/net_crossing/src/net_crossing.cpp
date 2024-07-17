@@ -46,7 +46,7 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
           T t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));          
           T u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
 
-          std::cout << "custom t: " << t << " u: " << u << "\n";
+          // std::cout << "custom t: " << t << " u: " << u << "\n";
 
           // Bell function
           // lambda = 2, mu = 2, sigma = 1
@@ -63,7 +63,14 @@ void computeNetCrossingLauncher(const T* x, const T* y, const int* flat_netpin,
             }
           };
 
+          // T f = bell(t - 0.5);
+          // T g = bell(u - 0.5);
+
+          // std::cout << "custom f: " << f << " g: " << g << "\n";
+
           net_crossing[i] += bell(t - 0.5) * bell(u - 0.5);
+
+          // std::cout << "custom net crossing: " << net_crossing[i] << "\n";
 
           // compute gradient
           auto bell_gradient = [&](T x) {
