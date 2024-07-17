@@ -376,6 +376,18 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                             % (model.macro_overlap_weight.data)
                         )
 
+                    # initialize net_crossing weight
+                    # if net_crossing weight is set to 0.0,
+                    # use model.initialize_net_crossing_weight to set it to a reasonable value
+                    if params.net_crossing_flag and torch.eq(
+                        model.net_crossing_weight, 0.0
+                    ):
+                        model.initialize_net_crossing_weight(params, placedb)
+                        logging.info(
+                            "net_crossing_weight = %.6E"
+                            % (model.net_crossing_weight.data)
+                        )
+
                     optimizer.zero_grad()
 
                     # t1 = time.time()
@@ -675,6 +687,16 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                         # update macro overlap weight
                         if Llambda_flat_iteration > 1 and params.macro_overlap_flag:
                             model.op_collections.update_macro_overlap_weight_op(
+                                Llambda_metrics[-1][-1],
+                                Llambda_metrics[-2][-1]
+                                if len(Llambda_metrics) > 1
+                                else Lgamma_metrics[-2][-1][-1],
+                                Llambda_flat_iteration,
+                            )
+
+                        # update net crossing weight
+                        if Llambda_flat_iteration > 1 and params.net_crossing_flag:
+                            model.op_collections.update_net_crossing_weight_op(
                                 Llambda_metrics[-1][-1],
                                 Llambda_metrics[-2][-1]
                                 if len(Llambda_metrics) > 1

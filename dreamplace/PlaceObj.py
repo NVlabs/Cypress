@@ -190,6 +190,7 @@ class PlaceObj(nn.Module):
         self.init_density = None
         ### increase density penalty if slow convergence
         self.density_factor = 1
+        self.net_crossing_factor = 1
 
         if len(placedb.regions) > 0:
             ### fence region will enable quadratic penalty by default
@@ -273,10 +274,6 @@ class PlaceObj(nn.Module):
             assert 0, "unknown wirelength model %s" % (
                 global_place_params["wirelength"]
             )
-        # net crossing 
-        self.op_collections.net_crossing_op = self.build_net_crossing(
-            params, placedb, self.data_collections, self.op_collections.pin_pos_op
-        )
         self.op_collections.density_overflow_op = self.build_electric_overflow(
             params, placedb, self.data_collections, self.num_bins_x, self.num_bins_y
         )
@@ -365,6 +362,20 @@ class PlaceObj(nn.Module):
             params, placedb, self.data_collections, self.op_collections.hpwl_op
         )
 
+        # PCB Net Crossing
+        if self.params.net_crossing_flag:
+            self.op_collections.net_crossing_op = self.build_net_crossing(
+                params, placedb, self.data_collections, self.op_collections.pin_pos_op
+            )
+            self.net_crossing_weight = torch.tensor(
+                [self.params.net_crossing_weight],
+                dtype=self.data_collections.pos[0].dtype,
+                device=self.data_collections.pos[0].device,
+            )
+            self.op_collections.update_net_crossing_weight_op = (
+                self.build_update_net_crossing_weight(params, placedb)
+            )
+
     def obj_fn(self, pos):
         """
         @brief Compute objective.
@@ -409,7 +420,7 @@ class PlaceObj(nn.Module):
 
         # initial test for adding net crossing
         #TODO(Niansong): factor * weights
-        # result = torch.add(result, self.net_crossing, alpha=1)
+        result = torch.add(result, self.net_crossing, alpha=1)
 
         return result
 
@@ -684,6 +695,30 @@ class PlaceObj(nn.Module):
             return net_crossing_op(pin_pos_op(pos))
 
         return build_net_crossing_op
+
+
+    def build_update_net_crossing_weight(self, params, placedb):
+        """
+        @brief build the op to update net crossing weight
+        @param params parameters
+        @param placedb placement database
+        """
+        ref_hpwl = params.RePlAce_ref_hpwl / params.scale_factor
+        LOWER_PCOF = params.RePlAce_LOWER_PCOF
+        UPPER_PCOF = params.RePlAce_UPPER_PCOF
+
+        def get_coeff(scaled_diff_hpwl, cofmax, cofmin):
+            mu = cofmax * torch.pow(cofmax, 1.0 - scaled_diff_hpwl)
+            return torch.clamp(mu, min=cofmin, max=cofmax)
+
+        def update_net_crossing_weight_op(curr_metric, prev_metric, iteration):
+            with torch.no_grad():
+                delta_hpwl = curr_metric.hpwl - prev_metric.hpwl
+                mu = get_coeff(delta_hpwl / ref_hpwl, UPPER_PCOF, LOWER_PCOF)
+                self.net_crossing_weight *= mu
+
+        return update_net_crossing_weight_op
+
 
     def build_density_overflow(
         self, params, placedb, data_collections, num_bins_x, num_bins_y
