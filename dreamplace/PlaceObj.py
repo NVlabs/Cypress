@@ -418,9 +418,8 @@ class PlaceObj(nn.Module):
                 result, self.macro_overlap, alpha=self.macro_overlap_weight.item()
             )
 
-        # initial test for adding net crossing
-        #TODO(Niansong): factor * weights
-        result = torch.add(result, self.net_crossing, alpha=1)
+        if self.params.net_crossing_flag:
+            result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
 
         return result
 
