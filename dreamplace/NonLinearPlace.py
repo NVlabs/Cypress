@@ -1165,6 +1165,11 @@ class NonLinearPlace(BasicPlace.BasicPlace):
             hpwl = self.op_collections.hpwl_op(self.pos[0])
             logging.info("unweighted hpwl %.6E" % hpwl)
 
+        # get net crossing
+        with torch.no_grad():
+            net_crossing = self.op_collections.net_crossing_op(self.pos[0])
+            logging.info("net crossing %d" % net_crossing)
+
         # save nets degree, RSMT, HPWL
         # with torch.no_grad():
         #     degrees = torch.from_numpy(np.ediff1d(placedb.flat_net2pin_start_map))
