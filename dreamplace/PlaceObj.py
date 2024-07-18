@@ -418,8 +418,8 @@ class PlaceObj(nn.Module):
             )
 
         if self.params.net_crossing_flag:
-            result = torch.add(result, self.net_crossing, alpha=1)
-            # result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
+            # result = torch.add(result, self.net_crossing, alpha=1)
+            result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
 
         return result
 
@@ -571,35 +571,41 @@ class PlaceObj(nn.Module):
         pos.grad.zero_()
 
     def estimate_initial_learning_rate(self, x_k, lr):
-        """
-        @brief Estimate initial learning rate by moving a small step.
-        Computed as | x_k - x_k_1 |_2 / | g_k - g_k_1 |_2.
-        @param x_k current solution
-        @param lr small step
-        """
-        obj_k, g_k = self.obj_and_grad_fn(x_k)
+        """Estimate initial learning rate by moving a small step."""
+        # obj_and_grad_fn = partial(self.obj_and_grad_fn, enabled_ops="wl:dens")
+        _, g_k = self.obj_and_grad_fn(x_k)
         x_k_1 = torch.autograd.Variable(x_k - lr * g_k, requires_grad=True)
-        obj_k_1, g_k_1 = self.obj_and_grad_fn(x_k_1)
+        _, g_k_1 = self.obj_and_grad_fn(x_k_1)
         new_lr = (x_k - x_k_1).norm(p=2) / (g_k - g_k_1).norm(p=2)
-
-        if torch.isnan(new_lr) or torch.isinf(new_lr):
+        if (
+            # self.data_collection.params.init_with_line_search
+            torch.isnan(new_lr)
+            or torch.isinf(new_lr)
+            or not torch.is_nonzero(new_lr)
+        ):
             # backtracking line search (w. Armijo condition)
+            logging.info("setting init lr with backtracking line search")
             def backtrack_line_search(f, df, x, alpha, beta):
-                assert (0 < alpha < 0.5) and (0 < beta < 1.0)
+                assert (0 < alpha < 0.5) and (0 < beta < 1.0) and (alpha < beta)
                 t = 1.0
-                x1 = torch.autograd.Variable(x - t * df(x), requires_grad=True)
-                while f(x1) > f(x) - alpha * t * df(x).norm(p=2):
+                fx, dfx = f(x), df(x)
+                dfxN = dfx.norm(p=2).square()
+                x1 = torch.autograd.Variable(x - t * dfx, requires_grad=True)
+                while (
+                    f(x1)
+                    > fx - alpha * t * dfxN  # Armijo
+                    # or dfx.T @ df(x1) > beta * dfxN  # Wolfe
+                ):
                     t *= beta
-                    x1 = x - t * df(x)
+                    with torch.no_grad():
+                        x1.copy_(x - t * dfx)
                 return t, x1
-
             f = lambda x: self.obj_and_grad_fn(x)[0]
             df = lambda x: self.obj_and_grad_fn(x)[1]
-            _, x_k_1 = backtrack_line_search(f, df, x_k, 0.3, 0.8)
+            # _, x_k_1 = backtrack_line_search(f, df, x_k, 0.3, 0.8)
+            _, x_k_1 = backtrack_line_search(f, df, x_k, 1e-4, 0.1)
             _, g_k_1 = self.obj_and_grad_fn(x_k_1)
-
             new_lr = (x_k - x_k_1).norm(p=2) / (g_k - g_k_1).norm(p=2)
-
         return new_lr
 
     def build_weighted_average_wl(self, params, placedb, data_collections, pin_pos_op):
