@@ -363,18 +363,17 @@ class PlaceObj(nn.Module):
         )
 
         # PCB Net Crossing
-        if self.params.net_crossing_flag:
-            self.op_collections.net_crossing_op = self.build_net_crossing(
-                params, placedb, self.data_collections, self.op_collections.pin_pos_op
-            )
-            self.net_crossing_weight = torch.tensor(
-                [self.params.net_crossing_weight],
-                dtype=self.data_collections.pos[0].dtype,
-                device=self.data_collections.pos[0].device,
-            )
-            self.op_collections.update_net_crossing_weight_op = (
-                self.build_update_net_crossing_weight(params, placedb)
-            )
+        self.op_collections.net_crossing_op = self.build_net_crossing(
+            params, placedb, self.data_collections, self.op_collections.pin_pos_op
+        )
+        self.net_crossing_weight = torch.tensor(
+            [self.params.net_crossing_weight],
+            dtype=self.data_collections.pos[0].dtype,
+            device=self.data_collections.pos[0].device,
+        )
+        self.op_collections.update_net_crossing_weight_op = (
+            self.build_update_net_crossing_weight(params, placedb)
+        )
 
     def obj_fn(self, pos):
         """
@@ -419,6 +418,7 @@ class PlaceObj(nn.Module):
             )
 
         if self.params.net_crossing_flag:
+            # result = torch.add(result, self.net_crossing, alpha=1)
             result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
 
         return result
