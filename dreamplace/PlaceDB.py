@@ -802,19 +802,25 @@ class PlaceDB(object):
             return self.row_height * op(v / self.row_height)
 
     def update_sides(self):
-        self.btm_movable_nodes_mask = np.char.endswith(self.node_names[self.movable_slice].astype(str), '.btm')
-        self.top_movable_nodes_mask = not self.btm_movable_nodes_mask
-        self.btm_movable_nodes_idx = np.where(self.btm_movable_nodes_mask)[0]
-        self.top_movable_nodes_idx = np.where(self.top_movable_nodes_mask)[0]
-        self.num_btm_movable_nodes = self.btm_movable_nodes_idx.shape[0]
-        self.num_top_movable_nodes = self.top_movable_nodes_idx.shape[0]
+        # self.btm_movable_nodes_mask = np.char.endswith(self.node_names[self.movable_slice].astype(str), '.btm')
+        # self.top_movable_nodes_mask = ~self.btm_movable_nodes_mask
+        # self.btm_movable_nodes_idx = np.where(self.btm_movable_nodes_mask)[0]
+        # self.top_movable_nodes_idx = np.where(self.top_movable_nodes_mask)[0]
+        # self.num_btm_movable_nodes = self.btm_movable_nodes_idx.shape[0]
+        # self.num_top_movable_nodes = self.top_movable_nodes_idx.shape[0]
 
-        self.btm_fixed_nodes_mask = self.node_names[self.fixed_slice].astype(str).str.endswith(".btm")
-        self.top_fixed_nodes_mask = not self.btm_fixed_nodes_mask
-        self.btm_fixed_nodes_idx = np.where(self.btm_fixed_nodes_mask)[0] + self.num_movable_nodes
-        self.top_fixed_nodes_idx = np.where(self.top_fixed_nodes_mask)[0] + self.num_movable_nodes
-        self.num_btm_fixed_nodes = self.btm_fixed_nodes_idx.shape[0]
-        self.num_top_fixed_nodes = self.top_fixed_nodes_idx.shape[0]
+        # self.btm_fixed_nodes_mask = np.char.endswith(self.node_names[self.fixed_slice].astype(str), '.btm')
+        # self.top_fixed_nodes_mask = ~self.btm_fixed_nodes_mask
+        # self.btm_fixed_nodes_idx = np.where(self.btm_fixed_nodes_mask)[0] + self.num_movable_nodes
+        # self.top_fixed_nodes_idx = np.where(self.top_fixed_nodes_mask)[0] + self.num_movable_nodes
+        # self.num_btm_fixed_nodes = self.btm_fixed_nodes_idx.shape[0]
+        # self.num_top_fixed_nodes = self.top_fixed_nodes_idx.shape[0]
+
+        self.btm_nodes_mask = np.char.endswith(self.node_names.astype(str), '.btm')
+        self.top_nodes_mask = ~self.btm_nodes_mask
+        self.btm_nodes_idx = np.where(self.btm_nodes_mask)[0]
+        self.top_nodes_idx = np.where(self.top_nodes_mask)[0]
+
 
 
     def update_macros(self, params, area_threshold=10, height_threshold=2):
