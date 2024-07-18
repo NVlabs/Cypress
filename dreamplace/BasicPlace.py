@@ -784,18 +784,18 @@ class BasicPlace(nn.Module):
         # for movable macro legalization
         # the number of bins control the search granularity
         ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x,
-            node_size_y=data_collections.node_size_y,
-            node_weights=data_collections.num_pins_in_nodes,
+            node_size_x=data_collections.node_size_x, # per layer
+            node_size_y=data_collections.node_size_y, # per layer
+            node_weights=data_collections.num_pins_in_nodes, # per layer
             flat_region_boxes=data_collections.flat_region_boxes,
             flat_region_boxes_start=data_collections.flat_region_boxes_start,
             node2fence_region_map=data_collections.node2fence_region_map,
             fp_info=data_collections.fp_info,
             num_bins_x=placedb.num_bins_x,
             num_bins_y=placedb.num_bins_y,
-            num_movable_nodes=placedb.num_movable_nodes,
-            num_terminal_NIs=placedb.num_terminal_NIs,
-            num_filler_nodes=placedb.num_filler_nodes,
+            num_movable_nodes=placedb.num_movable_nodes, # per layer
+            num_terminal_NIs=placedb.num_terminal_NIs, # per layer
+            num_filler_nodes=placedb.num_filler_nodes, # per layer
         )
         # for standard cell legalization
         # legalize_alg = mg_legalize.MGLegalize

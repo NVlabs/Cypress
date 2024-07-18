@@ -801,6 +801,22 @@ class PlaceDB(object):
         elif axis == "y":
             return self.row_height * op(v / self.row_height)
 
+    def update_sides(self):
+        self.btm_movable_nodes_mask = np.char.endswith(self.node_names[self.movable_slice].astype(str), '.btm')
+        self.top_movable_nodes_mask = not self.btm_movable_nodes_mask
+        self.btm_movable_nodes_idx = np.where(self.btm_movable_nodes_mask)[0]
+        self.top_movable_nodes_idx = np.where(self.top_movable_nodes_mask)[0]
+        self.num_btm_movable_nodes = self.btm_movable_nodes_idx.shape[0]
+        self.num_top_movable_nodes = self.top_movable_nodes_idx.shape[0]
+
+        self.btm_fixed_nodes_mask = self.node_names[self.fixed_slice].astype(str).str.endswith(".btm")
+        self.top_fixed_nodes_mask = not self.btm_fixed_nodes_mask
+        self.btm_fixed_nodes_idx = np.where(self.btm_fixed_nodes_mask)[0] + self.num_movable_nodes
+        self.top_fixed_nodes_idx = np.where(self.top_fixed_nodes_mask)[0] + self.num_movable_nodes
+        self.num_btm_fixed_nodes = self.btm_fixed_nodes_idx.shape[0]
+        self.num_top_fixed_nodes = self.top_fixed_nodes_idx.shape[0]
+
+
     def update_macros(self, params, area_threshold=10, height_threshold=2):
         # set large cells as macros
         node_areas = self.node_size_x * self.node_size_y
@@ -995,6 +1011,9 @@ class PlaceDB(object):
 
         # set macros
         self.update_macros(params)
+
+        # set PCB sides
+        self.update_sides()
 
         # set net weights for improved HPWL % RSMT correlation
         if params.risa_weights == 1:
@@ -1325,6 +1344,7 @@ row height = %g, site width = %g
                     )
                 )
             else:
+                # insert filler node here for each layer
                 node_size_order = np.argsort(self.node_size_x[self.movable_slice])
                 filler_size_x = np.mean(
                     self.node_size_x[
