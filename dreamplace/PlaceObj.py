@@ -418,8 +418,8 @@ class PlaceObj(nn.Module):
             )
 
         if self.params.net_crossing_flag:
-            # result = torch.add(result, self.net_crossing, alpha=1)
-            result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
+            result = torch.add(result, self.net_crossing, alpha=1)
+            # result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
 
         return result
 

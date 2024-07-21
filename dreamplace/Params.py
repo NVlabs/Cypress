@@ -186,7 +186,9 @@ class Params:
         """
         @brief speculate the design name for dumping out intermediate solutions
         """
-        if self.aux_input:
+        if self.proj_name != "default":
+            design_name = self.proj_name
+        elif self.aux_input:
             design_name = (
                 os.path.basename(self.aux_input).replace(".aux", "").replace(".AUX", "")
             )

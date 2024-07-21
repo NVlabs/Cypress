@@ -30,6 +30,7 @@ import torch
 import random
 import numpy as np
 import logging
+from PIL import Image
 
 # for consistency between python2 and python3
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -321,6 +322,25 @@ class PlacementEngine:
         final_ppa.update(other_metrics)
         logging.info(f"Final PPA: {final_ppa}")
 
+        if self.params.create_gif:
+            res_path = "%s/%s" % (self.params.result_dir, self.params.design_name())
+            png_dir = os.path.join(res_path, "plot/")
+            # get all png files in it
+            image_list = [png_dir + f for f in os.listdir(png_dir) if f.endswith(".png")]
+            # sort the list
+            image_list.sort()
+            # Name of the output GIF
+            gif_name = os.path.join(res_path, gif_name)
+            duration = 100
+            frames = [Image.open(image) for image in image_list]
+            frames[0].save(
+                gif_name,
+                save_all=True,
+                append_images=frames[1:],
+                duration=duration,
+                loop=0,
+            )
+
         return final_ppa
 
 
@@ -337,3 +357,11 @@ if __name__ == "__main__":
 
     engine = PlacementEngine(sys.argv[1:])
     ppa = engine.run()
+
+    config_file = sys.argv[1]
+    res_path = "%s/%s" % (engine.params.result_dir, engine.params.design_name())
+    # copy config file to result directory
+    os.system("cp %s %s" % (config_file, res_path))
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # copy DREAMPlace.log to result directory
+    os.system("cp %s/DREAMPlace.log %s" % (root_dir, res_path))

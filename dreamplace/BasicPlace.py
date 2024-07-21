@@ -793,14 +793,28 @@ class BasicPlace(nn.Module):
             fp_info=data_collections.fp_info,
             num_bins_x=placedb.num_bins_x,
             num_bins_y=placedb.num_bins_y,
-            num_movable_nodes=placedb.num_movable_nodes,
-            num_terminal_NIs=placedb.num_terminal_NIs,
-            num_filler_nodes=placedb.num_filler_nodes,
+            num_movable_nodes=placedb.num_top_movable_nodes, 
+            num_terminal_NIs=0,
+            num_filler_nodes=0
         )
         btm_ml = macro_legalize.MacroLegalize(
             node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx], # per layer
             node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx], # per layer
             node_weights=data_collections.num_pins_in_nodes[placedb.btm_nodes_idx], # per layer
+            flat_region_boxes=data_collections.flat_region_boxes,
+            flat_region_boxes_start=data_collections.flat_region_boxes_start,
+            node2fence_region_map=data_collections.node2fence_region_map,
+            fp_info=data_collections.fp_info,
+            num_bins_x=placedb.num_bins_x,
+            num_bins_y=placedb.num_bins_y,
+            num_movable_nodes=placedb.num_btm_movable_nodes,
+            num_terminal_NIs=0,
+            num_filler_nodes=0,
+        )
+        ml = macro_legalize.MacroLegalize(
+            node_size_x=data_collections.node_size_x,
+            node_size_y=data_collections.node_size_y,
+            node_weights=data_collections.num_pins_in_nodes,
             flat_region_boxes=data_collections.flat_region_boxes,
             flat_region_boxes_start=data_collections.flat_region_boxes_start,
             node2fence_region_map=data_collections.node2fence_region_map,
@@ -846,30 +860,36 @@ class BasicPlace(nn.Module):
             num_filler_nodes=placedb.num_filler_nodes,
         )
 
-        # def build_legalization_op_single_layer(pos):
-        #     logging.info("Start legalization")
-        #     pos1 = ml(pos, pos)
-        #     pos2 = gl(pos1, pos1)
-        #     legal = self.op_collections.legality_check_op(pos2)
-        #     if not legal:
-        #         logging.error("legality check failed in greedy legalization")
-        #         return pos2
-        #     return al(pos1, pos2)
+        def build_legalization_op_single_layer(pos):
+            logging.info("Start legalization")
+            pos1 = ml(pos, pos)
+            pos2 = gl(pos1, pos1)
+            legal = self.op_collections.legality_check_op(pos2)
+            if not legal:
+                logging.error("legality check failed in greedy legalization")
+                return pos2
+            return al(pos1, pos2)
         
         def build_legalization_op(pos):
             logging.info("Start legalization")
-            pos1 = top_ml(pos, pos)
+            top_pos = pos.view(2, -1)[:, placedb.top_nodes_idx].view(-1)
+            pos1 = top_ml(top_pos, top_pos) # pass in the view of pos just having that side
             pos2 = btm_ml(pos1, pos1)
-            pos3 = gl(pos2, pos2)
-            legal = self.op_collections.legality_check_op(pos3)
-            if not legal:
-                logging.error("legality check failed in greedy legalization")
-                return pos3
+            # put pos2 back to pos
+            pos_clone = pos.clone()
+            pos_clone.view(2, -1)[:, placedb.top_nodes_idx] = pos2.view(2, -1)
+            pos = pos_clone
+
+            # pos3 = gl(pos2, pos2)
+            # legal = self.op_collections.legality_check_op(pos3)
+            # if not legal:
+            #     logging.error("legality check failed in greedy legalization")
+            #     return pos3
             # abacus doesn't work?
             # return al(pos2, pos3)
-            return pos3
+            return pos
 
-        return build_legalization_op
+        return build_legalization_op_single_layer
 
     def build_multi_fence_region_legalization(
         self, params, placedb, data_collections, device

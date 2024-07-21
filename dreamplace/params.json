@@ -302,5 +302,13 @@
     "risa_weights": {
         "description": "whether use weighted smooth HPWL with RISA net weights",
         "default": 0
+    },
+    "proj_name": {
+        "description": "design project name",
+        "default": "default"
+    },
+    "create_gif": {
+        "description": "create gif for placement process",
+        "default": 0
     }
 }
