@@ -330,7 +330,7 @@ class PlacementEngine:
             # sort the list
             image_list.sort()
             # Name of the output GIF
-            gif_name = os.path.join(res_path, gif_name)
+            gif_name = os.path.join(res_path, "placement.gif")
             duration = 100
             frames = [Image.open(image) for image in image_list]
             frames[0].save(
