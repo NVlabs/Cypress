@@ -159,7 +159,7 @@ class EvalMetrics(object):
                 overflow, max_density = ops["overflow"](var)
                 if overflow.numel() == 1:
                     # self.overflow = overflow.data / placedb.total_movable_node_area
-                    self.overflow = overflow.data / placedb.total_movable_macro_area
+                    self.overflow = overflow.data / (placedb.total_movable_macro_area + placedb.total_movable_node_area)
                     self.max_density = max_density.data
                 else:
                     self.overflow = (

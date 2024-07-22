@@ -31,6 +31,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pdb
 import gzip
+import math
 
 if sys.version_info[0] < 3:
     import cPickle as pickle
@@ -384,6 +385,19 @@ class PlaceObj(nn.Module):
         """
         self.wirelength = self.op_collections.wirelength_op(pos)
         self.net_crossing = self.op_collections.net_crossing_op(pos)
+
+        # check gradient of wirelength:
+        self.wirelength.backward()
+        wl_grad = pos.grad.clone()
+        pos.grad.zero_()
+        self.net_crossing.backward()
+        nc_grad = pos.grad.clone()
+        pos.grad.zero_()
+        wl_grad_norm = wl_grad.norm(p=1)
+        nc_grad_norm = nc_grad.norm(p=1)
+        nc_grad_scale = wl_grad_norm / nc_grad_norm
+        logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
+
         if len(self.placedb.regions) > 0:
             self.density = self.op_collections.fence_region_density_merged_op(pos)
         else:
@@ -417,9 +431,15 @@ class PlaceObj(nn.Module):
                 result, self.macro_overlap, alpha=self.macro_overlap_weight.item()
             )
 
-        if self.params.net_crossing_flag:
-            result = torch.add(result, self.net_crossing, alpha=1)
+        if self.params.net_crossing_flag and not math.isnan(nc_grad_norm):
+            # constant net crossing weight: 
+            # result = torch.add(result, self.net_crossing, alpha=self.params.net_crossing_weight)
+
+            # scheduled net crossing weight:
             # result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
+
+            # net crossing weight according to grad scale
+            result = torch.add(result, self.net_crossing, alpha=nc_grad_scale)
 
         return result
 
