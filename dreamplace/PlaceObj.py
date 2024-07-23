@@ -367,11 +367,12 @@ class PlaceObj(nn.Module):
         self.op_collections.net_crossing_op = self.build_net_crossing(
             params, placedb, self.data_collections, self.op_collections.pin_pos_op
         )
-        self.net_crossing_weight = torch.tensor(
-            [self.params.net_crossing_weight],
-            dtype=self.data_collections.pos[0].dtype,
-            device=self.data_collections.pos[0].device,
-        )
+        # self.net_crossing_weight = torch.tensor(
+        #     [self.params.net_crossing_weight],
+        #     dtype=self.data_collections.pos[0].dtype,
+        #     device=self.data_collections.pos[0].device,
+        # )
+        self.net_crossing_weight = 1.0
         self.op_collections.update_net_crossing_weight_op = (
             self.build_update_net_crossing_weight(params, placedb)
         )
@@ -387,16 +388,17 @@ class PlaceObj(nn.Module):
         self.net_crossing = self.op_collections.net_crossing_op(pos)
 
         # check gradient of wirelength:
-        self.wirelength.backward()
-        wl_grad = pos.grad.clone()
-        pos.grad.zero_()
-        self.net_crossing.backward()
-        nc_grad = pos.grad.clone()
-        pos.grad.zero_()
-        wl_grad_norm = wl_grad.norm(p=1)
-        nc_grad_norm = nc_grad.norm(p=1)
-        nc_grad_scale = wl_grad_norm / nc_grad_norm
-        logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
+        with torch.no_grad():
+            self.wirelength.backward()
+            wl_grad = pos.grad.clone()
+            pos.grad.zero_()
+            self.net_crossing.backward()
+            nc_grad = pos.grad.clone()
+            pos.grad.zero_()
+            wl_grad_norm = wl_grad.norm(p=1)
+            nc_grad_norm = nc_grad.norm(p=1)
+            nc_grad_scale = wl_grad_norm / nc_grad_norm
+            logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
 
         if len(self.placedb.regions) > 0:
             self.density = self.op_collections.fence_region_density_merged_op(pos)
@@ -436,10 +438,10 @@ class PlaceObj(nn.Module):
             # result = torch.add(result, self.net_crossing, alpha=self.params.net_crossing_weight)
 
             # scheduled net crossing weight:
-            # result = torch.add(result, self.net_crossing, alpha=self.net_crossing_factor * self.net_crossing_weight.item())
+            result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
 
             # net crossing weight according to grad scale
-            result = torch.add(result, self.net_crossing, alpha=nc_grad_scale)
+            # result = torch.add(result, self.net_crossing, alpha=nc_grad_scale)
 
         return result
 
@@ -728,19 +730,31 @@ class PlaceObj(nn.Module):
         @param params parameters
         @param placedb placement database
         """
-        ref_hpwl = params.RePlAce_ref_hpwl / params.scale_factor
-        LOWER_PCOF = params.RePlAce_LOWER_PCOF
-        UPPER_PCOF = params.RePlAce_UPPER_PCOF
-
-        def get_coeff(scaled_diff_hpwl, cofmax, cofmin):
-            mu = cofmax * torch.pow(cofmax, 1.0 - scaled_diff_hpwl)
-            return torch.clamp(mu, min=cofmin, max=cofmax)
 
         def update_net_crossing_weight_op(curr_metric, prev_metric, iteration):
             with torch.no_grad():
-                delta_hpwl = curr_metric.hpwl - prev_metric.hpwl
-                mu = get_coeff(delta_hpwl / ref_hpwl, UPPER_PCOF, LOWER_PCOF)
-                self.net_crossing_weight *= mu
+                # delta_hpwl = curr_metric.hpwl - prev_metric.hpwl
+                # mu = get_coeff(delta_hpwl / ref_hpwl, UPPER_PCOF, LOWER_PCOF)
+                # self.net_crossing_weight *= mu
+                self.net_crossing_weight += 0.001
+
+        # ref_hpwl = params.RePlAce_ref_hpwl / params.scale_factor
+        # LOWER_PCOF = params.RePlAce_LOWER_PCOF
+        # UPPER_PCOF = params.RePlAce_UPPER_PCOF
+
+        # def update_net_crossing_weight_op(cur_metric, prev_metric, iteration):
+        #     ### based on hpwl
+        #     with torch.no_grad():
+        #         delta_hpwl = cur_metric.hpwl - prev_metric.hpwl
+        #         if delta_hpwl < 0:
+        #             mu = UPPER_PCOF * np.maximum(
+        #                 np.power(0.9999, float(iteration)), 0.98
+        #             )
+        #         else:
+        #             mu = UPPER_PCOF * torch.pow(
+        #                 UPPER_PCOF, -delta_hpwl / ref_hpwl
+        #             ).clamp(min=LOWER_PCOF, max=UPPER_PCOF)
+        #         self.net_crossing_weight *= mu
 
         return update_net_crossing_weight_op
 

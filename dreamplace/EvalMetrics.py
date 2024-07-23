@@ -54,6 +54,7 @@ class EvalMetrics(object):
         self.macro_overlap = None
         self.macro_overlap_weight = None
         self.net_crossing = None
+        self.net_crossing_weight = None
 
     def __str__(self):
         """
@@ -74,6 +75,8 @@ class EvalMetrics(object):
             content += ", WL %.3E" % (self.wirelength)
         if self.net_crossing is not None:
             content += ", NetCrossing %.3E" % (self.net_crossing)
+        if self.net_crossing_weight is not None:
+            content += ", NetCrossingWeight %.6E" % (self.net_crossing_weight)
         if self.density is not None:
             if self.density.numel() == 1:
                 content += ", Density %.3E" % (self.density)
