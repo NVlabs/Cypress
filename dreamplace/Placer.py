@@ -112,6 +112,7 @@ class PlacementEngine:
         self.net_crossing = float("inf")
         self.congestion = float("inf")
         self.density = float("inf")
+        self.net_crossing = float("inf")
         self.metrics = None
 
     def setup_rawdb(self):
@@ -144,7 +145,7 @@ class PlacementEngine:
             "non-linear placement initialization takes %.2f seconds"
             % (time.time() - tt)
         )
-        self.rsmt, self.hpwl, self.metrics = self.placer(self.params, self.placedb)
+        self.rsmt, self.hpwl, self.net_crossing, self.metrics = self.placer(self.params, self.placedb)
         logging.info("non-linear placement takes %.2f seconds" % (time.time() - tt))
 
     def external_detailed_placer(self):
@@ -311,6 +312,7 @@ class PlacementEngine:
             "hpwl": self.hpwl,
             "congestion": self.congestion,
             "density": self.density,
+            "net_crossing": self.net_crossing,
         }
         niter = len(self.metrics["objective"])
         other_metrics = {

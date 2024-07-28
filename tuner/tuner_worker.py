@@ -147,6 +147,8 @@ class AutoDMPWorker(Worker):
         rsmt_norm = ppa["rsmt"] / self.base_ppa["rsmt"]
         congestion_norm = ppa["congestion"] / self.base_ppa["congestion"]
         density_norm = ppa["density"] / self.base_ppa["density"]
+        # add more metrics here, e.g. HPWL, net crossing
+        # TODO(Niansong): add HPWL, net crossing, make sure they are saved in Placer.py
 
         if self.multiobj:
             return {

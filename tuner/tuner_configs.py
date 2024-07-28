@@ -36,7 +36,7 @@ AUTODMP_BASE_CONFIG = {
             "learning_rate_decay": 1.0,
         }
     ],
-    "target_density": 0.7,
+    "target_density": 1.0,
     "density_weight": 8e-05,
     "random_seed": 1000,
     "result_dir": "",
@@ -48,7 +48,7 @@ AUTODMP_BASE_CONFIG = {
     "enable_fillers": 1,
     "global_place_flag": 1,
     "legalize_flag": 1,
-    "detailed_place_flag": 1,
+    "detailed_place_flag": 0,
     "stop_overflow": 0.07,
     "dtype": "float32",
     "detailed_place_engine": "",
@@ -107,6 +107,7 @@ AUTODMP_BAD_RATIO = 10
 
 
 # Base PPA: HPWL, RSMT, Congestion, Density
+# Add metrics, e.g. 1
 AUTODMP_BASE_PPA = {
     "nvdla_asap7": {
         "hpwl": 1.37e9,

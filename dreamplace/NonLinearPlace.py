@@ -1204,4 +1204,4 @@ class NonLinearPlace(BasicPlace.BasicPlace):
         #     with open("%s/risa_weights.pkl" % path, "wb") as f:
         #         pickle.dump(weights_dict, f)
 
-        return float(rsmt_wl), float(hpwl), processed_metrics
+        return float(rsmt_wl), float(hpwl), float(net_crossing), processed_metrics
