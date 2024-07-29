@@ -12,22 +12,29 @@ DREAMPLACE_BEGIN_NAMESPACE
 
 template <typename T>
 int computePinPosCudaLauncher(const T* x, const T* y, const T* pin_offset_x,
-                              const T* pin_offset_y, const long* pin2node_map,
+                              const T* pin_offset_y, const T* theta,
+                              const long* pin2node_map,
                               const int* flat_node2pin_map,
                               const int* flat_node2pin_start_map, int num_pins,
+                              const T* h, const T* w,
                               T* pin_x, T* pin_y);
 
 template <typename T>
 int computePinPosGradCudaLauncher(
-    const T* grad_out_x, const T* grad_out_y, const T* x, const T* y,
-    const T* pin_offset_x, const T* pin_offset_y, const long* pin2node_map,
+    const T* grad_out_x, const T* grad_out_y,
+    const T* x, const T* y,
+    const T* pin_offset_x, const T* pin_offset_y, const T* theta, 
+    const long* pin2node_map,
     const int* flat_node2pin_map, const int* flat_node2pin_start_map,
-    int num_nodes, int num_pins, T* grad, T* grad_y);
+    const T* h, const T* w,
+    int num_nodes, int num_pins, T* grad, T* grad_y, T*grad_theta);
 
 at::Tensor pin_pos_forward(at::Tensor pos, at::Tensor pin_offset_x,
-                           at::Tensor pin_offset_y, at::Tensor pin2node_map,
+                           at::Tensor pin_offset_y, at::Tensor theta,
+                           at::Tensor pin2node_map,
                            at::Tensor flat_node2pin_map,
-                           at::Tensor flat_node2pin_start_map) {
+                           at::Tensor flat_node2pin_start_map,
+                           at::Tensor h, at::Tensor w) {
   CHECK_FLAT_CUDA(pos);
   CHECK_EVEN(pos);
   CHECK_CONTIGUOUS(pos);
@@ -43,9 +50,12 @@ at::Tensor pin_pos_forward(at::Tensor pos, at::Tensor pin_offset_x,
             DREAMPLACE_TENSOR_DATA_PTR(pos, scalar_t) + num_nodes,
             DREAMPLACE_TENSOR_DATA_PTR(pin_offset_x, scalar_t),
             DREAMPLACE_TENSOR_DATA_PTR(pin_offset_y, scalar_t),
+            DREAMPLACE_TENSOR_DATA_PTR(theta, scalar_t),
             DREAMPLACE_TENSOR_DATA_PTR(pin2node_map, long),
             DREAMPLACE_TENSOR_DATA_PTR(flat_node2pin_map, int),
             DREAMPLACE_TENSOR_DATA_PTR(flat_node2pin_start_map, int), num_pins,
+            DREAMPLACE_TENSOR_DATA_PTR(h, scalar_t),
+            DREAMPLACE_TENSOR_DATA_PTR(w, scalar_t),
             DREAMPLACE_TENSOR_DATA_PTR(out, scalar_t),
             DREAMPLACE_TENSOR_DATA_PTR(out, scalar_t) + num_pins);
       });
@@ -55,9 +65,11 @@ at::Tensor pin_pos_forward(at::Tensor pos, at::Tensor pin_offset_x,
 
 at::Tensor pin_pos_backward(at::Tensor grad_out, at::Tensor pos,
                             at::Tensor pin_offset_x, at::Tensor pin_offset_y,
+                            at::Tensor theta,
                             at::Tensor pin2node_map,
                             at::Tensor flat_node2pin_map,
                             at::Tensor flat_node2pin_start_map,
+                            at::Tensor h, at::Tensor w,
                             int num_physical_nodes) {
   CHECK_FLAT_CUDA(pos);
   CHECK_EVEN(pos);
@@ -66,7 +78,7 @@ at::Tensor pin_pos_backward(at::Tensor grad_out, at::Tensor pos,
   CHECK_EVEN(grad_out);
   CHECK_CONTIGUOUS(grad_out);
 
-  auto out = at::zeros_like(pos);
+  auto out = at::zeros(pos.numel() * 3, pos.options()); // grad for x, y, theta
   int num_nodes = pos.numel() / 2;
   int num_pins = pin_offset_x.numel();
 
@@ -79,12 +91,16 @@ at::Tensor pin_pos_backward(at::Tensor grad_out, at::Tensor pos,
             DREAMPLACE_TENSOR_DATA_PTR(pos, scalar_t) + num_nodes,
             DREAMPLACE_TENSOR_DATA_PTR(pin_offset_x, scalar_t),
             DREAMPLACE_TENSOR_DATA_PTR(pin_offset_y, scalar_t),
+            DREAMPLACE_TENSOR_DATA_PTR(theta, scalar_t),
             DREAMPLACE_TENSOR_DATA_PTR(pin2node_map, long),
             DREAMPLACE_TENSOR_DATA_PTR(flat_node2pin_map, int),
             DREAMPLACE_TENSOR_DATA_PTR(flat_node2pin_start_map, int),
+            DREAMPLACE_TENSOR_DATA_PTR(h, scalar_t),
+            DREAMPLACE_TENSOR_DATA_PTR(w, scalar_t),
             num_physical_nodes, num_pins,
             DREAMPLACE_TENSOR_DATA_PTR(out, scalar_t),
-            DREAMPLACE_TENSOR_DATA_PTR(out, scalar_t) + num_nodes);
+            DREAMPLACE_TENSOR_DATA_PTR(out, scalar_t) + num_nodes,
+            DREAMPLACE_TENSOR_DATA_PTR(out, scalar_t) + num_nodes * 2);
       });
 
   return out;

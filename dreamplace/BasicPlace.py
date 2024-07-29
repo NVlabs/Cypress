@@ -99,6 +99,7 @@ class PlaceDataCollection(object):
 
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
+            self.orient_logits = torch.from_numpy(placedb.orient_logits).to(device)
             # original node size for legalization, since they will be adjusted in global placement
             if params.routability_opt_flag:
                 self.original_node_size_x = self.node_size_x.clone()
@@ -636,6 +637,8 @@ class BasicPlace(nn.Module):
             flat_node2pin_map=data_collections.flat_node2pin_map,
             flat_node2pin_start_map=data_collections.flat_node2pin_start_map,
             num_physical_nodes=placedb.num_physical_nodes,
+            h=data_collections.node_size_x,
+            w=data_collections.node_size_y,
             algorithm="node-by-node",
         )
 
