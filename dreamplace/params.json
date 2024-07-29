@@ -310,5 +310,9 @@
     "create_gif": {
         "description": "create gif for placement process",
         "default": 0
+    },
+    "enable_rotation": {
+        "description": "enable cell rotation",
+        "default": 0
     }
 }
