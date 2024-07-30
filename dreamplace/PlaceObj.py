@@ -389,10 +389,10 @@ class PlaceObj(nn.Module):
 
         # check gradient of wirelength:
         with torch.no_grad():
-            self.wirelength.backward()
+            self.wirelength.backward(retain_graph=True)
             wl_grad = pos.grad.clone()
             pos.grad.zero_()
-            self.net_crossing.backward()
+            self.net_crossing.backward(retain_graph=True)
             nc_grad = pos.grad.clone()
             pos.grad.zero_()
             wl_grad_norm = wl_grad.norm(p=1)
@@ -554,7 +554,7 @@ class PlaceObj(nn.Module):
             pos.grad.zero_()
         obj = self.obj_fn(pos)
 
-        obj.backward()
+        obj.backward(retain_graph=True)
 
         self.op_collections.precondition_op(
             pos.grad, self.density_weight, self.update_mask

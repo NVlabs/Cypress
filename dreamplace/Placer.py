@@ -145,7 +145,12 @@ class PlacementEngine:
             "non-linear placement initialization takes %.2f seconds"
             % (time.time() - tt)
         )
-        self.rsmt, self.hpwl, self.net_crossing, self.metrics = self.placer(self.params, self.placedb)
+        ret = self.placer(self.params, self.placedb)
+        if len(ret) == 4:
+            self.rsmt, self.hpwl, self.net_crossing, self.metrics = ret
+        else:
+            self.rsmt, self.hpwl, self.metrics = ret
+            self.net_crossing = float("inf")
         logging.info("non-linear placement takes %.2f seconds" % (time.time() - tt))
 
     def external_detailed_placer(self):

@@ -62,7 +62,7 @@ class PinPosFunction(Function):
         # split pos and theta gradients
         num_nodes = ctx.pos.numel() // 2
         grad_pos = output[:num_nodes * 2]
-        grad_theta = output[num_nodes * 2:]
+        grad_theta = output[num_nodes * 2 : num_nodes * 2 + ctx.theta.numel()]
         return grad_pos, None, None, grad_theta, None, None, None, None, None, None
 
 

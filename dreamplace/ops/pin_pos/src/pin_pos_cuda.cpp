@@ -78,8 +78,8 @@ at::Tensor pin_pos_backward(at::Tensor grad_out, at::Tensor pos,
   CHECK_EVEN(grad_out);
   CHECK_CONTIGUOUS(grad_out);
 
-  auto out = at::zeros(pos.numel() * 3, pos.options()); // grad for x, y, theta
   int num_nodes = pos.numel() / 2;
+  auto out = at::zeros(num_nodes * 3, pos.options()); // grad for x, y, theta
   int num_pins = pin_offset_x.numel();
 
   DREAMPLACE_DISPATCH_FLOATING_TYPES(

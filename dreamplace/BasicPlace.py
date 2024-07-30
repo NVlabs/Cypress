@@ -99,7 +99,12 @@ class PlaceDataCollection(object):
 
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
-            self.orient_logits = torch.from_numpy(placedb.orient_logits).to(device)
+            if params.enable_rotation:
+                logits = torch.from_numpy(placedb.orient_logits).to(device)
+                # Also register orient_logits as parameter
+                self.orient_logits = nn.Parameter(logits)
+            else:
+                self.orient_logits = None
             # original node size for legalization, since they will be adjusted in global placement
             if params.routability_opt_flag:
                 self.original_node_size_x = self.node_size_x.clone()
