@@ -637,9 +637,10 @@ class BasicPlace(nn.Module):
             flat_node2pin_map=data_collections.flat_node2pin_map,
             flat_node2pin_start_map=data_collections.flat_node2pin_start_map,
             num_physical_nodes=placedb.num_physical_nodes,
-            h=data_collections.node_size_x,
-            w=data_collections.node_size_y,
+            h=data_collections.node_size_y,
+            w=data_collections.node_size_x,
             algorithm="node-by-node",
+            orient_logits=data_collections.orient_logits,
         )
 
     def build_move_boundary(self, params, placedb, data_collections, device):

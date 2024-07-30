@@ -1010,13 +1010,13 @@ class PlaceDB(object):
         # first step we only use four orientations: N, S, W, E
         # we will add the other four orientations later if we want to let the tool decide
         # side of the components too
-        self.orient_logits = np.zeros((self.num_physical_nodes, 4), dtype=np.int32)
+        self.orient_logits = np.zeros((self.num_physical_nodes, 4), dtype=np.float32)
         for i in range(self.num_physical_nodes):
             node_orient_i = str(self.node_orient[i])
             if 'N' in node_orient_i:
                 self.orient_logits[i, 0] = 1
             elif 'S' in node_orient_i:
-                self.orientorient_logits_one_hot[i, 1] = 1
+                self.orient_logits[i, 1] = 1
             elif 'W' in node_orient_i:
                 self.orient_logits[i, 2] = 1
             elif 'E' in node_orient_i:

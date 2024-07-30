@@ -59,7 +59,11 @@ class PinPosFunction(Function):
                       ctx.flat_node2pin_map, ctx.flat_node2pin_start_map,
                       ctx.h, ctx.w,
                       ctx.num_physical_nodes)
-        return output, None, None, None, None, None, None
+        # split pos and theta gradients
+        num_nodes = ctx.pos.numel() // 2
+        grad_pos = output[:num_nodes * 2]
+        grad_theta = output[num_nodes * 2:]
+        return grad_pos, None, None, grad_theta, None, None, None, None, None, None
 
 
 class PinPosSegmentFunction(Function):
@@ -147,11 +151,11 @@ class PinPos(nn.Module):
         """
         assert pos.numel() % 2 == 0
         num_nodes = pos.numel() // 2
-        if self.theta is not None:
+        if self.orient_logits is not None:
             # rotation is enabled
             y = torch.nn.functional.gumbel_softmax(self.orient_logits, tau=1.0, hard=True)
-            index_tensor = torch.arange(4).unsqueeze(0).expand_as(y)
-            choices = torch.sum(self.y * index_tensor, dim=1)
+            index_tensor = torch.arange(4).unsqueeze(0).expand_as(y).to(y.device)
+            choices = torch.sum(y * index_tensor, dim=1)
             self.theta = choices * math.pi / 2
         else:
             # initialize theta to 0
