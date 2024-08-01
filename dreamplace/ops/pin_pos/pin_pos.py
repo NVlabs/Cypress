@@ -125,7 +125,8 @@ class PinPos(nn.Module):
                  num_physical_nodes,
                  h, w,
                  algorithm='segment',
-                 orient_logits=None):
+                 orient_logits=None,
+                 best_theta=None):
         """
         @brief initialization 
         @param pin_offset pin offset in x or y direction, only computes one direction 
@@ -140,10 +141,12 @@ class PinPos(nn.Module):
         self.num_physical_nodes = num_physical_nodes
         self.algorithm = algorithm
         self.orient_logits = orient_logits
+        self.best_theta = best_theta
+        self.use_best_theta = False
         self.h = h
         self.w = w
 
-    def forward(self, pos, use_gumbel=True):
+    def forward(self, pos):
         """
         @brief API 
         @param pos cell locations. The array consists of x locations of movable cells, fixed cells, and filler cells, then y locations of them 
@@ -151,15 +154,17 @@ class PinPos(nn.Module):
         assert pos.numel() % 2 == 0
         num_nodes = pos.numel() // 2
 
-        if use_gumbel:
+        if self.use_best_theta:
+            self.theta = self.best_theta
+        else:
             # rotation is enabled
             y = torch.nn.functional.gumbel_softmax(self.orient_logits, tau=1.0, hard=True)
             index_tensor = torch.arange(4).unsqueeze(0).expand_as(y).to(y.device)
             choices = torch.sum(y * index_tensor, dim=1)
             self.theta = choices * math.pi / 2
-        else:
+        # else:
             # initialize theta to 0
-            self.theta = torch.zeros(num_nodes, dtype=pos.dtype, device=pos.device)
+            # self.theta = torch.zeros(num_nodes, dtype=pos.dtype, device=pos.device)
 
         if pos.is_cuda:
             if self.algorithm == 'segment':

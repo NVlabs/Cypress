@@ -390,11 +390,15 @@ class NonLinearPlace(BasicPlace.BasicPlace):
 
                     optimizer.zero_grad()
 
-                    if iteration < 100:
+                    if iteration > 1000:
                         if params.enable_rotation:
                             rot_optimizer.zero_grad()
                             model.obj_and_grad_fn(pos)
                             rot_optimizer.step()
+                            self.update_best_theta()
+                            model.op_collections.pin_pos_op.use_best_theta = False
+                    else:
+                        model.op_collections.pin_pos_op.use_best_theta = True
 
                     # t1 = time.time()
                     cur_metric.evaluate(placedb, eval_ops, pos, model.data_collections)
@@ -418,7 +422,6 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     if params.plot_flag and iteration % plot_frequency == 0:
                         cur_pos = self.pos[0].data.clone().cpu().numpy()
                         self.plot(params, placedb, iteration, cur_pos)
-                    logging.info("orientations: " + str(self.orient_logits))
 
                     #### stop updating fence regions that are marked stop, exclude the outer cell !
                     t3 = time.time()
@@ -873,6 +876,11 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     "optimizer %s takes %.3f seconds"
                     % (optimizer_name, time.time() - tt)
                 )
+
+
+            # log best theta
+            if params.enable_rotation:
+                logging.info("Best theta: ", self.data_collections.best_theta.data)
 
             # recover node size and pin offset for legalization, since node size is adjusted in global placement
             if params.routability_opt_flag:

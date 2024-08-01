@@ -98,7 +98,7 @@ class PlaceDataCollection(object):
 
         with torch.no_grad():
             # other tensors required to build ops
-
+            self.best_theta = torch.zeros(self.orient_logits.size(0), dtype=self.orient_logits.dtype, device=device)
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
             # original node size for legalization, since they will be adjusted in global placement
@@ -629,6 +629,12 @@ class BasicPlace(nn.Module):
         """
         pass
 
+    
+    def update_best_theta(self):
+        choices = torch.argmax(nn.functional.gumbel_softmax(self.orient_logits, tau=1, hard=True), dim=1)
+        self.data_collections.best_theta = choices * np.pi / 2
+    
+    
     def build_pin_pos(self, params, placedb, data_collections, device):
         """
         @brief sum up the pins for each cell
@@ -648,6 +654,7 @@ class BasicPlace(nn.Module):
             w=data_collections.node_size_x,
             algorithm="node-by-node",
             orient_logits=data_collections.orient_logits,
+            best_theta=data_collections.best_theta,
         )
 
     def build_move_boundary(self, params, placedb, data_collections, device):
