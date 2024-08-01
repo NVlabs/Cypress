@@ -102,27 +102,38 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                 optimizer_name = global_place_params["optimizer"]
 
                 # determine optimizer
+                position = []
+                orient_logits = []
+                for name, param in self.named_parameters():
+                    if "orient_logits" == name:
+                        orient_logits.append(param)
+                    else:
+                        position.append(param)
+                
                 if optimizer_name.lower() == "adam":
-                    optimizer = torch.optim.Adam(self.parameters(), lr=0)
+                    optimizer = torch.optim.Adam(position, lr=0)
                 elif optimizer_name.lower() == "sgd":
-                    optimizer = torch.optim.SGD(self.parameters(), lr=0)
+                    optimizer = torch.optim.SGD(position, lr=0)
                 elif optimizer_name.lower() == "sgd_momentum":
                     optimizer = torch.optim.SGD(
-                        self.parameters(), lr=0, momentum=0.9, nesterov=False
+                        position, lr=0, momentum=0.9, nesterov=False
                     )
                 elif optimizer_name.lower() == "sgd_nesterov":
                     optimizer = torch.optim.SGD(
-                        self.parameters(), lr=0, momentum=0.9, nesterov=True
+                        position, lr=0, momentum=0.9, nesterov=True
                     )
                 elif optimizer_name.lower() == "nesterov":
                     optimizer = NesterovAcceleratedGradientOptimizer.NesterovAcceleratedGradientOptimizer(
-                        self.parameters(),
+                        position,
                         lr=0,
                         obj_and_grad_fn=model.obj_and_grad_fn,
                         constraint_fn=self.op_collections.move_boundary_op,
                     )
                 else:
                     assert 0, "unknown optimizer %s" % (optimizer_name)
+
+                if params.enable_rotation:
+                    rot_optimizer = torch.optim.Adam(orient_logits, lr=0.001)
 
                 logging.info("use %s optimizer" % (optimizer_name))
                 model.train()
@@ -378,6 +389,12 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                         )
 
                     optimizer.zero_grad()
+
+                    if iteration > 2000:
+                        if params.enable_rotation:
+                            rot_optimizer.zero_grad()
+                            model.obj_and_grad_fn(pos)
+                            rot_optimizer.step()
 
                     # t1 = time.time()
                     cur_metric.evaluate(placedb, eval_ops, pos, model.data_collections)

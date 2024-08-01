@@ -26,20 +26,20 @@ __global__ void computePinPos(
 		int node_id = pin2node_map[i];
 
 		// orignal version		
-		pin_x[i] = pin_offset_x[i] + x[node_id];
-		pin_y[i] = pin_offset_y[i] + y[node_id];
+		// pin_x[i] = pin_offset_x[i] + x[node_id];
+		// pin_y[i] = pin_offset_y[i] + y[node_id];
 
 		// with rotation
-		// T xi = x[node_id];
-		// T yi = y[node_id];
-		// T hi = h[node_id];
-		// T wi = w[node_id];
-		// T cos_theta = std::cos(theta[node_id]);
-		// T sin_theta = std::sin(theta[node_id]);
-		// T ofx = pin_offset_x[i];
-		// T ofy = pin_offset_y[i];
-		// pin_x[i] = (xi + wi/2) + (ofx - wi/2) * cos_theta - (ofy - hi/2) * sin_theta;
-		// pin_y[i] = (yi + hi/2) + (ofx - wi/2) * sin_theta + (ofy - hi/2) * cos_theta;
+		T xi = x[node_id];
+		T yi = y[node_id];
+		T hi = h[node_id];
+		T wi = w[node_id];
+		T cos_theta = std::cos(theta[node_id]);
+		T sin_theta = std::sin(theta[node_id]);
+		T ofx = pin_offset_x[i];
+		T ofy = pin_offset_y[i];
+		pin_x[i] = (xi + wi/2) + (ofx - wi/2) * cos_theta - (ofy - hi/2) * sin_theta;
+		pin_y[i] = (yi + hi/2) + (ofx - wi/2) * sin_theta + (ofy - hi/2) * cos_theta;
 	}
 }
 

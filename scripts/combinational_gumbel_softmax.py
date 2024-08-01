@@ -15,7 +15,6 @@ def gumbel_softmax(logits, tau=1.0):
     gumbels = -torch.log(-torch.log(torch.rand_like(logits)))
     y = logits + gumbels
     return F.softmax(y / tau, dim=-1)
-    # return F.softmax(logits / tau, dim=-1)
 
 # Set temperature parameter
 tau = 1.0
@@ -35,11 +34,9 @@ for step in range(num_steps):
     y = torch.nn.functional.gumbel_softmax(logits, tau=tau, hard=True)
     
     # Convert softmax probabilities to discrete choices
-    # if I can get rid of the argmax, I can make it differentiable
     # choices = torch.argmax(y, dim=1).float()
     index_tensor = torch.arange(4).unsqueeze(0).expand_as(y)
     choices = torch.sum(y * index_tensor, dim=1)
-    # choices = torch.nn.functional.gumbel_softmax(logits, tau=tau, hard=True)
     
     # Compute the cost for the sequence of choices
     cost = cost_function(choices)
