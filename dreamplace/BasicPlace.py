@@ -82,7 +82,7 @@ class PlaceDataCollection(object):
     @brief A wraper for all data tensors on device for building ops
     """
 
-    def __init__(self, pos, params, placedb, device):
+    def __init__(self, pos, orient_logits, params, placedb, device):
         """
         @brief initialization
         @param pos locations of cells
@@ -93,18 +93,14 @@ class PlaceDataCollection(object):
         self.device = device
         # position should be parameter
         self.pos = pos
+        # orient logits should also be parameter
+        self.orient_logits = orient_logits
 
         with torch.no_grad():
             # other tensors required to build ops
 
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
-            if params.enable_rotation:
-                logits = torch.from_numpy(placedb.orient_logits).to(device)
-                # Also register orient_logits as parameter
-                self.orient_logits = nn.Parameter(logits)
-            else:
-                self.orient_logits = None
             # original node size for legalization, since they will be adjusted in global placement
             if params.routability_opt_flag:
                 self.original_node_size_x = self.node_size_x.clone()
@@ -540,11 +536,17 @@ class BasicPlace(nn.Module):
             [nn.Parameter(torch.from_numpy(self.init_pos).to(self.device))]
         )
         logging.debug("build pos takes %.2f seconds" % (time.time() - tt))
+
+        # Orientation logits
+        tt = time.time()
+        self.orient_logits = nn.Parameter(torch.from_numpy(placedb.orient_logits).to(self.device))
+        logging.debug("build orient_logits takes %.2f seconds" % (time.time() - tt))
+
         # shared data on device for building ops
         # I do not want to construct the data from placedb again and again for each op
         tt = time.time()
         self.data_collections = PlaceDataCollection(
-            self.pos, params, placedb, self.device
+            self.pos, self.orient_logits, params, placedb, self.device
         )
         logging.debug("build data_collections takes %.2f seconds" % (time.time() - tt))
 

@@ -140,18 +140,18 @@ class PinPos(nn.Module):
         self.num_physical_nodes = num_physical_nodes
         self.algorithm = algorithm
         self.orient_logits = orient_logits
-        self.theta = None
         self.h = h
         self.w = w
 
-    def forward(self, pos):
+    def forward(self, pos, use_gumbel=True):
         """
         @brief API 
         @param pos cell locations. The array consists of x locations of movable cells, fixed cells, and filler cells, then y locations of them 
         """
         assert pos.numel() % 2 == 0
         num_nodes = pos.numel() // 2
-        if self.orient_logits is not None:
+
+        if use_gumbel:
             # rotation is enabled
             y = torch.nn.functional.gumbel_softmax(self.orient_logits, tau=1.0, hard=True)
             index_tensor = torch.arange(4).unsqueeze(0).expand_as(y).to(y.device)

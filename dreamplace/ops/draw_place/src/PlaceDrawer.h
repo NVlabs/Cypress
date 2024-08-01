@@ -69,11 +69,18 @@ class PlaceDrawer {
     ALL_PHYS = NODE | PIN | NET,
     ALL = NODE | NODETEXT | PIN | NET
   };
+  enum Orientation {
+    N = 0,
+    W = 1,
+    S = 2,
+    E = 3
+  };
   /// constructor
   PlaceDrawer(
       const coordinate_type* x, const coordinate_type* y,
       const coordinate_type* node_size_x, const coordinate_type* node_size_y,
       const coordinate_type* pin_offset_x, const coordinate_type* pin_offset_y,
+      const Orientation orient,
       const index_type* pin2node_map, const index_type num_nodes,
       const index_type num_movable_nodes, const index_type num_filler_nodes,
       const index_type num_pins, const coordinate_type xl,

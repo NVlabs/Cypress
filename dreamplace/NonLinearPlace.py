@@ -105,7 +105,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                 position = []
                 orient_logits = []
                 for name, param in self.named_parameters():
-                    if "orient_logits" == name:
+                    if "orient_logits" in name:
                         orient_logits.append(param)
                     else:
                         position.append(param)
@@ -390,7 +390,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
 
                     optimizer.zero_grad()
 
-                    if iteration > 2000:
+                    if iteration < 100:
                         if params.enable_rotation:
                             rot_optimizer.zero_grad()
                             model.obj_and_grad_fn(pos)
@@ -418,6 +418,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     if params.plot_flag and iteration % plot_frequency == 0:
                         cur_pos = self.pos[0].data.clone().cpu().numpy()
                         self.plot(params, placedb, iteration, cur_pos)
+                    logging.info("orientations: " + str(self.orient_logits))
 
                     #### stop updating fence regions that are marked stop, exclude the outer cell !
                     t3 = time.time()

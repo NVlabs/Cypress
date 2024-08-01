@@ -1002,7 +1002,7 @@ class PlaceDB(object):
         self.routing_grid_xh = self.xh
         self.routing_grid_yh = self.yh
     
-    def update_orient_logits(self):
+    def update_orient_logits(self, enable_rotation):
         # self.orient is the orientation of the cells
         # we add a one-hot encoding of the orientation to each node
         # Bookshelf has eight orientations: N, S, W, E, FN, FS, FW, FE
@@ -1012,12 +1012,17 @@ class PlaceDB(object):
         # side of the components too
         self.orient_logits = np.zeros((self.num_physical_nodes, 4), dtype=np.float32)
         for i in range(self.num_physical_nodes):
-            node_orient_i = str(self.node_orient[i])
+            # if enable_rotation:
+            #     node_orient_i = str(self.node_orient[i])
+            # else:
+            #     node_orient_i = 'N'
+            # Always set initial orientation to N is better
+            node_orient_i = 'N'
             if 'N' in node_orient_i:
                 self.orient_logits[i, 0] = 1
-            elif 'S' in node_orient_i:
-                self.orient_logits[i, 1] = 1
             elif 'W' in node_orient_i:
+                self.orient_logits[i, 1] = 1
+            elif 'S' in node_orient_i:
                 self.orient_logits[i, 2] = 1
             elif 'E' in node_orient_i:
                 self.orient_logits[i, 3] = 1
@@ -1047,8 +1052,7 @@ class PlaceDB(object):
         self.update_sides()
 
         # enable orientation
-        if params.enable_rotation:
-            self.update_orient_logits()
+        self.update_orient_logits(params.enable_rotation)
 
         # set net weights for improved HPWL % RSMT correlation
         if params.risa_weights == 1:
