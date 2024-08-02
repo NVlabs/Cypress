@@ -36,6 +36,7 @@ class DrawPlaceFunction(Function):
         node_size_y,
         pin_offset_x,
         pin_offset_y,
+        theta,
         pin2node_map,
         xl,
         yl,
@@ -56,6 +57,7 @@ class DrawPlaceFunction(Function):
             node_size_y.cpu(),
             pin_offset_x.cpu(),
             pin_offset_y.cpu(),
+            theta.cpu(),
             pin2node_map.cpu(),
             xl,
             yl,
@@ -105,6 +107,7 @@ class DrawPlace(object):
         node_size_y,
         pin_offset_x,
         pin_offset_y,
+        theta,
         pin2node_map,
         fp_info,
         bin_size_x,
@@ -119,6 +122,7 @@ class DrawPlace(object):
         self.node_size_y = node_size_y
         self.pin_offset_x = pin_offset_x
         self.pin_offset_y = pin_offset_y
+        self.theta = theta
         self.pin2node_map = pin2node_map
         self.fp_info = fp_info
         self.bin_size_x = bin_size_x
@@ -137,6 +141,7 @@ class DrawPlace(object):
             self.node_size_y,
             self.pin_offset_x,
             self.pin_offset_y,
+            self.theta,
             self.pin2node_map,
             self.fp_info.xl,
             self.fp_info.yl,

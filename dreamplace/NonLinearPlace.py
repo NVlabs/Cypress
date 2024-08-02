@@ -133,7 +133,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     assert 0, "unknown optimizer %s" % (optimizer_name)
 
                 if params.enable_rotation:
-                    rot_optimizer = torch.optim.Adam(orient_logits, lr=0.001)
+                    rot_optimizer = torch.optim.SGD(orient_logits, lr=0.0001, momentum=0.9, nesterov=True)
 
                 logging.info("use %s optimizer" % (optimizer_name))
                 model.train()
@@ -391,13 +391,12 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     optimizer.zero_grad()
 
                     update_orient_cond = (
-                        # iteration >= 400 and iteration < 500
-                        iteration == 400
+                        iteration > 800 and iteration < 900
                     )
                     
                     if update_orient_cond is True:
                         if params.enable_rotation:
-                            for _ in range(100):
+                            # for _ in range(100):
                                 obj_rot, grad_rot = model.obj_and_grad_fn(pos)
                                 rot_optimizer.step()
                                 self.update_best_theta()

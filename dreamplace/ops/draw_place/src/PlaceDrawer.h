@@ -28,6 +28,8 @@
 #include <set>
 #include <string>
 
+#define DRAWPLACE 1
+
 #if DRAWPLACE == 1
 #include <cairo-pdf.h>
 #include <cairo-ps.h>
@@ -69,18 +71,12 @@ class PlaceDrawer {
     ALL_PHYS = NODE | PIN | NET,
     ALL = NODE | NODETEXT | PIN | NET
   };
-  enum Orientation {
-    N = 0,
-    W = 1,
-    S = 2,
-    E = 3
-  };
   /// constructor
   PlaceDrawer(
       const coordinate_type* x, const coordinate_type* y,
       const coordinate_type* node_size_x, const coordinate_type* node_size_y,
       const coordinate_type* pin_offset_x, const coordinate_type* pin_offset_y,
-      // const Orientation orient,
+      const coordinate_type* theta,
       const index_type* pin2node_map, const index_type num_nodes,
       const index_type num_movable_nodes, const index_type num_filler_nodes,
       const index_type num_pins, const coordinate_type xl,
@@ -95,6 +91,7 @@ class PlaceDrawer {
         m_node_size_y(node_size_y),
         m_pin_offset_x(pin_offset_x),
         m_pin_offset_y(pin_offset_y),
+        m_theta(theta),
         m_pin2node_map(pin2node_map),
         m_num_nodes(num_nodes),
         m_num_movable_nodes(num_movable_nodes),
@@ -181,12 +178,14 @@ class PlaceDrawer {
     cairo_set_source_rgb(c, 0.0, 0.0, 0.0);
     cairo_fill(c);
     // background
+    // background filling
     cairo_rectangle(c, m_xl, m_yl, (m_xh - m_xl), (m_yh - m_yl));
-    cairo_set_source_rgb(c, 75 / 255.0, 75 / 255.0, 75 / 255.0);
+    cairo_set_source_rgb(c, 211 / 255.0, 211 / 255.0, 211 / 255.0);
     cairo_fill(c);
     cairo_rectangle(c, m_xl, m_yl, (m_xh - m_xl), (m_yh - m_yl));
+    // background border
     cairo_set_line_width(c, 2 * m_row_height);
-    cairo_set_source_rgb(c, 120 / 255.0, 120 / 255.0, 120 / 255.0);
+    cairo_set_source_rgb(c, 250 / 255.0, 250 / 255.0, 250 / 255.0);
     cairo_stroke(c);
 
     // bins
@@ -234,15 +233,16 @@ class PlaceDrawer {
           cairo_set_source_rgb(c, 240 / 255.0, 206 / 255.0, 30 / 255.0);
           cairo_stroke(c);
         } else {
+          // fixed macro filling
           cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
                           m_node_size_y[i]);
-          cairo_set_source_rgba(c, 1.0, 0.0, 0.0, 0.5);
+          cairo_set_source_rgba(c, 175/255.0, 225/255.0, 175/255.0, 0.5);
           cairo_fill(c);
           cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
                           m_node_size_y[i]);
-          cairo_set_line_width(c, 0.001);
-          cairo_set_source_rgb(c, 0.0, 0.0, 0.0);
-          cairo_stroke(c);
+          // cairo_set_line_width(c, 0.001);
+          // cairo_set_source_rgb(c, 0.0, 0.0, 0.0);
+          // cairo_stroke(c);
         }
         if (m_content & NODETEXT) {
           sprintf(buf, "%u", i);
@@ -283,15 +283,44 @@ class PlaceDrawer {
       // movable
       for (int i = 0; i < m_num_movable_nodes; ++i) {
         if (m_node_size_y[i] > 2 * m_row_height) {
-          cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
-                          m_node_size_y[i]);
-          cairo_set_source_rgb(c, 200 / 255.0, 100 / 255.0, 100 / 255.0);
+          
+          double angle = m_theta[i];
+          double rect_x = m_x[i];
+          double rect_y = m_y[i];
+          double rect_width = m_node_size_x[i];
+          double rect_height = m_node_size_y[i];
+
+
+          // Translate and rotate:
+          cairo_save(c);
+          // Translate to the center of the rectangle
+          cairo_translate(c, rect_x + rect_width / 2, rect_y + rect_height / 2);
+
+          // Rotate the context
+          cairo_rotate(c, angle);
+
+          // Draw the rectangle, centered at the origin
+          cairo_rectangle(c, -rect_width / 2, -rect_height / 2, rect_width, rect_height);
+
+          // cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
+          //                 m_node_size_y[i]);
+          cairo_set_source_rgb(c, 118 / 255.0, 185 / 255.0, 0 / 255.0);
           cairo_fill(c);
-          cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
-                          m_node_size_y[i]);
+
+          // Undo the transformations so they don't affect subsequent drawing operations
+          // cairo_identity_matrix(c);
+
+
+          // Draw outline
+          // cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
+          //                 m_node_size_y[i]);
+          cairo_rectangle(c, -rect_width / 2, -rect_height / 2, rect_width, rect_height);
           cairo_set_line_width(c, m_row_height);
           cairo_set_source_rgb(c, 20 / 255.0, 20 / 255.0, 255 / 255.0);
           cairo_stroke(c);
+          
+          cairo_restore(c);
+
         } else {
           cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
                           m_node_size_y[i]);
@@ -545,6 +574,7 @@ class PlaceDrawer {
   const coordinate_type* m_node_size_y;
   const coordinate_type* m_pin_offset_x;
   const coordinate_type* m_pin_offset_y;
+  const coordinate_type* m_theta;
   const index_type* m_pin2node_map;
   index_type m_num_nodes;
   index_type m_num_movable_nodes;

@@ -632,7 +632,9 @@ class BasicPlace(nn.Module):
     
     def update_best_theta(self):
         choices = torch.argmax(nn.functional.gumbel_softmax(self.orient_logits, tau=1, hard=True), dim=1)
-        self.data_collections.best_theta = choices * np.pi / 2
+        # self.data_collections.best_theta = choices * np.pi / 2
+        # update in-place
+        self.data_collections.best_theta.copy_(choices * np.pi / 2)
     
     
     def build_pin_pos(self, params, placedb, data_collections, device):
@@ -1365,6 +1367,7 @@ class BasicPlace(nn.Module):
             node_size_y=data_collections.node_size_y,
             pin_offset_x=data_collections.pin_offset_x,
             pin_offset_y=data_collections.pin_offset_y,
+            theta=data_collections.best_theta,
             pin2node_map=data_collections.pin2node_map,
             fp_info=data_collections.fp_info,
             bin_size_x=placedb.bin_size_x,
