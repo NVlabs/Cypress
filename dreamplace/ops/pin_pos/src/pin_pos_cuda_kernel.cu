@@ -103,7 +103,7 @@ __global__ void computeNodeGrad(
             gy += grad_out_y[pin_id]; 
 			T px_pt = cos_theta * (hi/2 - pin_offset_y[pin_id]) + sin_theta * (wi/2 - pin_offset_x[pin_id]);
 			T py_pt = cos_theta * (pin_offset_x[pin_id] - wi/2) + sin_theta * (pin_offset_y[pin_id] - hi/2);
-			gt += grad_out_x[pin_id] * py_pt + grad_out_y[pin_id] * px_pt;
+			gt += grad_out_x[pin_id] * px_pt + grad_out_y[pin_id] * py_pt;
         }
 	}
 }

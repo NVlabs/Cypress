@@ -390,15 +390,22 @@ class NonLinearPlace(BasicPlace.BasicPlace):
 
                     optimizer.zero_grad()
 
-                    if iteration > 1000:
+                    update_orient_cond = (
+                        # iteration >= 400 and iteration < 500
+                        iteration == 400
+                    )
+                    
+                    if update_orient_cond is True:
                         if params.enable_rotation:
-                            rot_optimizer.zero_grad()
-                            model.obj_and_grad_fn(pos)
-                            rot_optimizer.step()
-                            self.update_best_theta()
-                            model.op_collections.pin_pos_op.use_best_theta = False
+                            for _ in range(100):
+                                obj_rot, grad_rot = model.obj_and_grad_fn(pos)
+                                rot_optimizer.step()
+                                self.update_best_theta()
+                                model.op_collections.pin_pos_op.use_best_theta = False
+                                model.freeze_pos = True
                     else:
                         model.op_collections.pin_pos_op.use_best_theta = True
+                        model.freeze_pos = False
 
                     # t1 = time.time()
                     cur_metric.evaluate(placedb, eval_ops, pos, model.data_collections)
@@ -439,7 +446,8 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                                 ].pos_mask
                                 pos.data.masked_scatter_(mask, pos_bk[mask])
                     else:
-                        optimizer.step()
+                        if not model.freeze_pos:
+                            optimizer.step()
 
                     logging.info("optimizer step %.3f ms" % ((time.time() - t3) * 1000))
 
@@ -880,7 +888,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
 
             # log best theta
             if params.enable_rotation:
-                logging.info("Best theta: ", self.data_collections.best_theta.data)
+                logging.info("Best theta: " + str(self.data_collections.best_theta.data))
 
             # recover node size and pin offset for legalization, since node size is adjusted in global placement
             if params.routability_opt_flag:

@@ -186,6 +186,9 @@ class PlaceObj(nn.Module):
         """
         super(PlaceObj, self).__init__()
 
+        ### freeze pos
+        self.freeze_pos = False
+
         ### quadratic penalty
         self.density_quad_coeff = 2000
         self.init_density = None
@@ -556,9 +559,11 @@ class PlaceObj(nn.Module):
 
         obj.backward(retain_graph=True)
 
-        self.op_collections.precondition_op(
-            pos.grad, self.density_weight, self.update_mask
-        )
+
+        if not self.freeze_pos:
+            self.op_collections.precondition_op(
+                pos.grad, self.density_weight, self.update_mask
+            )
 
         return obj, pos.grad
 
