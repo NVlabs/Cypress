@@ -149,10 +149,12 @@ class AutoDMPWorker(Worker):
         density_norm = ppa["density"] / self.base_ppa["density"]
         # add more metrics here, e.g. HPWL, net crossing
         # TODO(Niansong): add HPWL, net crossing, make sure they are saved in Placer.py
+        net_crossing = ppa["net_crossing"]
+        hpwl_norm = ppa["hpwl"] / self.base_ppa["hpwl"]
 
         if self.multiobj:
             return {
-                "loss": (rsmt_norm, congestion_norm, density_norm),
+                "loss": (rsmt_norm, congestion_norm, density_norm, net_crossing, hpwl_norm),
                 "info": result,
             }
         else:
@@ -160,6 +162,8 @@ class AutoDMPWorker(Worker):
                 rsmt_norm
                 + self.congestion_ratio * congestion_norm
                 + self.density_ratio * density_norm
+                + net_crossing * 1e-3
+                + hpwl_norm
             )
             result.update({"cost": float(cost)})
             return {

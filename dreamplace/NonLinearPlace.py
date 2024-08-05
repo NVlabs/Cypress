@@ -391,7 +391,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     optimizer.zero_grad()
 
                     update_orient_cond = (
-                        iteration > 800 and iteration < 900
+                        iteration > 100 and iteration % 10 > 5
                     )
                     
                     if update_orient_cond is True:

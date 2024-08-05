@@ -112,7 +112,6 @@ class PlacementEngine:
         self.net_crossing = float("inf")
         self.congestion = float("inf")
         self.density = float("inf")
-        self.net_crossing = float("inf")
         self.metrics = None
 
     def setup_rawdb(self):

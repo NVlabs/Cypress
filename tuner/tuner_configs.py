@@ -31,8 +31,8 @@ AUTODMP_BASE_CONFIG = {
             "learning_rate": 0.01,
             "wirelength": "weighted_average",
             "optimizer": "adam",
-            "Llambda_density_weight_iteration": 1,
-            "Lsub_iteration": 1,
+            "Llambda_density_weight_iteration": 10,
+            "Lsub_iteration": 2,
             "learning_rate_decay": 1.0,
         }
     ],
@@ -41,6 +41,8 @@ AUTODMP_BASE_CONFIG = {
     "random_seed": 1000,
     "result_dir": "",
     "scale_factor": 1.0,
+    "net_crossing_flag" : True,
+    "net_crossing_weight" : 1,
     "ignore_net_weight": 10,
     "shift_factor": [0, 0],
     "ignore_net_degree": 100,
@@ -53,7 +55,7 @@ AUTODMP_BASE_CONFIG = {
     "dtype": "float32",
     "detailed_place_engine": "",
     "detailed_place_command": "",
-    "plot_flag": 0,
+    "plot_flag": 1,
     "RePlAce_ref_hpwl": 350000,
     "RePlAce_LOWER_PCOF": 0.94,
     "RePlAce_UPPER_PCOF": 1.05,
@@ -86,9 +88,9 @@ AUTODMP_BASE_CONFIG = {
     "max_pin_opt_adjust_rate": 1.5,
     "deterministic_flag": 1,
     "get_congestion_map": 1,
-    "macro_halo_x": 0,
-    "macro_halo_y": 0,
-    "macro_overlap_flag": 0,
+    "macro_halo_x": 2,
+    "macro_halo_y": 2,
+    "macro_overlap_flag": True,
     "macro_overlap_weight": 8e-06,
     "macro_overlap_mult_weight": 1,
     "macro_padding_x": 0,
@@ -99,6 +101,8 @@ AUTODMP_BASE_CONFIG = {
     "route_info_input": "default",
     "risa_weights": 0,
     "evaluate_pl": 0,
+    "enable_rotation": False,
+    "create_gif": True
 }
 
 

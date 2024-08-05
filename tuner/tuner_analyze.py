@@ -100,6 +100,7 @@ def get_candidates(result, num: int = 5, ranking: str = "rsmt"):
         candidates = paretos.nsmallest(num, "cost")
     else:
         # multi-objective
+        num = min(num, len(paretos))
         kmeans = KMeans(n_clusters=num)
         scaled_points = preprocessing.StandardScaler().fit_transform(paretos[axes])
         paretos["group"] = kmeans.fit_predict(scaled_points)

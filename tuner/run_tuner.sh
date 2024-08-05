@@ -37,6 +37,7 @@ auxbase=$(basename $aux .aux)
 
 echo "Parameters:" $@
 printf "# Parameters: %s\n" "${#@}"
+printf "# Worker: %s\n" "${workers}"
 
 # kill previous processes
 # ps -fA | grep tuner_train | awk '{print $2}' | xargs kill -9 $1

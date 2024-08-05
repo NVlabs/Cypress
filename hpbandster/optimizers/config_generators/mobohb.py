@@ -286,15 +286,25 @@ class MOBOHB(base_config_generator):
         #          'f': loss,
         #          'budget': budget}
 
-        # print(job.result)
-        record = {
-            "Trial": len(self.history),
-            "Config": conf,
-            "Error": job.result["loss"][0],
-            "norm_params": job.result["loss"][1],
-            "f": loss,
-            "budget": budget,
-        }
+        try: 
+            record = {
+                "Trial": len(self.history),
+                "Config": conf,
+                "Error": job.result["loss"][0],
+                "norm_params": job.result["loss"][1],
+                "f": loss,
+                "budget": budget,
+            }
+        except:
+
+            record = {
+                "Trial": len(self.history),
+                "Config": conf,
+                "Error": float('inf'),
+                "norm_params": (),
+                "f": loss,
+                "budget": budget,
+            }
 
         self.history.append(record)
         self.write()
