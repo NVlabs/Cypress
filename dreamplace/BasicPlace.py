@@ -99,6 +99,7 @@ class PlaceDataCollection(object):
         with torch.no_grad():
             # other tensors required to build ops
             self.best_theta = torch.zeros(self.orient_logits.size(0), dtype=self.orient_logits.dtype, device=device)
+            self.best_orient_choice = torch.zeros(self.orient_logits.size(0), dtype=torch.int32, device=device)
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
             # original node size for legalization, since they will be adjusted in global placement
@@ -634,6 +635,7 @@ class BasicPlace(nn.Module):
         choices = torch.argmax(nn.functional.gumbel_softmax(self.orient_logits, tau=1, hard=True), dim=1)
         # self.data_collections.best_theta = choices * np.pi / 2
         # update in-place
+        self.data_collections.best_orient_choice.copy_(choices)
         self.data_collections.best_theta.copy_(choices * np.pi / 2)
     
     
@@ -880,15 +882,15 @@ class BasicPlace(nn.Module):
             num_filler_nodes=placedb.num_filler_nodes,
         )
 
-        def build_legalization_op_single_layer(pos):
+        def build_legalization_op_single_layer(pos, orient_choice):
             logging.info("Start legalization")
-            pos1 = ml(pos, pos)
-            pos2 = gl(pos1, pos1)
+            pos1 = ml(pos, pos, orient_choice)
+            pos2 = gl(pos1, pos1, orient_choice)
             legal = self.op_collections.legality_check_op(pos2)
             if not legal:
                 logging.error("legality check failed in greedy legalization")
                 return pos2
-            return al(pos1, pos2)
+            return al(pos1, pos2, orient_choice)
         
         def build_legalization_op(pos):
             logging.info("Start legalization")

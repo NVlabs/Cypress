@@ -30,13 +30,14 @@ for step in range(num_steps):
     optimizer.zero_grad()
     
     # Sample using Gumbel-Softmax for each choice
-    # y = gumbel_softmax(logits, tau)
     y = torch.nn.functional.gumbel_softmax(logits, tau=tau, hard=True)
     
     # Convert softmax probabilities to discrete choices
-    # choices = torch.argmax(y, dim=1).float()
     index_tensor = torch.arange(4).unsqueeze(0).expand_as(y)
     choices = torch.sum(y * index_tensor, dim=1)
+
+    # Multiply by pi/2 to get the angle in radians
+    theta = choices * (math.pi / 2)
     
     # Compute the cost for the sequence of choices
     cost = cost_function(choices)

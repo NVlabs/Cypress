@@ -448,7 +448,7 @@ class ElectricPotential(ElectricOverflow):
         self.idct_idxst = None
         self.idxst_idct = None
 
-    def forward(self, pos, mode="density"):
+    def forward(self, pos, orient_choice=None, mode="density"):
         assert mode in {"density", "overflow"}, "Only support density mode or overflow mode"
         if(self.region_id is not None):
             ### reconstruct pos, only extract cells in this electric field
@@ -516,6 +516,16 @@ class ElectricPotential(ElectricOverflow):
                 1. / 2)
             self.wv_by_wu2_plus_wv2_half = wv.mul(self.inv_wu2_plus_wv2).mul_(
                 1. / 2)
+
+        if orient_choice is not None:
+            node_size_x_clamped = self.node_size_x_clamped.clone()
+            node_size_y_clamped = self.node_size_y_clamped.clone()
+            offset_x = self.offset_x.clone()
+            offset_y = self.offset_y.clone()
+            self.node_size_x_clamped = torch.where(orient_choice % 2 == 1, node_size_y_clamped, node_size_x_clamped)
+            self.node_size_y_clamped = torch.where(orient_choice % 2 == 1, node_size_x_clamped, node_size_y_clamped)
+            self.offset_x = torch.where(orient_choice % 2 == 1, offset_y, offset_x)
+            self.offset_y = torch.where(orient_choice % 2 == 1, offset_x, offset_y)
 
         if(mode == "density"):
             return ElectricPotentialFunction.apply(

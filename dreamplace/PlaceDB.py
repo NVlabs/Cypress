@@ -825,8 +825,7 @@ class PlaceDB(object):
 
 
 
-    def update_macros(self, params, area_threshold=0.5, height_threshold=0.5):
-        # TODO(Niansong): use differenet area threshold
+    def update_macros(self, params, area_threshold=0, height_threshold=0): # mark everything as macro
         # set large cells as macros
         node_areas = self.node_size_x * self.node_size_y
         mean_area = node_areas[self.movable_slice].mean() * area_threshold

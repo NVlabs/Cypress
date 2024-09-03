@@ -42,7 +42,7 @@ AUTODMP_BASE_CONFIG = {
     "result_dir": "",
     "scale_factor": 1.0,
     "net_crossing_flag" : True,
-    "net_crossing_weight" : 1,
+    "net_crossing_weight" : 10,
     "ignore_net_weight": 10,
     "shift_factor": [0, 0],
     "ignore_net_degree": 100,
@@ -51,7 +51,7 @@ AUTODMP_BASE_CONFIG = {
     "global_place_flag": 1,
     "legalize_flag": 1,
     "detailed_place_flag": 0,
-    "stop_overflow": 0.07,
+    "stop_overflow": 0.02,
     "dtype": "float32",
     "detailed_place_engine": "",
     "detailed_place_command": "",
@@ -88,8 +88,8 @@ AUTODMP_BASE_CONFIG = {
     "max_pin_opt_adjust_rate": 1.5,
     "deterministic_flag": 1,
     "get_congestion_map": 1,
-    "macro_halo_x": 2,
-    "macro_halo_y": 2,
+    "macro_halo_x": 4,
+    "macro_halo_y": 4,
     "macro_overlap_flag": True,
     "macro_overlap_weight": 8e-06,
     "macro_overlap_mult_weight": 1,
@@ -101,7 +101,7 @@ AUTODMP_BASE_CONFIG = {
     "route_info_input": "default",
     "risa_weights": 0,
     "evaluate_pl": 0,
-    "enable_rotation": False,
+    "enable_rotation": True,
     "create_gif": True
 }
 

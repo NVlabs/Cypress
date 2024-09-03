@@ -87,16 +87,17 @@ class PreconditionOp:
         elif self.best_overflow.mean() > overflow.mean():
             self.best_overflow = overflow
 
-    def __call__(self, grad, density_weight, update_mask=None):
+    def __call__(self, grad, density_weight, update_mask=None, freeze_pos=False):
         """Introduce alpha parameter to avoid divergence.
         It is tricky for this parameter to increase.
         """
         with torch.no_grad():
             if density_weight.size(0) == 1:
-                precond = (
-                    self.data_collections.num_pins_in_nodes
-                    + self.alpha * density_weight * self.data_collections.node_areas
-                )
+                precond = self.data_collections.num_pins_in_nodes # approx 2nd derivative for wirelength
+                if not freeze_pos: # not freeze pos, we need to precondition density
+                    precond += self.alpha * density_weight * self.data_collections.node_areas # approx 2nd deiivative for density
+                    # if enable rotation, we only have gradient from wirelength
+
             else:
                 ### only precondition the non fence region
                 node_areas = self.data_collections.node_areas.clone()
@@ -560,9 +561,8 @@ class PlaceObj(nn.Module):
         obj.backward(retain_graph=True)
 
 
-        if not self.freeze_pos:
-            self.op_collections.precondition_op(
-                pos.grad, self.density_weight, self.update_mask
+        self.op_collections.precondition_op(
+                pos.grad, self.density_weight, self.update_mask, freeze_pos=self.freeze_pos
             )
 
         return obj, pos.grad

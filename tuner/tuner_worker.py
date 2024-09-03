@@ -154,7 +154,7 @@ class AutoDMPWorker(Worker):
 
         if self.multiobj:
             return {
-                "loss": (rsmt_norm, congestion_norm, density_norm, net_crossing, hpwl_norm),
+                "loss": (rsmt_norm, congestion_norm, density_norm, net_crossing, hpwl_norm), # probably we can ignore rsmt, density
                 "info": result,
             }
         else:

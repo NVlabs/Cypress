@@ -42,10 +42,32 @@ printf "# Worker: %s\n" "${workers}"
 # kill previous processes
 # ps -fA | grep tuner_train | awk '{print $2}' | xargs kill -9 $1
 
-# launch master process
-python $script_dir/tuner_train.py --multiobj $multiobj --cfgSearchFile $cfg --n_workers $workers --n_iterations $iterations --min_points_in_model $m_points --log_dir $log_dir/$auxbase --run_args aux_input=$aux &
+# Array to store PIDs
+pids=()
 
-# launch worker processes
+# Launch master process
+python $script_dir/tuner_train.py --multiobj $multiobj --cfgSearchFile $cfg --n_workers $workers --n_iterations $iterations --min_points_in_model $m_points --log_dir $log_dir/$auxbase --run_args aux_input=$aux &
+pids+=($!)
+
+# Launch worker processes
 for i in $(seq $workers); do
     python $script_dir/tuner_train.py --multiobj $multiobj --log_dir $log_dir/$auxbase --worker --worker_id $i --run_args aux_input=$aux gpu=$gpu base_ppa=$base_ppa reuse_params=$reuse_params --density_ratio $d_ratio --congestion_ratio $c_ratio &
+    pids+=($!)
 done
+
+# Wait for all processes to finish and check for failures
+while true; do
+    wait -n
+    code=$?
+    if [ $? -ne 0 ]; then
+        echo "A process failed, killing all jobs"
+        jobs -p | xargs kill
+        exit 1
+    fi
+    if [ -z "$(jobs -r)" ]; then
+        break
+    fi
+done
+
+# If all processes succeeded
+echo "All processes finished successfully"

@@ -391,17 +391,21 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     optimizer.zero_grad()
 
                     update_orient_cond = (
-                        iteration > 100 and iteration % 10 > 5
+                        iteration > 1000 and iteration % 100 == 0
                     )
+                    # update_orient_cond = iteration > 100
                     
                     if update_orient_cond is True:
                         if params.enable_rotation:
-                            # for _ in range(100):
-                                obj_rot, grad_rot = model.obj_and_grad_fn(pos)
-                                rot_optimizer.step()
-                                self.update_best_theta()
+                            best_wl, best_nc = model.wirelength.data, model.net_crossing.data
+                            for _ in range(10):
                                 model.op_collections.pin_pos_op.use_best_theta = False
                                 model.freeze_pos = True
+                                obj_rot, grad_rot = model.obj_and_grad_fn(pos)
+                                rot_optimizer.step()
+                                if model.wirelength.data < best_wl or model.net_crossing.data < best_nc:
+                                    self.update_best_theta()
+                                    best_wl, best_nc = model.wirelength.data, model.net_crossing.data
                     else:
                         model.op_collections.pin_pos_op.use_best_theta = True
                         model.freeze_pos = False
@@ -1101,7 +1105,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
         # legalization
         if params.legalize_flag:
             tt = time.time()
-            self.pos[0].data.copy_(self.op_collections.legalize_op(self.pos[0]))
+            self.pos[0].data.copy_(self.op_collections.legalize_op(self.pos[0], self.data_collections.best_orient_choice))
             logging.info("legalization takes %.3f seconds" % (time.time() - tt))
             cur_metric = EvalMetrics.EvalMetrics(iteration)
             all_metrics.append(cur_metric)

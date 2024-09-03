@@ -130,11 +130,19 @@ class GreedyLegalize(object):
         self.num_terminal_NIs = num_terminal_NIs
         self.num_filler_nodes = num_filler_nodes
 
-    def __call__(self, init_pos, pos):
+    def __call__(self, init_pos, pos, orient_choice):
         """
         @param init_pos the reference position for displacement minization
         @param pos current roughly legal position
         """
+        node_size_x = self.node_size_x.clone()
+        node_size_y = self.node_size_y.clone()
+        # first append 0 to the end of orient_choice to make sure it has the same size as node_size_x and node_size_y
+        orient_choice_cat = torch.zeros_like(node_size_x)
+        orient_choice_cat[: orient_choice.numel()] = orient_choice
+        self.node_size_x = torch.where(orient_choice_cat % 2 == 1, node_size_y, node_size_x)
+        self.node_size_y = torch.where(orient_choice_cat % 2 == 1, node_size_x, node_size_y)
+        
         return GreedyLegalizeFunction.forward(
             init_pos,
             pos,

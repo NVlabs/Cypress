@@ -236,7 +236,7 @@ class PlaceDrawer {
           // fixed macro filling
           cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
                           m_node_size_y[i]);
-          cairo_set_source_rgba(c, 175/255.0, 225/255.0, 175/255.0, 0.5);
+          cairo_set_source_rgba(c, 113/255.0, 188/255.0, 120/255.0, 0.5);
           cairo_fill(c);
           cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
                           m_node_size_y[i]);

@@ -87,29 +87,95 @@ def extract_paretos(df, axes):
     return df[undominated]
 
 
-def get_candidates(result, num: int = 5, ranking: str = "rsmt"):
-    axes = ["rsmt", "congestion", "density"]
-    assert ranking in axes
+# def get_candidates(result, num: int = 5, ranking: str = "rsmt"): # sort by net crossing or hpwl
+#     axes = ["rsmt", "congestion", "density"] # add net crossing, hpwl
+#     assert ranking in axes
+#     df = build_dataframe(result)
+#     # df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]
+#     paretos = extract_paretos(df, axes)
+#     print(f"# Pareto-optimal points = {len(paretos)}")
+#     print(paretos[axes].to_markdown())
+#     # if single-objective
+#     if "cost" in df:
+#         candidates = paretos.nsmallest(num, "cost")
+#     else:
+#         # multi-objective
+#         num = min(num, len(paretos))
+#         kmeans = KMeans(n_clusters=num)
+#         scaled_points = preprocessing.StandardScaler().fit_transform(paretos[axes])
+#         paretos["group"] = kmeans.fit_predict(scaled_points)
+#         rank = paretos.groupby("group")[ranking]
+#         candidates = paretos[
+#             paretos[ranking] == paretos.assign(min=rank.transform(min))["min"]
+#         ]
+#     print("Pareto candidates:")
+#     print(candidates[axes].to_markdown())
+#     return candidates, paretos, df
+
+def get_candidates(
+    result, num: int = 5, ranking: str = "hpwl", optimize_clusters=False
+):
     df = build_dataframe(result)
-    # df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]
-    paretos = extract_paretos(df, axes)
+    # remove columns and rows that are all none
+    bad_values = [np.nan, np.inf, -np.inf, None]
+    df = df[df.columns[~df.isin(bad_values).all(axis=0)]]
+    df = df[~df.isin(bad_values).all(axis=1)]
+    # extract PPA
+    ppa_axes = [ # add net crossing
+        # "rsmt",
+        # "congestion",
+        # "density",
+        "hpwl",
+        "net_crossing",
+        # "blockage",
+        # "inflation",
+        # "density_shift",
+    ]
+    ppa_axes = list(set(ppa_axes) & set(df.columns))
+    assert ranking in ppa_axes
+    df = df[~df[ppa_axes].isin(bad_values).any(axis=1)]
+    # if "inflation" in ppa_axes:
+    #    df["inflation"] = df["inflation"].apply(lambda x: x[0])
+    paretos = extract_paretos(df, ppa_axes)
     print(f"# Pareto-optimal points = {len(paretos)}")
-    print(paretos[axes].to_markdown())
+    print(paretos[ppa_axes].to_markdown())
+    num = min(num, len(paretos))
     # if single-objective
     if "cost" in df:
         candidates = paretos.nsmallest(num, "cost")
     else:
         # multi-objective
-        num = min(num, len(paretos))
-        kmeans = KMeans(n_clusters=num)
-        scaled_points = preprocessing.StandardScaler().fit_transform(paretos[axes])
-        paretos["group"] = kmeans.fit_predict(scaled_points)
+        if optimize_clusters:
+            # optimize the number of clusters
+            scaled_points = preprocessing.StandardScaler().fit_transform(
+                paretos[ppa_axes]
+            )
+            num_clusters = list(range(5, 50, 5))
+            scores = {}
+            for n in num_clusters:
+                kmeans = KMeans(n_clusters=n, algorithm="elkan", n_init=10)
+                labels = kmeans.fit_predict(scaled_points)
+                silhouette = silhouette_score(scaled_points, labels)
+                scores[n] = (silhouette, labels)
+            scores = dict(sorted(scores.items(), key=lambda it: it[1][0], reverse=True))
+            best_clustering = next(iter(scores.items()))
+            paretos["group"] = best_clustering[1][1]
+            print(
+                f"Best #clusters={best_clustering[0]}, Silhouette={best_clustering[1][0]:.2f}"
+            )
+        else:
+            kmeans = KMeans(n_clusters=num, algorithm="elkan", n_init=10)
+            scaled_points = preprocessing.StandardScaler().fit_transform(
+                paretos[ppa_axes]
+            )
+            paretos["group"] = kmeans.fit_predict(scaled_points)
+            print(f"Fixed #clusters={num}")
         rank = paretos.groupby("group")[ranking]
         candidates = paretos[
             paretos[ranking] == paretos.assign(min=rank.transform(min))["min"]
         ]
     print("Pareto candidates:")
-    print(candidates[axes].to_markdown())
+    print(candidates[ppa_axes].to_markdown())
     return candidates, paretos, df
 
 
