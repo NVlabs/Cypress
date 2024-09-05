@@ -540,7 +540,10 @@ class BasicPlace(nn.Module):
 
         # Orientation logits
         tt = time.time()
-        self.orient_logits = nn.Parameter(torch.from_numpy(placedb.orient_logits).to(self.device))
+        if params.enable_rotation:
+            self.orient_logits = nn.Parameter(torch.from_numpy(placedb.orient_logits).to(self.device))
+        else:
+            self.orient_logits = None
         logging.debug("build orient_logits takes %.2f seconds" % (time.time() - tt))
 
         # shared data on device for building ops

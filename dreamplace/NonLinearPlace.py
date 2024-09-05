@@ -393,7 +393,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     update_orient_cond = (
                         iteration > 1000 and iteration % 100 == 0
                     )
-                    # update_orient_cond = iteration > 100
+                    update_orient_cond = True
                     
                     if update_orient_cond is True:
                         if params.enable_rotation:
@@ -401,7 +401,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                             for _ in range(10):
                                 model.op_collections.pin_pos_op.use_best_theta = False
                                 model.freeze_pos = True
-                                obj_rot, grad_rot = model.obj_and_grad_fn(pos)
+                                obj_rot, grad_rot = model.obj_and_grad_fn(pos, orient_logits=self.orient_logits)
                                 rot_optimizer.step()
                                 if model.wirelength.data < best_wl or model.net_crossing.data < best_nc:
                                     self.update_best_theta()
@@ -456,6 +456,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
 
                     # nesterov has already computed the objective of the next step
                     if optimizer_name.lower() == "nesterov":
+                        # import ipdb; ipdb.set_trace()
                         cur_metric.objective = optimizer.param_groups[0]["obj_k_1"][
                             0
                         ].data.clone()

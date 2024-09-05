@@ -122,6 +122,17 @@ class PreconditionOp:
                     self.data_collections.num_pins_in_nodes + self.alpha * node_areas
                 )
 
+            if freeze_pos:
+                # this means we only update orientation
+                # in this case precond needs to match
+                # the shape of grad
+                num_real_nodes = grad.shape[0]
+                num_orientations = grad.shape[1]
+                precond.clamp_(min=1.0)
+                precond = precond[:num_real_nodes].unsqueeze(1).expand(-1, num_orientations)
+                grad.div_(precond)
+                return grad
+
             precond.clamp_(min=1.0)
             grad[0 : self.placedb.num_nodes].div_(precond)
             grad[self.placedb.num_nodes : self.placedb.num_nodes * 2].div_(precond)
@@ -381,28 +392,39 @@ class PlaceObj(nn.Module):
             self.build_update_net_crossing_weight(params, placedb)
         )
 
-    def obj_fn(self, pos):
+    def obj_fn(self, pos, orient_logits=None):
         """
         @brief Compute objective.
             wirelength + density_weight * density penalty + macro_overlap_weight * macro overlap penalty
         @param pos locations of cells
         @return objective value
         """
-        self.wirelength = self.op_collections.wirelength_op(pos)
-        self.net_crossing = self.op_collections.net_crossing_op(pos)
 
-        # check gradient of wirelength:
-        with torch.no_grad():
-            self.wirelength.backward(retain_graph=True)
-            wl_grad = pos.grad.clone()
-            pos.grad.zero_()
-            self.net_crossing.backward(retain_graph=True)
-            nc_grad = pos.grad.clone()
-            pos.grad.zero_()
-            wl_grad_norm = wl_grad.norm(p=1)
-            nc_grad_norm = nc_grad.norm(p=1)
-            nc_grad_scale = wl_grad_norm / nc_grad_norm
-            logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
+        # create result as a zero tensor
+        result = torch.tensor([0], dtype=pos.dtype, device=pos.device, requires_grad=True)
+
+        self.wirelength = self.op_collections.wirelength_op(pos)
+        result = torch.add(result, self.wirelength)
+
+        if self.params.net_crossing_flag:
+            self.net_crossing = self.op_collections.net_crossing_op(pos)
+            # check gradient of wirelength:
+            with torch.no_grad():
+                self.wirelength.backward(retain_graph=True)
+                wl_grad = pos.grad.clone()
+                pos.grad.zero_()
+                self.net_crossing.backward(retain_graph=True)
+                nc_grad = pos.grad.clone()
+                pos.grad.zero_()
+                wl_grad_norm = wl_grad.norm(p=1)
+                nc_grad_norm = nc_grad.norm(p=1)
+                nc_grad_scale = wl_grad_norm / nc_grad_norm
+                logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
+            if not math.isnan(nc_grad_norm):
+                result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
+
+        if orient_logits is not None:
+            return result
 
         if len(self.placedb.regions) > 0:
             self.density = self.op_collections.fence_region_density_merged_op(pos)
@@ -423,10 +445,10 @@ class PlaceObj(nn.Module):
             ### quadratic density penalty
             self.density = self.density * (1 + self.quad_penalty_coeff * self.density)
         if len(self.placedb.regions) > 0:
-            result = self.wirelength + self.density_weight.dot(self.density)
+            result = torch.add(result, self.density_weight.dot(self.density))
         else:
             result = torch.add(
-                self.wirelength,
+                result,
                 self.density,
                 alpha=(self.density_factor * self.density_weight).item(),
             )
@@ -436,16 +458,6 @@ class PlaceObj(nn.Module):
             result = torch.add(
                 result, self.macro_overlap, alpha=self.macro_overlap_weight.item()
             )
-
-        if self.params.net_crossing_flag and not math.isnan(nc_grad_norm):
-            # constant net crossing weight: 
-            # result = torch.add(result, self.net_crossing, alpha=self.params.net_crossing_weight)
-
-            # scheduled net crossing weight:
-            result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
-
-            # net crossing weight according to grad scale
-            # result = torch.add(result, self.net_crossing, alpha=nc_grad_scale)
 
         return result
 
@@ -546,7 +558,7 @@ class PlaceObj(nn.Module):
 
         return obj, pos_w.grad
 
-    def obj_and_grad_fn(self, pos):
+    def obj_and_grad_fn(self, pos, orient_logits=None):
         """
         @brief compute objective and gradient.
             wirelength + density_weight * density penalty
@@ -556,16 +568,29 @@ class PlaceObj(nn.Module):
         # self.check_gradient(pos)
         if pos.grad is not None:
             pos.grad.zero_()
-        obj = self.obj_fn(pos)
+        if orient_logits is not None:
+            orient_logits.grad.zero_()
+
+        obj = self.obj_fn(pos, orient_logits)
 
         obj.backward(retain_graph=True)
 
-
-        self.op_collections.precondition_op(
-                pos.grad, self.density_weight, self.update_mask, freeze_pos=self.freeze_pos
+        # need to get theta.grad into precondition op
+        ret_grad = None
+        if orient_logits is None: 
+            self.op_collections.precondition_op(
+                    pos.grad, self.density_weight, self.update_mask, freeze_pos=self.freeze_pos
+                )
+            ret_grad = pos.grad
+        else:
+            assert orient_logits.grad is not None
+            self.op_collections.precondition_op(
+                orient_logits.grad, self.density_weight, self.update_mask, freeze_pos=self.freeze_pos
             )
+            ret_grad = orient_logits.grad
 
-        return obj, pos.grad
+
+        return obj, ret_grad
 
     def forward(self):
         """
