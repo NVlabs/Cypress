@@ -90,7 +90,6 @@ class NesterovAcceleratedGradientOptimizer(Optimizer):
         loss = None
         if closure is not None:
             loss = closure()
-
         for group in self.param_groups:
             obj_and_grad_fn = self.obj_and_grad_fn
             constraint_fn = self.constraint_fn

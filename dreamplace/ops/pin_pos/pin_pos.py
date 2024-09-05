@@ -154,7 +154,7 @@ class PinPos(nn.Module):
         assert pos.numel() % 2 == 0
         num_nodes = pos.numel() // 2
 
-        if self.use_best_theta:
+        if self.use_best_theta or self.orient_logits is None:
             self.theta = self.best_theta
         else:
             # rotation is enabled

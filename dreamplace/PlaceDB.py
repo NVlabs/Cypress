@@ -1010,23 +1010,23 @@ class PlaceDB(object):
         # we will add the other four orientations later if we want to let the tool decide
         # side of the components too
         self.orient_logits = np.zeros((self.num_physical_nodes, 4), dtype=np.float32)
-        for i in range(self.num_physical_nodes):
+        # for i in range(self.num_physical_nodes):
             # if enable_rotation:
             #     node_orient_i = str(self.node_orient[i])
             # else:
             #     node_orient_i = 'N'
             # Always set initial orientation to N is better
-            node_orient_i = 'N'
-            if 'N' in node_orient_i:
-                self.orient_logits[i, 0] = 1
-            elif 'W' in node_orient_i:
-                self.orient_logits[i, 1] = 1
-            elif 'S' in node_orient_i:
-                self.orient_logits[i, 2] = 1
-            elif 'E' in node_orient_i:
-                self.orient_logits[i, 3] = 1
-            else:
-                logging.error(f"Unknown orientation {self.node_orient[i]} for node {self.node_names[i]}")
+            # node_orient_i = 'N'
+            # if 'N' in node_orient_i:
+            #     self.orient_logits[i, 0] = 1
+            # elif 'W' in node_orient_i:
+            #     self.orient_logits[i, 1] = 1
+            # elif 'S' in node_orient_i:
+            #     self.orient_logits[i, 2] = 1
+            # elif 'E' in node_orient_i:
+            #     self.orient_logits[i, 3] = 1
+            # else:
+            #     logging.error(f"Unknown orientation {self.node_orient[i]} for node {self.node_names[i]}")
 
     def initialize(self, params):
         """

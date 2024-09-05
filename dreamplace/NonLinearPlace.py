@@ -133,7 +133,13 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     assert 0, "unknown optimizer %s" % (optimizer_name)
 
                 if params.enable_rotation:
-                    rot_optimizer = torch.optim.SGD(orient_logits, lr=0.0001, momentum=0.9, nesterov=True)
+                    rot_optimizer = torch.optim.SGD(orient_logits, lr=0)
+                    # rot_optimizer = NesterovAcceleratedGradientOptimizer.NesterovAcceleratedGradientOptimizer(
+                    #     orient_logits,
+                    #     lr=0,
+                    #     obj_and_grad_fn=model.obj_and_grad_fn,
+                    #     constraint_fn=self.op_collections.move_boundary_op,
+                    # )
 
                 logging.info("use %s optimizer" % (optimizer_name))
                 model.train()
@@ -393,19 +399,21 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     update_orient_cond = (
                         iteration > 1000 and iteration % 100 == 0
                     )
-                    update_orient_cond = True
                     
                     if update_orient_cond is True:
                         if params.enable_rotation:
                             best_wl, best_nc = model.wirelength.data, model.net_crossing.data
-                            for _ in range(10):
+                            for _ in range(20):
                                 model.op_collections.pin_pos_op.use_best_theta = False
                                 model.freeze_pos = True
                                 obj_rot, grad_rot = model.obj_and_grad_fn(pos, orient_logits=self.orient_logits)
                                 rot_optimizer.step()
-                                if model.wirelength.data < best_wl or model.net_crossing.data < best_nc:
+                                # if model.wirelength.data < best_wl or model.net_crossing.data < best_nc:
+                                if model.wirelength.data < best_wl:
                                     self.update_best_theta()
                                     best_wl, best_nc = model.wirelength.data, model.net_crossing.data
+                                model.freeze_pos = False
+                                model.op_collections.pin_pos_op.use_best_theta = True
                     else:
                         model.op_collections.pin_pos_op.use_best_theta = True
                         model.freeze_pos = False
