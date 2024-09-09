@@ -98,12 +98,8 @@ class PlaceDataCollection(object):
 
         with torch.no_grad():
             # other tensors required to build ops
-            if orient_logits is not None:
-                self.best_theta = torch.zeros(self.orient_logits.size(0), dtype=self.orient_logits.dtype, device=device)
-                self.best_orient_choice = torch.zeros(self.orient_logits.size(0), dtype=torch.int32, device=device)
-            else:
-                self.best_theta = torch.tensor(placedb.orient_logits, dtype=self.pos[0].dtype, device=device)
-                self.best_orient_choice = torch.zeros(placedb.orient_logits.shape[0], dtype=torch.int32, device=device)
+            self.best_theta = torch.zeros(placedb.orient_logits.shape[0], dtype=self.pos[0].dtype, device=device)
+            self.best_orient_choice = torch.zeros(placedb.orient_logits.shape[0], dtype=torch.int32, device=device)
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
             # original node size for legalization, since they will be adjusted in global placement

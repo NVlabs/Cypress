@@ -1010,6 +1010,11 @@ class PlaceDB(object):
         # we will add the other four orientations later if we want to let the tool decide
         # side of the components too
         self.orient_logits = np.zeros((self.num_physical_nodes, 4), dtype=np.float32)
+        self.orient_logits[:,0] = torch.randn(self.num_physical_nodes) + 100
+        self.orient_logits[:,1:] = torch.randn((self.num_physical_nodes, 3))
+        # clamp to larger than 1e-5
+        self.orient_logits = np.maximum(self.orient_logits, 1e-5)
+        self.orient_logits = np.log(self.orient_logits)
         # for i in range(self.num_physical_nodes):
             # if enable_rotation:
             #     node_orient_i = str(self.node_orient[i])
