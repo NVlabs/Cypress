@@ -283,9 +283,10 @@ class PlacementEngine:
         #     self.place()
         # print(p.key_averages().table(sort_by="self_cuda_time_total", row_limit=20))
         # print(p.key_averages().table(sort_by="self_cpu_time_total", row_limit=20))
+        self.placedb.update_node_orient(self.placer.data_collections.best_orient_choice.cpu().numpy())
+        self.save_placement()
 
-        if self.rsmt != float("inf"):
-            self.save_placement()
+        if self.rsmt != float("inf"):            
             self.density = float(self.params.target_density)
 
             if self.params.detailed_place_engine and os.path.exists(

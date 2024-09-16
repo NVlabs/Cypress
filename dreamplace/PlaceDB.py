@@ -802,6 +802,7 @@ class PlaceDB(object):
             return self.row_height * op(v / self.row_height)
 
     def update_sides(self):
+        # TODO: Use orientation information to update the sides
         self.btm_movable_nodes_mask = np.char.endswith(self.node_names[self.movable_slice].astype(str), '.btm')
         self.top_movable_nodes_mask = ~self.btm_movable_nodes_mask
         self.btm_movable_nodes_idx = np.where(self.btm_movable_nodes_mask)[0]
@@ -1001,37 +1002,28 @@ class PlaceDB(object):
         self.routing_grid_xh = self.xh
         self.routing_grid_yh = self.yh
     
-    def update_orient_logits(self, enable_rotation):
-        # self.orient is the orientation of the cells
-        # we add a one-hot encoding of the orientation to each node
-        # Bookshelf has eight orientations: N, S, W, E, FN, FS, FW, FE
-        # F means "flipped" (mirrored), we use this to denote backside components (bottom layer)
-        # first step we only use four orientations: N, S, W, E
-        # we will add the other four orientations later if we want to let the tool decide
-        # side of the components too
+    def init_orient_logits(self, enable_rotation):
         self.orient_logits = np.zeros((self.num_physical_nodes, 4), dtype=np.float32)
         self.orient_logits[:,0] = torch.randn(self.num_physical_nodes) + 100
         self.orient_logits[:,1:] = torch.randn((self.num_physical_nodes, 3))
         # clamp to larger than 1e-5
         self.orient_logits = np.maximum(self.orient_logits, 1e-5)
         self.orient_logits = np.log(self.orient_logits)
-        # for i in range(self.num_physical_nodes):
-            # if enable_rotation:
-            #     node_orient_i = str(self.node_orient[i])
-            # else:
-            #     node_orient_i = 'N'
-            # Always set initial orientation to N is better
-            # node_orient_i = 'N'
-            # if 'N' in node_orient_i:
-            #     self.orient_logits[i, 0] = 1
-            # elif 'W' in node_orient_i:
-            #     self.orient_logits[i, 1] = 1
-            # elif 'S' in node_orient_i:
-            #     self.orient_logits[i, 2] = 1
-            # elif 'E' in node_orient_i:
-            #     self.orient_logits[i, 3] = 1
-            # else:
-            #     logging.error(f"Unknown orientation {self.node_orient[i]} for node {self.node_names[i]}")
+
+
+    def update_node_orient(self, best_orient_choice):
+        # best orient choice is the index of the orientation, e.g. 0, 1, 2, 3
+        # self.node_orient should be a numpy array of strings
+        # if any item in self.node_orient starts with an "F", the flag should be 1
+        self.node_orient = np.array(self.node_orient, dtype=str)
+        btm_flag = np.char.startswith(self.node_orient, 'F')
+        self.node_orient = np.array([
+            'N', 'W', 'S', 'E',
+        ])[best_orient_choice]
+        self.node_orient = np.array(self.node_orient, dtype=object)
+        self.node_orient = np.where(btm_flag, 'F' + self.node_orient, self.node_orient)
+
+
 
     def initialize(self, params):
         """
@@ -1056,7 +1048,7 @@ class PlaceDB(object):
         self.update_sides()
 
         # enable orientation
-        self.update_orient_logits(params.enable_rotation)
+        self.init_orient_logits(params.enable_rotation)
 
         # set net weights for improved HPWL % RSMT correlation
         if params.risa_weights == 1:
@@ -1506,16 +1498,17 @@ row height = %g, site width = %g
         # Global placement may have floating point positions.
         # Currently only support BOOKSHELF format.
         # This is mainly for debug.
-        if (
-            not params.legalize_flag
-            and not params.detailed_place_flag
-            and sol_file_format == place_io.SolutionFileFormat.BOOKSHELF
-        ):
-            self.write_pl(params, filename, node_x, node_y)
-        else:
-            place_io.PlaceIOFunction.write(
-                self.rawdb, filename, sol_file_format, node_x, node_y
-            )
+        self.write_pl(params, filename, node_x, node_y)
+        # if (
+        #     not params.legalize_flag
+        #     and not params.detailed_place_flag
+        #     and sol_file_format == place_io.SolutionFileFormat.BOOKSHELF
+        # ):
+        #     self.write_pl(params, filename, node_x, node_y)
+        # else:
+        #     place_io.PlaceIOFunction.write(
+        #         self.rawdb, filename, sol_file_format, node_x, node_y
+        #     )
         logging.info(
             "write %s takes %.3f seconds" % (str(sol_file_format), time.time() - tt)
         )
@@ -1565,11 +1558,13 @@ row height = %g, site width = %g
         # use the original fixed cells, because they are expanded if they contain shapes
         fixed_node_indices = list(self.rawdb.fixedNodeIndices())
         for i, node_id in enumerate(fixed_node_indices):
+            orient = str(self.rawdb.node(node_id).orient())
+            orient = orient.split('.')[-1]
             content += "\n%s %g %g : %s /FIXED" % (
                 str(self.rawdb.nodeName(node_id)),
                 float(self.rawdb.node(node_id).xl()),
                 float(self.rawdb.node(node_id).yl()),
-                "N",  # still hard-coded
+                orient,  # still hard-coded
             )
         for i in range(
             self.num_movable_nodes + self.num_terminals,

@@ -49,7 +49,7 @@ AUTODMP_BASE_CONFIG = {
     "gp_noise_ratio": 0.025,
     "enable_fillers": 1,
     "global_place_flag": 1,
-    "legalize_flag": 1,
+    "legalize_flag": 0,
     "detailed_place_flag": 0,
     "stop_overflow": 0.02,
     "dtype": "float32",
@@ -101,7 +101,7 @@ AUTODMP_BASE_CONFIG = {
     "route_info_input": "default",
     "risa_weights": 0,
     "evaluate_pl": 0,
-    "enable_rotation": True,
+    "enable_rotation": False,
     "create_gif": True
 }
 

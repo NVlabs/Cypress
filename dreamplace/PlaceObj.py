@@ -421,8 +421,8 @@ class PlaceObj(nn.Module):
                 nc_grad_norm = nc_grad.norm(p=1)
                 nc_grad_scale = wl_grad_norm / nc_grad_norm
                 logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
-            # if not math.isnan(nc_grad_norm):
-            #     result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
+            if not math.isnan(nc_grad_norm):
+                result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
 
         if orient_logits is not None:
             return result

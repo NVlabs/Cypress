@@ -413,7 +413,8 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                             rot_optimizer.step()
                             # with torch.no_grad():
                                 # self.orient_logits -= 1e-5 * grad_rot
-                            if model.wirelength.data < best_wl or model.net_crossing.data < best_nc:
+                            # if model.wirelength.data < best_wl or model.net_crossing.data < best_nc:
+                            if model.wirelength.data < best_wl and model.net_crossing.data < best_nc:
                             # if model.wirelength.data < best_wl:
                                 logging.info("update best theta")
                                 self.update_best_theta()
@@ -1185,29 +1186,6 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                 placedb.rawdb.setNodeOrient(
                     int(macro), place_io_cpp.OrientEnum.OrientType(orients_map[orient])
                 )
-
-        # update pin offsets of std cells
-        # assume rows are FS = 0, N = 1, FS, ...
-        # cur_orient = torch.from_numpy(
-        #     np.where(placedb.node_orient == b"N", 1, 0)[: placedb.num_movable_nodes]
-        # ).to(self.pos[0].device)
-        # new_orient = (
-        #     torch.div(
-        #         self.pos[0][
-        #             placedb.num_nodes : placedb.num_nodes + placedb.num_movable_nodes
-        #         ],
-        #         self.data_collections.fp_info.row_height,
-        #         rounding_mode="floor",
-        #     )
-        #     % 2
-        # )
-        # flips = (
-        #     (cur_orient != new_orient) & ~self.data_collections.movable_macro_mask
-        # ).nonzero().view(-1)
-        # self.data_collections.pin_offset_y[flips] = (
-        #     self.data_collections.fp_info.row_height
-        #     - self.data_collections.pin_offset_y[flips]
-        # )
 
         # reset net weights
         self.data_collections.net_weights.fill_(1.0)
