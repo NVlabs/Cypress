@@ -382,12 +382,7 @@ class PlaceObj(nn.Module):
         self.op_collections.net_crossing_op = self.build_net_crossing(
             params, placedb, self.data_collections, self.op_collections.pin_pos_op
         )
-        # self.net_crossing_weight = torch.tensor(
-        #     [self.params.net_crossing_weight],
-        #     dtype=self.data_collections.pos[0].dtype,
-        #     device=self.data_collections.pos[0].device,
-        # )
-        self.net_crossing_weight = 1.0
+        self.net_crossing_weight = params.net_crossing_weight
         self.op_collections.update_net_crossing_weight_op = (
             self.build_update_net_crossing_weight(params, placedb)
         )
@@ -410,19 +405,23 @@ class PlaceObj(nn.Module):
         if self.params.net_crossing_flag:
             self.net_crossing = self.op_collections.net_crossing_op(pos)
             # check gradient of wirelength:
-            with torch.no_grad():
-                self.wirelength.backward(retain_graph=True)
-                wl_grad = pos.grad.clone()
-                pos.grad.zero_()
-                self.net_crossing.backward(retain_graph=True)
-                nc_grad = pos.grad.clone()
-                pos.grad.zero_()
-                wl_grad_norm = wl_grad.norm(p=1)
-                nc_grad_norm = nc_grad.norm(p=1)
-                nc_grad_scale = wl_grad_norm / nc_grad_norm
-                logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
-            if not math.isnan(nc_grad_norm):
-                result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
+            if False:
+                with torch.no_grad():
+                    self.wirelength.backward(retain_graph=True)
+                    wl_grad = pos.grad.clone()
+                    pos.grad.zero_()
+                    self.net_crossing.backward(retain_graph=True)
+                    nc_grad = pos.grad.clone()
+                    pos.grad.zero_()
+                    wl_grad_norm = wl_grad.norm(p=1)
+                    nc_grad_norm = nc_grad.norm(p=1)
+                    nc_grad_scale = wl_grad_norm / nc_grad_norm
+                    logging.info(f"wirelength grad norm = {wl_grad_norm}, net crossing grad norm = {nc_grad_norm}")
+                if not math.isnan(nc_grad_norm):
+                    result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
+                
+            else:
+                result = torch.add(result, self.net_crossing, alpha=(self.density_factor * self.density_weight).item())
 
         if orient_logits is not None:
             return result
@@ -578,12 +577,18 @@ class PlaceObj(nn.Module):
 
         # need to get theta.grad into precondition op
         ret_grad = None
+        num_movable_nodes = self.placedb.num_movable_nodes
+        num_physical_nodes = self.placedb.num_physical_nodes
         if orient_logits is None: 
+            num_nodes = self.placedb.num_nodes
+            pos.grad[num_movable_nodes:num_physical_nodes] = 0.0
+            pos.grad[num_nodes+num_movable_nodes:num_nodes+num_physical_nodes] = 0.0
             self.op_collections.precondition_op(
                     pos.grad, self.density_weight, self.update_mask, freeze_pos=self.freeze_pos
                 )
             ret_grad = pos.grad
         else:
+            orient_logits.grad[num_movable_nodes:, :] = 0.0
             assert orient_logits.grad is not None
             self.op_collections.precondition_op(
                 orient_logits.grad, self.density_weight, self.update_mask, freeze_pos=self.freeze_pos
@@ -765,9 +770,8 @@ class PlaceObj(nn.Module):
         def update_net_crossing_weight_op(curr_metric, prev_metric, iteration):
             with torch.no_grad():
                 # delta_hpwl = curr_metric.hpwl - prev_metric.hpwl
-                # mu = get_coeff(delta_hpwl / ref_hpwl, UPPER_PCOF, LOWER_PCOF)
-                # self.net_crossing_weight *= mu
-                self.net_crossing_weight += 0.001
+                # self.net_crossing_weight -= 1e-5
+                self.net_crossing_weight *= 1.0
 
         # ref_hpwl = params.RePlAce_ref_hpwl / params.scale_factor
         # LOWER_PCOF = params.RePlAce_LOWER_PCOF

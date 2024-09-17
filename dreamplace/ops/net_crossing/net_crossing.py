@@ -41,7 +41,6 @@ class NetCrossingFunction(Function):
 
         if grad_pos.is_cuda:
             torch.cuda.synchronize()
-
         return output, None, None, None, None, None, None
 
 class NetCrossing(nn.Module):

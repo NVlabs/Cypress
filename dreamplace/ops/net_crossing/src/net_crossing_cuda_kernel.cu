@@ -81,23 +81,25 @@ __global__ void computeNetCrossing(
                 }
             };
 
-            T dt_dx1 = ((y3 - y4) * (x4 * (y3 - y2) + x3 * (y2 - y4) + x2 * (y4 - y3))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-            T dt_dy1 = ((x3 - x4) * (-x4 * (y3 - y2) - x3 * (y2 - y4) + x2 * (y3 - y4))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
-            T dt_dx2 = -((y4 - y3) * ((x1 - x3) * (y3 - y4) - (x3 - x4) * (y1 - y3))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
-            T dt_dy2 = -((x3 - x4) * ((x1 - x3) * (y3 - y4) - (x3 - x4) * (y1 - y3))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
-            T dt_dx3 = ((y4 - y3) * (-x4 * (y2 - y1) - x2 * (y1 - y4) + x1 * (y2 - y4))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
-            T dt_dy3 = ((x3 - x4) * (x4 * (y1 - y2) + x1 * (y2 - y4) + x2 * (y4 - y1))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-            T dt_dx4 = ((y3 - y4) * (x3 * (y1 - y2) + x1 * (y2 - y3) + x2 * (y3 - y1))) / std::pow((x3 - x4) * (y1 - y2) - (x1 - x2) * (y3 - y4), 2);
-            T dt_dy4 = ((x4 - x3) * (-x3 * (y2 - y1) - x2 * (y1 - y3) + x1 * (y2 - y3)))/ std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
+            T epsilon = 1e-5;
 
-            T du_dx1 = ((y2 - y1) * (-x4 * (y3 - y2) - x3 * (y2 - y4) + x2 * (y3 - y4))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
-            T du_dy1 = ((x1 - x2) * (x4 * (y2 - y3) + x2 * (y3 - y4) + x3 * (y4 - y2))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-            T du_dx2 = -((y1 - y2) * (x4 * (y3 - y1) + x3 * (y1 - y4) + x1 * (y4 - y3))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-            T du_dy2 = -((x1 - x2) * (x4 * (y1 - y3) + x1 * (y3 - y4) + x3 * (y4 - y1))) / std::pow((x3 - x4) * (y1 - y2) - (x1 - x2) * (y3 - y4), 2);
-            T du_dx3 = ((y1 - y2) * (x4 * (y2 - y1) + x2 * (y1 - y4) + x1 * (y4 - y2))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-            T du_dy3 = ((x1 - x2) * (x4 * (y1 - y2) + x1 * (y2 - y4) + x2 * (y4 - y1))) / std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2);
-            T du_dx4 = ((y1 - y2) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
-            T du_dy4 = ((x2 - x1) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2))) / std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2);
+            T dt_dx1 = ((y3 - y4) * (x4 * (y3 - y2) + x3 * (y2 - y4) + x2 * (y4 - y3)))   / (std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2) + epsilon);
+            T dt_dy1 = ((x3 - x4) * (-x4 * (y3 - y2) - x3 * (y2 - y4) + x2 * (y3 - y4)))  / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2) + epsilon);
+            T dt_dx2 = -((y4 - y3) * ((x1 - x3) * (y3 - y4) - (x3 - x4) * (y1 - y3)))     / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2) + epsilon);
+            T dt_dy2 = -((x3 - x4) * ((x1 - x3) * (y3 - y4) - (x3 - x4) * (y1 - y3)))     / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2)+ epsilon);
+            T dt_dx3 = ((y4 - y3) * (-x4 * (y2 - y1) - x2 * (y1 - y4) + x1 * (y2 - y4)))  / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2)+ epsilon);
+            T dt_dy3 = ((x3 - x4) * (x4 * (y1 - y2) + x1 * (y2 - y4) + x2 * (y4 - y1)))   / (std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2)+ epsilon);
+            T dt_dx4 = ((y3 - y4) * (x3 * (y1 - y2) + x1 * (y2 - y3) + x2 * (y3 - y1)))   / (std::pow((x3 - x4) * (y1 - y2) - (x1 - x2) * (y3 - y4), 2)+ epsilon);
+            T dt_dy4 = ((x4 - x3) * (-x3 * (y2 - y1) - x2 * (y1 - y3) + x1 * (y2 - y3)))  / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2)+ epsilon);
+
+            T du_dx1 = ((y2 - y1) * (-x4 * (y3 - y2) - x3 * (y2 - y4) + x2 * (y3 - y4)))  / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2)+ epsilon);
+            T du_dy1 = ((x1 - x2) * (x4 * (y2 - y3) + x2 * (y3 - y4) + x3 * (y4 - y2)))   / (std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2)+ epsilon);
+            T du_dx2 = -((y1 - y2) * (x4 * (y3 - y1) + x3 * (y1 - y4) + x1 * (y4 - y3)))  / (std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2)+ epsilon);
+            T du_dy2 = -((x1 - x2) * (x4 * (y1 - y3) + x1 * (y3 - y4) + x3 * (y4 - y1)))  / (std::pow((x3 - x4) * (y1 - y2) - (x1 - x2) * (y3 - y4), 2)+ epsilon);
+            T du_dx3 = ((y1 - y2) * (x4 * (y2 - y1) + x2 * (y1 - y4) + x1 * (y4 - y2)))   / (std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2)+ epsilon);
+            T du_dy3 = ((x1 - x2) * (x4 * (y1 - y2) + x1 * (y2 - y4) + x2 * (y4 - y1)))   / (std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2)+ epsilon);
+            T du_dx4 = ((y1 - y2) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2)))      / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2)+ epsilon);
+            T du_dy4 = ((x2 - x1) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2)))      / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2)+ epsilon);
 
             // NC = f * g
             T df_dx1 = bell_gradient(t - 0.5) * dt_dx1;

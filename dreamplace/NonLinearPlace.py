@@ -296,6 +296,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                                 cur_metric.overflow[-1] < params.stop_overflow
                                 and cur_metric.hpwl > prev_metric.hpwl
                             ) or cur_metric.max_density[-1] < 1.0:
+                            # if cur_metric.net_crossing < 1e4:
                                 logging.info(
                                     "Llambda stopping criteria: %d and (( %g < 0.1 and %g > %g ) or %g < 1.0)"
                                     % (
