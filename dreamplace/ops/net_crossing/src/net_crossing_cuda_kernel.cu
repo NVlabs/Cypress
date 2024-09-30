@@ -26,7 +26,7 @@ __global__ void computeNetCrossing(
 {
     int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
     int total_pairs = num_nets * num_nets;
-    if (thread_idx >= total_pairs) return; // boundary check
+    if (thread_idx >= total_pairs - 1) return; // boundary check
     int i = thread_idx / num_nets;
     int j = thread_idx % num_nets;
     if (j <= i) return; // only compute the upper triangular part
@@ -50,8 +50,9 @@ __global__ void computeNetCrossing(
             T y4 = y[net_j_sink_pin_id];
 
             // Bezier curve intersection
-            T t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));          
-            T u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+            T epsilon = 1e-5;
+            T t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4) + epsilon);          
+            T u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4) + epsilon);
 
             // Bell function
             // lambda = 2, mu = 2, sigma = 1
@@ -81,7 +82,6 @@ __global__ void computeNetCrossing(
                 }
             };
 
-            T epsilon = 1e-5;
 
             T dt_dx1 = ((y3 - y4) * (x4 * (y3 - y2) + x3 * (y2 - y4) + x2 * (y4 - y3)))   / (std::pow(-x3 * (y1 - y2) - x4 * (y2 - y1) + (x1 - x2) * (y3 - y4), 2) + epsilon);
             T dt_dy1 = ((x3 - x4) * (-x4 * (y3 - y2) - x3 * (y2 - y4) + x2 * (y3 - y4)))  / (std::pow((x1 - x2) * (y3 - y4) - (x3 - x4) * (y1 - y2), 2) + epsilon);

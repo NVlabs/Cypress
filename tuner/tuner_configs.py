@@ -101,8 +101,8 @@ AUTODMP_BASE_CONFIG = {
     "route_info_input": "default",
     "risa_weights": 0,
     "evaluate_pl": 0,
-    "enable_rotation": False,
-    "create_gif": True
+    "enable_rotation": True,
+    "create_gif": False
 }
 
 

@@ -82,8 +82,12 @@ class RudyWithMacros(nn.Module):
         ) / self.num_bins_y
 
         num_bins = self.num_bins_x * self.num_bins_y
-        bin_capa_H = self.fp_info.routing_H / num_bins
-        bin_capa_V = self.fp_info.routing_V / num_bins
+        # bin_capa_H = self.fp_info.routing_H / num_bins
+        # bin_capa_V = self.fp_info.routing_V / num_bins
+
+        # For PCB let's just use 1
+        bin_capa_H = self.bin_size_x
+        bin_capa_V = self.bin_size_y
 
         horizontal_bin_capacity = torch.full(
             (self.num_bins_x, self.num_bins_y),
@@ -122,7 +126,9 @@ class RudyWithMacros(nn.Module):
             vertical_utilization_map,
         )
 
-        if self.macro_indexes.size(0) > 0:
+        # if self.macro_indexes.size(0) > 0:
+        if False:
+            # remove macro blockage
             num_nodes = pos.numel() // 2
             macro_pos_x = pos[self.macro_indexes].contiguous()
             macro_pos_y = pos[num_nodes + self.macro_indexes].contiguous()
@@ -177,6 +183,11 @@ class RudyWithMacros(nn.Module):
         if self.params.plot_flag:
             path = "%s/%s" % (self.params.result_dir, self.params.design_name())
             logging.info("writing congestion maps to %s" % (path))
+            max_hor = torch.max(horizontal_utilization_map).item()
+            max_ver = torch.max(vertical_utilization_map).item()
+            logging.info("max horizontal congestion: %g" % (max_hor))
+            logging.info("max vertical congestion: %g" % (max_ver))
+            max_global = max(max_hor, max_ver)
             plot(
                 self.bin_size_x,
                 self.bin_size_y,
@@ -184,7 +195,7 @@ class RudyWithMacros(nn.Module):
                 opj(path, f"{self.params.design_name()}.hcong"),
                 "2D",
                 0.0,
-                2.0,
+                max_global,
             )
 
             plot(
@@ -194,7 +205,7 @@ class RudyWithMacros(nn.Module):
                 opj(path, f"{self.params.design_name()}.vcong"),
                 "2D",
                 0.0,
-                2.0,
+                max_global,
             )
 
         # infinity norm

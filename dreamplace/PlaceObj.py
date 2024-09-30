@@ -421,7 +421,8 @@ class PlaceObj(nn.Module):
                     result = torch.add(result, self.net_crossing, alpha=nc_grad_scale * self.net_crossing_weight)
                 
             else:
-                result = torch.add(result, self.net_crossing, alpha=(self.density_factor * self.density_weight).item())
+                # result = torch.add(result, self.net_crossing, alpha=(self.density_factor * self.density_weight).item())
+                result = torch.add(result, self.net_crossing, alpha=self.net_crossing_weight)
 
         if orient_logits is not None:
             return result
@@ -771,7 +772,8 @@ class PlaceObj(nn.Module):
             with torch.no_grad():
                 # delta_hpwl = curr_metric.hpwl - prev_metric.hpwl
                 # self.net_crossing_weight -= 1e-5
-                self.net_crossing_weight *= 1.0
+                # self.net_crossing_weight += 1e-2
+                self.net_crossing_weight += 0
 
         # ref_hpwl = params.RePlAce_ref_hpwl / params.scale_factor
         # LOWER_PCOF = params.RePlAce_LOWER_PCOF
