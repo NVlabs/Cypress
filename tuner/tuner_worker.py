@@ -137,7 +137,18 @@ class AutoDMPWorker(Worker):
         config_filename = opj(working_directory, "parameters.json")
         self.placer.params.dump(config_filename)
 
-        result = self.placer.run()
+        try: 
+            result = self.placer.run()
+        except Exception as e:
+            logging.exception(f"Error during search: {e}")
+            print(f"Error during search: {e}")
+            result = {
+                "rsmt": float("inf"),
+                "congestion": float("inf"),
+                "density": float("inf"),
+                "net_crossing": float("inf"),
+                "hpwl": float("inf"),
+            }
 
         if float("inf") in result.values():
             ppa = self.bad_run
@@ -147,8 +158,6 @@ class AutoDMPWorker(Worker):
         rsmt_norm = ppa["rsmt"] / self.base_ppa["rsmt"]
         congestion_norm = ppa["congestion"] / self.base_ppa["congestion"]
         density_norm = ppa["density"] / self.base_ppa["density"]
-        # add more metrics here, e.g. HPWL, net crossing
-        # TODO(Niansong): add HPWL, net crossing, make sure they are saved in Placer.py
         net_crossing = ppa["net_crossing"]
         hpwl_norm = ppa["hpwl"] / self.base_ppa["hpwl"]
 

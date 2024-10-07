@@ -55,6 +55,12 @@ std::vector<at::Tensor> net_crossing_forward(at::Tensor pos, at::Tensor flat_net
         DREAMPLACE_TENSOR_DATA_PTR(grad_intermediate, scalar_t) + num_pins);
   });
 
+  // Check if there are any NaN values in the tensor
+  bool has_nan = at::isnan(net_crossing).any().item<bool>();
+  if (has_nan){
+    std::cout << "net crossing contains NaN: " << (has_nan ? "Yes" : "No") << std::endl;
+  }
+
   return {net_crossing.sum(), grad_intermediate};
 }
 
