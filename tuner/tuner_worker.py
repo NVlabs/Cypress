@@ -158,7 +158,10 @@ class AutoDMPWorker(Worker):
         rsmt_norm = ppa["rsmt"] / self.base_ppa["rsmt"]
         congestion_norm = ppa["congestion"] / self.base_ppa["congestion"]
         density_norm = ppa["density"] / self.base_ppa["density"]
-        net_crossing = ppa["net_crossing"]
+        if "net_crossing" in ppa:
+            net_crossing = ppa["net_crossing"]
+        else:
+            net_crossing = float("inf")
         hpwl_norm = ppa["hpwl"] / self.base_ppa["hpwl"]
 
         if self.multiobj:

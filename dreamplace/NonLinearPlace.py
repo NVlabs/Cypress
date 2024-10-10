@@ -1040,14 +1040,16 @@ class NonLinearPlace(BasicPlace.BasicPlace):
         hpwls = [metric.hpwl.data.item() for metric in metrics]
         overflows = [metric.overflow.data.item() for metric in metrics]
         densities = [metric.max_density.data.item() for metric in metrics]
-        net_crossing = [metric.net_crossing.data.item() for metric in metrics]
+        if params.net_crossing_flag:
+            net_crossing = [metric.net_crossing.data.item() for metric in metrics]
         processed_metrics = {
             "objective": objectives,
             "hpwl": hpwls,
             "overflow": overflows,
             "density": densities,
-            "net_crossing": net_crossing,
         }
+        if params.net_crossing_flag:
+            processed_metrics["net_crossing"] = net_crossing
 
         # plot losses
         if params.plot_flag:
@@ -1209,8 +1211,9 @@ class NonLinearPlace(BasicPlace.BasicPlace):
 
         # get net crossing
         with torch.no_grad():
-            net_crossing = self.op_collections.net_crossing_op(self.pos[0])
-            logging.info("net crossing %d" % net_crossing)
+            if params.net_crossing_flag:
+                net_crossing = self.op_collections.net_crossing_op(self.pos[0])
+                logging.info("net crossing %d" % net_crossing)
 
         # save nets degree, RSMT, HPWL
         # with torch.no_grad():
@@ -1235,4 +1238,4 @@ class NonLinearPlace(BasicPlace.BasicPlace):
         #     with open("%s/risa_weights.pkl" % path, "wb") as f:
         #         pickle.dump(weights_dict, f)
 
-        return float(rsmt_wl), float(hpwl), float(net_crossing), processed_metrics
+        return float(rsmt_wl), float(hpwl), processed_metrics
