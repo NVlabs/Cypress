@@ -14,7 +14,7 @@ template <typename T>
 int computeNetCrossingCudaLauncher(
     const T* x, const T* y, const int* flat_netpin,
     const int* netpin_start, const unsigned char* net_mask,
-    int num_nets, T* net_crossing,
+    int num_nets, int num_pins, T* net_crossing,
     T *lambda_, T *mu_, T *sigma_,
     T *grad_intermediate_x, T *grad_intermediate_y
 );
@@ -46,7 +46,7 @@ std::vector<at::Tensor> net_crossing_forward(at::Tensor pos, at::Tensor flat_net
         DREAMPLACE_TENSOR_DATA_PTR(flat_netpin, int),
         DREAMPLACE_TENSOR_DATA_PTR(netpin_start, int),
         DREAMPLACE_TENSOR_DATA_PTR(net_mask, unsigned char), 
-        num_nets,
+        num_nets, num_pins,
         DREAMPLACE_TENSOR_DATA_PTR(net_crossing, scalar_t),
         DREAMPLACE_TENSOR_DATA_PTR(lambda, scalar_t),
         DREAMPLACE_TENSOR_DATA_PTR(mu, scalar_t),

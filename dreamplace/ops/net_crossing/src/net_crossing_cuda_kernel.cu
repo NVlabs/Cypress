@@ -18,7 +18,7 @@ __global__ void computeNetCrossing(
         const int* flat_netpin, 
         const int* netpin_start, 
         const unsigned char* net_mask, 
-        int num_nets, 
+        int num_nets, int num_pins, 
         T* net_crossing, 
         T *lambda_, T *mu_, T *sigma_,
         T *grad_intermediate_x, T *grad_intermediate_y
@@ -128,15 +128,23 @@ __global__ void computeNetCrossing(
             T dy3 = df_dy3 * bell(u - 0.5) + bell(t - 0.5) * dg_dy3;
             T dx4 = df_dx4 * bell(u - 0.5) + bell(t - 0.5) * dg_dx4;
             T dy4 = df_dy4 * bell(u - 0.5) + bell(t - 0.5) * dg_dy4;
-          
-            atomicAdd(grad_intermediate_x + net_i_src_pin_id, dx1);
-            atomicAdd(grad_intermediate_y + net_i_src_pin_id, dy1);
-            atomicAdd(grad_intermediate_x + net_i_sink_pin_id, dx2);
-            atomicAdd(grad_intermediate_y + net_i_sink_pin_id, dy2);
-            atomicAdd(grad_intermediate_x + net_j_src_pin_id, dx3);
-            atomicAdd(grad_intermediate_y + net_j_src_pin_id, dy3);
-            atomicAdd(grad_intermediate_x + net_j_sink_pin_id, dx4);
-            atomicAdd(grad_intermediate_y + net_j_sink_pin_id, dy4);
+            
+            if (net_i_src_pin_id < num_pins){
+                atomicAdd(grad_intermediate_x + net_i_src_pin_id, dx1);
+                atomicAdd(grad_intermediate_y + net_i_src_pin_id, dy1);
+            }
+            if (net_i_sink_pin_id < num_pins){
+                atomicAdd(grad_intermediate_x + net_i_sink_pin_id, dx2);
+                atomicAdd(grad_intermediate_y + net_i_sink_pin_id, dy2);
+            }
+            if (net_j_src_pin_id < num_pins){
+                atomicAdd(grad_intermediate_x + net_j_src_pin_id, dx3);
+                atomicAdd(grad_intermediate_y + net_j_src_pin_id, dy3);
+            }
+            if (net_j_sink_pin_id < num_pins){
+                atomicAdd(grad_intermediate_x + net_j_sink_pin_id, dx4);
+                atomicAdd(grad_intermediate_y + net_j_sink_pin_id, dy4);
+            }
         }
     }
 }
@@ -146,7 +154,7 @@ template <typename T>
 int computeNetCrossingCudaLauncher(
         const T* x, const T* y, const int* flat_netpin,
         const int* netpin_start, const unsigned char* net_mask,
-        int num_nets, T* net_crossing,
+        int num_nets, int num_pins, T* net_crossing,
         T *lambda_, T *mu_, T *sigma_,
         T *grad_intermediate_x, T *grad_intermediate_y
         )
@@ -161,7 +169,7 @@ int computeNetCrossingCudaLauncher(
             flat_netpin,
             netpin_start,
             net_mask,
-            num_nets,
+            num_nets, num_pins,
             net_crossing,
             lambda_, mu_, sigma_,
             grad_intermediate_x, grad_intermediate_y
@@ -174,7 +182,7 @@ int computeNetCrossingCudaLauncher(
     template int computeNetCrossingCudaLauncher<T>(\
             const T* x, const T* y, const int* flat_netpin, \
             const int* netpin_start, const unsigned char* net_mask, \
-            int num_nets, T* net_crossing, \
+            int num_nets, int num_pins, T* net_crossing, \
             T *lambda_, T *mu_, T *sigma_, \
             T *grad_intermediate_x, T *grad_intermediate_y \
             );
