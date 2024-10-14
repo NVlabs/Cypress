@@ -593,7 +593,10 @@ class PlaceDB(object):
         if not use_read_pl_flag:
             self.node_x = np.array(pydb.node_x, dtype=self.dtype)
             self.node_y = np.array(pydb.node_y, dtype=self.dtype)
-            self.node_orient = np.array(pydb.node_orient, dtype=np.string_)
+        self.node_orient = np.array(pydb.node_orient, dtype=np.string_)
+        # if the node orient start with "F" that means it is on the bottom side
+        # 0 for bottom side, 1 for top side
+        self.movable_node_side_flag = np.where(np.char.startswith(self.node_orient, b'F'), 0, 1)
         self.node_size_x = np.array(pydb.node_size_x, dtype=self.dtype)
         self.node_size_y = np.array(pydb.node_size_y, dtype=self.dtype)
         self.node2orig_node_map = np.array(pydb.node2orig_node_map, dtype=np.int32)
@@ -801,30 +804,6 @@ class PlaceDB(object):
         elif axis == "y":
             return self.row_height * op(v / self.row_height)
 
-    def update_sides(self):
-        # TODO: Use orientation information to update the sides
-        self.btm_movable_nodes_mask = np.char.endswith(self.node_names[self.movable_slice].astype(str), '.btm')
-        self.top_movable_nodes_mask = ~self.btm_movable_nodes_mask
-        self.btm_movable_nodes_idx = np.where(self.btm_movable_nodes_mask)[0]
-        self.top_movable_nodes_idx = np.where(self.top_movable_nodes_mask)[0]
-        self.num_btm_movable_nodes = self.btm_movable_nodes_idx.shape[0]
-        self.num_top_movable_nodes = self.top_movable_nodes_idx.shape[0]
-
-        self.btm_fixed_nodes_mask = np.char.endswith(self.node_names[self.fixed_slice].astype(str), '.btm')
-        self.top_fixed_nodes_mask = ~self.btm_fixed_nodes_mask
-        self.btm_fixed_nodes_idx = np.where(self.btm_fixed_nodes_mask)[0] + self.num_movable_nodes
-        self.top_fixed_nodes_idx = np.where(self.top_fixed_nodes_mask)[0] + self.num_movable_nodes
-        self.num_btm_fixed_nodes = self.btm_fixed_nodes_idx.shape[0]
-        self.num_top_fixed_nodes = self.top_fixed_nodes_idx.shape[0]
-
-        self.btm_nodes_mask = np.char.endswith(self.node_names.astype(str), '.btm')
-        self.top_nodes_mask = ~self.btm_nodes_mask
-        self.btm_nodes_idx = np.where(self.btm_nodes_mask)[0]
-        self.top_nodes_idx = np.where(self.top_nodes_mask)[0]
-        self.num_btm_nodes = self.btm_nodes_idx.shape[0]
-        self.num_top_nodes = self.top_nodes_idx.shape[0]
-
-
 
     def update_macros(self, params, area_threshold=0, height_threshold=0): # mark everything as macro
         # set large cells as macros
@@ -1016,12 +995,11 @@ class PlaceDB(object):
         # self.node_orient should be a numpy array of strings
         # if any item in self.node_orient starts with an "F", the flag should be 1
         self.node_orient = np.array(self.node_orient, dtype=str)
-        btm_flag = np.char.startswith(self.node_orient, 'F')
         self.node_orient = np.array([
             'N', 'W', 'S', 'E',
         ])[best_orient_choice]
         self.node_orient = np.array(self.node_orient, dtype=object)
-        self.node_orient = np.where(btm_flag, 'F' + self.node_orient, self.node_orient)
+        self.node_orient = np.where(self.movable_node_side_flag, self.node_orient, 'F' + self.node_orient)
 
 
 
@@ -1043,9 +1021,6 @@ class PlaceDB(object):
 
         # set macros
         self.update_macros(params)
-
-        # set PCB sides
-        self.update_sides()
 
         # enable orientation
         self.init_orient_logits(params.enable_rotation)

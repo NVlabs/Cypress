@@ -102,6 +102,7 @@ class PlaceDataCollection(object):
             self.best_orient_choice = torch.zeros(placedb.orient_logits.shape[0], dtype=torch.int32, device=device)
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
+            self.movable_node_side_flag = torch.from_numpy(placedb.movable_node_side_flag).to(torch.int32).to(device)
             # original node size for legalization, since they will be adjusted in global placement
             if params.routability_opt_flag:
                 self.original_node_size_x = self.node_size_x.clone()
@@ -808,34 +809,34 @@ class BasicPlace(nn.Module):
         """
         # for movable macro legalization
         # the number of bins control the search granularity
-        top_ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x[placedb.top_nodes_idx], # per layer
-            node_size_y=data_collections.node_size_y[placedb.top_nodes_idx], # per layer
-            node_weights=data_collections.num_pins_in_nodes[placedb.top_nodes_idx], # per layer
-            flat_region_boxes=data_collections.flat_region_boxes,
-            flat_region_boxes_start=data_collections.flat_region_boxes_start,
-            node2fence_region_map=data_collections.node2fence_region_map,
-            fp_info=data_collections.fp_info,
-            num_bins_x=placedb.num_bins_x,
-            num_bins_y=placedb.num_bins_y,
-            num_movable_nodes=placedb.num_top_movable_nodes, 
-            num_terminal_NIs=0,
-            num_filler_nodes=0
-        )
-        btm_ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx], # per layer
-            node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx], # per layer
-            node_weights=data_collections.num_pins_in_nodes[placedb.btm_nodes_idx], # per layer
-            flat_region_boxes=data_collections.flat_region_boxes,
-            flat_region_boxes_start=data_collections.flat_region_boxes_start,
-            node2fence_region_map=data_collections.node2fence_region_map,
-            fp_info=data_collections.fp_info,
-            num_bins_x=placedb.num_bins_x,
-            num_bins_y=placedb.num_bins_y,
-            num_movable_nodes=placedb.num_btm_movable_nodes,
-            num_terminal_NIs=0,
-            num_filler_nodes=0,
-        )
+        # top_ml = macro_legalize.MacroLegalize(
+        #     node_size_x=data_collections.node_size_x[placedb.top_nodes_idx], # per layer
+        #     node_size_y=data_collections.node_size_y[placedb.top_nodes_idx], # per layer
+        #     node_weights=data_collections.num_pins_in_nodes[placedb.top_nodes_idx], # per layer
+        #     flat_region_boxes=data_collections.flat_region_boxes,
+        #     flat_region_boxes_start=data_collections.flat_region_boxes_start,
+        #     node2fence_region_map=data_collections.node2fence_region_map,
+        #     fp_info=data_collections.fp_info,
+        #     num_bins_x=placedb.num_bins_x,
+        #     num_bins_y=placedb.num_bins_y,
+        #     num_movable_nodes=placedb.num_top_movable_nodes, 
+        #     num_terminal_NIs=0,
+        #     num_filler_nodes=0
+        # )
+        # btm_ml = macro_legalize.MacroLegalize(
+        #     node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx], # per layer
+        #     node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx], # per layer
+        #     node_weights=data_collections.num_pins_in_nodes[placedb.btm_nodes_idx], # per layer
+        #     flat_region_boxes=data_collections.flat_region_boxes,
+        #     flat_region_boxes_start=data_collections.flat_region_boxes_start,
+        #     node2fence_region_map=data_collections.node2fence_region_map,
+        #     fp_info=data_collections.fp_info,
+        #     num_bins_x=placedb.num_bins_x,
+        #     num_bins_y=placedb.num_bins_y,
+        #     num_movable_nodes=placedb.num_btm_movable_nodes,
+        #     num_terminal_NIs=0,
+        #     num_filler_nodes=0,
+        # )
         ml = macro_legalize.MacroLegalize(
             node_size_x=data_collections.node_size_x,
             node_size_y=data_collections.node_size_y,
@@ -1373,6 +1374,7 @@ class BasicPlace(nn.Module):
             pin_offset_x=data_collections.pin_offset_x,
             pin_offset_y=data_collections.pin_offset_y,
             theta=data_collections.best_theta,
+            side=data_collections.movable_node_side_flag,
             pin2node_map=data_collections.pin2node_map,
             fp_info=data_collections.fp_info,
             bin_size_x=placedb.bin_size_x,

@@ -77,6 +77,7 @@ class PlaceDrawer {
       const coordinate_type* node_size_x, const coordinate_type* node_size_y,
       const coordinate_type* pin_offset_x, const coordinate_type* pin_offset_y,
       const coordinate_type* theta,
+      const index_type* side,
       const index_type* pin2node_map, const index_type num_nodes,
       const index_type num_movable_nodes, const index_type num_filler_nodes,
       const index_type num_pins, const coordinate_type xl,
@@ -92,6 +93,7 @@ class PlaceDrawer {
         m_pin_offset_x(pin_offset_x),
         m_pin_offset_y(pin_offset_y),
         m_theta(theta),
+        m_side(side),
         m_pin2node_map(pin2node_map),
         m_num_nodes(num_nodes),
         m_num_movable_nodes(num_movable_nodes),
@@ -289,6 +291,7 @@ class PlaceDrawer {
           double rect_y = m_y[i];
           double rect_width = m_node_size_x[i];
           double rect_height = m_node_size_y[i];
+          int side = m_side[i];
 
 
           // Translate and rotate:
@@ -304,7 +307,11 @@ class PlaceDrawer {
 
           // cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
           //                 m_node_size_y[i]);
-          cairo_set_source_rgb(c, 118 / 255.0, 185 / 255.0, 0 / 255.0);
+          if (side == 1) // TOP
+            cairo_set_source_rgba(c, 118 / 255.0, 185 / 255.0, 0 / 255.0, 0.5);
+          else // bottom
+            cairo_set_source_rgba(c, 179 / 255.0, 205 / 255.0, 224 / 255.0, 0.5);
+
           cairo_fill(c);
 
           // Undo the transformations so they don't affect subsequent drawing operations
@@ -316,7 +323,10 @@ class PlaceDrawer {
           //                 m_node_size_y[i]);
           cairo_rectangle(c, -rect_width / 2, -rect_height / 2, rect_width, rect_height);
           cairo_set_line_width(c, m_row_height);
-          cairo_set_source_rgb(c, 20 / 255.0, 20 / 255.0, 255 / 255.0);
+          if (side == 1) // top
+            cairo_set_source_rgb(c, 118 / 255.0, 185 / 255.0, 0 / 255.0);
+          else // bottom
+            cairo_set_source_rgb(c, 0 / 255.0, 91 / 255.0, 150 / 255.0);
           cairo_stroke(c);
           
           cairo_restore(c);
@@ -575,6 +585,7 @@ class PlaceDrawer {
   const coordinate_type* m_pin_offset_x;
   const coordinate_type* m_pin_offset_y;
   const coordinate_type* m_theta;
+  const index_type* m_side;
   const index_type* m_pin2node_map;
   index_type m_num_nodes;
   index_type m_num_movable_nodes;
