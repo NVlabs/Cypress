@@ -596,7 +596,7 @@ class PlaceDB(object):
         self.node_orient = np.array(pydb.node_orient, dtype=np.string_)
         # if the node orient start with "F" that means it is on the bottom side
         # 0 for bottom side, 1 for top side
-        self.movable_node_side_flag = np.where(np.char.startswith(self.node_orient, b'F'), 0, 1)
+        self.node_side_flag = np.where(np.char.startswith(self.node_orient, b'F'), 0, 1)
         self.node_size_x = np.array(pydb.node_size_x, dtype=self.dtype)
         self.node_size_y = np.array(pydb.node_size_y, dtype=self.dtype)
         self.node2orig_node_map = np.array(pydb.node2orig_node_map, dtype=np.int32)
@@ -999,9 +999,14 @@ class PlaceDB(object):
             'N', 'W', 'S', 'E',
         ])[best_orient_choice]
         self.node_orient = np.array(self.node_orient, dtype=object)
-        self.node_orient = np.where(self.movable_node_side_flag, self.node_orient, 'F' + self.node_orient)
+        self.node_orient = np.where(self.node_side_flag, self.node_orient, 'F' + self.node_orient)
 
-
+    
+    def update_side_info(self):
+        self.top_nodes_idx = np.where(self.node_side_flag == 1)[0]
+        self.btm_nodes_idx = np.where(self.node_side_flag == 0)[0]
+        self.num_top_movable_nodes = len(np.where(self.top_nodes_idx < self.num_movable_nodes)[0])
+        self.num_btm_movable_nodes = len(np.where(self.btm_nodes_idx < self.num_movable_nodes)[0])
 
     def initialize(self, params):
         """
@@ -1021,6 +1026,9 @@ class PlaceDB(object):
 
         # set macros
         self.update_macros(params)
+
+        # set sides
+        self.update_side_info()
 
         # enable orientation
         self.init_orient_logits(params.enable_rotation)

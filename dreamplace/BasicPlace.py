@@ -102,7 +102,7 @@ class PlaceDataCollection(object):
             self.best_orient_choice = torch.zeros(placedb.orient_logits.shape[0], dtype=torch.int32, device=device)
             self.node_size_x = torch.from_numpy(placedb.node_size_x).to(device)
             self.node_size_y = torch.from_numpy(placedb.node_size_y).to(device)
-            self.movable_node_side_flag = torch.from_numpy(placedb.movable_node_side_flag).to(torch.int32).to(device)
+            self.movable_node_side_flag = torch.from_numpy(placedb.node_side_flag).to(torch.int32).to(device)
             # original node size for legalization, since they will be adjusted in global placement
             if params.routability_opt_flag:
                 self.original_node_size_x = self.node_size_x.clone()
@@ -809,34 +809,34 @@ class BasicPlace(nn.Module):
         """
         # for movable macro legalization
         # the number of bins control the search granularity
-        # top_ml = macro_legalize.MacroLegalize(
-        #     node_size_x=data_collections.node_size_x[placedb.top_nodes_idx], # per layer
-        #     node_size_y=data_collections.node_size_y[placedb.top_nodes_idx], # per layer
-        #     node_weights=data_collections.num_pins_in_nodes[placedb.top_nodes_idx], # per layer
-        #     flat_region_boxes=data_collections.flat_region_boxes,
-        #     flat_region_boxes_start=data_collections.flat_region_boxes_start,
-        #     node2fence_region_map=data_collections.node2fence_region_map,
-        #     fp_info=data_collections.fp_info,
-        #     num_bins_x=placedb.num_bins_x,
-        #     num_bins_y=placedb.num_bins_y,
-        #     num_movable_nodes=placedb.num_top_movable_nodes, 
-        #     num_terminal_NIs=0,
-        #     num_filler_nodes=0
-        # )
-        # btm_ml = macro_legalize.MacroLegalize(
-        #     node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx], # per layer
-        #     node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx], # per layer
-        #     node_weights=data_collections.num_pins_in_nodes[placedb.btm_nodes_idx], # per layer
-        #     flat_region_boxes=data_collections.flat_region_boxes,
-        #     flat_region_boxes_start=data_collections.flat_region_boxes_start,
-        #     node2fence_region_map=data_collections.node2fence_region_map,
-        #     fp_info=data_collections.fp_info,
-        #     num_bins_x=placedb.num_bins_x,
-        #     num_bins_y=placedb.num_bins_y,
-        #     num_movable_nodes=placedb.num_btm_movable_nodes,
-        #     num_terminal_NIs=0,
-        #     num_filler_nodes=0,
-        # )
+        top_ml = macro_legalize.MacroLegalize(
+            node_size_x=data_collections.node_size_x[placedb.top_nodes_idx].contiguous(), # per layer
+            node_size_y=data_collections.node_size_y[placedb.top_nodes_idx].contiguous(), # per layer
+            node_weights=data_collections.num_pins_in_nodes[placedb.top_nodes_idx].contiguous(), # per layer
+            flat_region_boxes=data_collections.flat_region_boxes,
+            flat_region_boxes_start=data_collections.flat_region_boxes_start,
+            node2fence_region_map=data_collections.node2fence_region_map,
+            fp_info=data_collections.fp_info,
+            num_bins_x=placedb.num_bins_x,
+            num_bins_y=placedb.num_bins_y,
+            num_movable_nodes=placedb.num_top_movable_nodes, 
+            num_terminal_NIs=placedb.num_terminal_NIs,
+            num_filler_nodes=placedb.num_filler_nodes,
+        )
+        btm_ml = macro_legalize.MacroLegalize(
+            node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx], # per layer
+            node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx], # per layer
+            node_weights=data_collections.num_pins_in_nodes[placedb.btm_nodes_idx], # per layer
+            flat_region_boxes=data_collections.flat_region_boxes,
+            flat_region_boxes_start=data_collections.flat_region_boxes_start,
+            node2fence_region_map=data_collections.node2fence_region_map,
+            fp_info=data_collections.fp_info,
+            num_bins_x=placedb.num_bins_x,
+            num_bins_y=placedb.num_bins_y,
+            num_movable_nodes=placedb.num_btm_movable_nodes,
+            num_terminal_NIs=placedb.num_terminal_NIs,
+            num_filler_nodes=placedb.num_filler_nodes,
+        )
         ml = macro_legalize.MacroLegalize(
             node_size_x=data_collections.node_size_x,
             node_size_y=data_collections.node_size_y,
@@ -896,26 +896,41 @@ class BasicPlace(nn.Module):
                 return pos2
             return al(pos1, pos2, orient_choice)
         
-        def build_legalization_op(pos):
+        def build_legalization_op(pos, orient_choice):
             logging.info("Start legalization")
-            top_pos = pos.view(2, -1)[:, placedb.top_nodes_idx].view(-1)
-            pos1 = top_ml(top_pos, top_pos) # pass in the view of pos just having that side
-            pos2 = btm_ml(pos1, pos1)
-            # put pos2 back to pos
-            pos_clone = pos.clone()
-            pos_clone.view(2, -1)[:, placedb.top_nodes_idx] = pos2.view(2, -1)
-            pos = pos_clone
 
-            # pos3 = gl(pos2, pos2)
-            # legal = self.op_collections.legality_check_op(pos3)
+            # top layer legalization
+            top_orient_choice = orient_choice[placedb.top_nodes_idx]
+            num_nodes = pos.numel() // 2
+            top_pos = torch.cat((pos[placedb.top_nodes_idx], pos[placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
+            top_pos1 = top_ml(top_pos, top_pos, top_orient_choice)
+            
+            # bottom layer legalization
+            btm_orient_choice = orient_choice[placedb.btm_nodes_idx]
+            btm_pos = torch.cat((pos[placedb.btm_nodes_idx], pos[placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
+            btm_pos1 = btm_ml(btm_pos, btm_pos, btm_orient_choice)
+            
+            
+            pos1 = pos.clone()
+            # first half of top_pos1 is x, second half is y
+            pos1[placedb.top_nodes_idx] = top_pos1[:len(placedb.top_nodes_idx)]
+            pos1[placedb.top_nodes_idx + num_nodes] = top_pos1[len(placedb.top_nodes_idx):]
+            # first half of btm_pos1 is x, second half is y
+            pos1[placedb.btm_nodes_idx] = btm_pos1[:len(placedb.btm_nodes_idx)]
+            pos1[placedb.btm_nodes_idx + num_nodes] = btm_pos1[len(placedb.btm_nodes_idx):]
+
+
+
+            return pos1
+            # pos1 = ml(pos, pos, orient_choice)
+            # pos2 = gl(pos1, pos1, orient_choice)
+            # legal = self.op_collections.legality_check_op(pos2)
             # if not legal:
             #     logging.error("legality check failed in greedy legalization")
-            #     return pos3
-            # abacus doesn't work?
-            # return al(pos2, pos3)
-            return pos
+            #     return pos2
+            # return al(pos1, pos2, orient_choice)           
 
-        return build_legalization_op_single_layer
+        return build_legalization_op
 
     def build_multi_fence_region_legalization(
         self, params, placedb, data_collections, device
