@@ -500,6 +500,8 @@ class BasicPlace(nn.Module):
                 )
 
             else:
+                # filler is placed uniformly on the floorplan
+                # should still work for both top and bottom
                 self.init_pos[
                     placedb.num_physical_nodes : placedb.num_nodes
                 ] = np.random.uniform(
@@ -810,7 +812,7 @@ class BasicPlace(nn.Module):
         # for movable macro legalization
         # the number of bins control the search granularity
         top_ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x[placedb.top_nodes_idx].contiguous(), # per layer
+            node_size_x=data_collections.node_size_x[placedb.top_nodes_idx].contiguous(), # per layer # copy?
             node_size_y=data_collections.node_size_y[placedb.top_nodes_idx].contiguous(), # per layer
             node_weights=data_collections.num_pins_in_nodes[placedb.top_nodes_idx].contiguous(), # per layer
             flat_region_boxes=data_collections.flat_region_boxes,
@@ -820,8 +822,8 @@ class BasicPlace(nn.Module):
             num_bins_x=placedb.num_bins_x,
             num_bins_y=placedb.num_bins_y,
             num_movable_nodes=placedb.num_top_movable_nodes, 
-            num_terminal_NIs=placedb.num_terminal_NIs,
-            num_filler_nodes=placedb.num_filler_nodes,
+            num_terminal_NIs=placedb.num_terminal_NIs, # used to find the terminal slice end
+            num_filler_nodes=placedb.num_filler_nodes, # used to find the terminal slice end
         )
         btm_ml = macro_legalize.MacroLegalize(
             node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx], # per layer

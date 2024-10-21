@@ -55,7 +55,7 @@ AUTODMP_BASE_CONFIG = {
     "dtype": "float32",
     "detailed_place_engine": "",
     "detailed_place_command": "",
-    "plot_flag": 1,
+    "plot_flag": 0,
     "RePlAce_ref_hpwl": 350000,
     "RePlAce_LOWER_PCOF": 0.94,
     "RePlAce_UPPER_PCOF": 1.05,
@@ -101,7 +101,7 @@ AUTODMP_BASE_CONFIG = {
     "route_info_input": "default",
     "risa_weights": 0,
     "evaluate_pl": 0,
-    "enable_rotation": True,
+    "enable_rotation": False,
     "create_gif": False
 }
 
