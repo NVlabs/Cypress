@@ -1003,12 +1003,16 @@ class PlaceDB(object):
 
     
     def update_side_info(self):
-        self.top_nodes_idx = np.where(self.node_side_flag == 1)[0]
-        self.btm_nodes_idx = np.where(self.node_side_flag == 0)[0]
+        self.top_phy_nodes_idx = np.where(self.node_side_flag == 1)[0]
+        self.btm_phy_nodes_idx = np.where(self.node_side_flag == 0)[0]
         self.num_top_movable_nodes = len(np.where(self.top_nodes_idx < self.num_movable_nodes)[0])
         self.num_btm_movable_nodes = len(np.where(self.btm_nodes_idx < self.num_movable_nodes)[0])
+        self.num_top_fixed_nodes = len(np.where(self.top_nodes_idx >= self.num_movable_nodes)[0])
+        self.num_btm_fixed_nodes = len(np.where(self.btm_nodes_idx >= self.num_movable_nodes)[0])
         self.top_fixed_nodes_idx = np.where(self.top_nodes_idx >= self.num_movable_nodes)[0]
         self.btm_fixed_nodes_idx = np.where(self.btm_nodes_idx >= self.num_movable_nodes)[0]
+        self.top_movable_macro_mask = self.movable_macro_mask[self.top_nodes_idx]
+        self.btm_movable_macro_mask = self.movable_macro_mask[self.btm_nodes_idx]
 
     def initialize(self, params):
         """
@@ -1293,8 +1297,11 @@ row height = %g, site width = %g
             btm_placeable_area = max(
                 self.area - self.btm_fixed_node_area, self.total_space_area
             )
-            content += "use placeable_area = %g to compute fillers\n" % (
-                placeable_area
+            content += "use top_placeable_area = %g to compute top fillers\n" % (
+                top_placeable_area
+            )
+            content += "use btm_placeable_area = %g to compute btm fillers\n" % (
+                btm_placeable_area
             )
             self.top_filler_node_area = max(
                 top_placeable_area * params.target_density
@@ -1343,6 +1350,12 @@ row height = %g, site width = %g
                         dtype=self.node_size_y.dtype,
                     ),
                 ]
+            )
+            self.top_nodes_idx = np.concatenate(
+                [self.top_nodes_idx, self.num_physical_nodes + np.arange(self.num_top_filler_nodes)]
+            )
+            self.btm_nodes_idx = np.concatenate(
+                [self.btm_nodes_idx, self.num_physical_nodes + self.num_top_filler_nodes + np.arange(self.num_btm_filler_nodes)]
             )
             content += (
                 "total_filler_node_area = %g, #fillers = %d, filler sizes = %gx%g\n"

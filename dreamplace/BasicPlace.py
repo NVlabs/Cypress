@@ -126,6 +126,12 @@ class PlaceDataCollection(object):
             self.movable_macro_mask = torch.from_numpy(placedb.movable_macro_mask).to(
                 device
             )
+            self.top_movable_macro_mask = torch.from_numpy(placedb.top_movable_macro_mask).to(
+                device
+            )
+            self.btm_movable_macro_mask = torch.from_numpy(placedb.btm_movable_macro_mask).to(
+                device
+            )
             self.fixed_macro_mask = torch.from_numpy(placedb.fixed_macro_mask).to(
                 device
             )
@@ -812,9 +818,9 @@ class BasicPlace(nn.Module):
         # for movable macro legalization
         # the number of bins control the search granularity
         top_ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x[placedb.top_nodes_idx].contiguous(), # per layer # copy?
-            node_size_y=data_collections.node_size_y[placedb.top_nodes_idx].contiguous(), # per layer
-            node_weights=data_collections.num_pins_in_nodes[placedb.top_nodes_idx].contiguous(), # per layer
+            node_size_x=data_collections.node_size_x[placedb.top_phy_nodes_idx].contiguous(), # per layer # copy?
+            node_size_y=data_collections.node_size_y[placedb.top_phy_nodes_idx].contiguous(), # per layer
+            node_weights=data_collections.num_pins_in_nodes[placedb.top_phy_nodes_idx].contiguous(), # per layer
             flat_region_boxes=data_collections.flat_region_boxes,
             flat_region_boxes_start=data_collections.flat_region_boxes_start,
             node2fence_region_map=data_collections.node2fence_region_map,
@@ -826,9 +832,9 @@ class BasicPlace(nn.Module):
             num_filler_nodes=placedb.num_filler_nodes, # used to find the terminal slice end
         )
         btm_ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx], # per layer
-            node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx], # per layer
-            node_weights=data_collections.num_pins_in_nodes[placedb.btm_nodes_idx], # per layer
+            node_size_x=data_collections.node_size_x[placedb.btm_phy_nodes_idx], # per layer
+            node_size_y=data_collections.node_size_y[placedb.btm_phy_nodes_idx], # per layer
+            node_weights=data_collections.num_pins_in_nodes[placedb.btm_phy_nodes_idx], # per layer
             flat_region_boxes=data_collections.flat_region_boxes,
             flat_region_boxes_start=data_collections.flat_region_boxes_start,
             node2fence_region_map=data_collections.node2fence_region_map,

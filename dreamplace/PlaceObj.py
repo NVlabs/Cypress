@@ -1037,6 +1037,7 @@ class PlaceObj(nn.Module):
         name,
         region_id=None,
         fence_regions=None,
+        side='both',
     ):
         """
         @brief e-place electrostatic potential
@@ -1092,31 +1093,85 @@ class PlaceObj(nn.Module):
             if fence_regions is None
             else placedb.target_density_fence_region[region_id]
         )
-        return electric_potential.ElectricPotential(
-            node_size_x=data_collections.node_size_x,
-            node_size_y=data_collections.node_size_y,
-            bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
-            bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
-            target_density=target_density,
-            xl=placedb.xl,
-            yl=placedb.yl,
-            xh=placedb.xh,
-            yh=placedb.yh,
-            bin_size_x=bin_size_x,
-            bin_size_y=bin_size_y,
-            num_movable_nodes=placedb.num_movable_nodes,
-            num_terminals=placedb.num_terminals,
-            num_filler_nodes=placedb.num_filler_nodes,
-            padding=0,
-            deterministic_flag=params.deterministic_flag,
-            sorted_node_map=data_collections.sorted_node_map,
-            movable_macro_mask=data_collections.movable_macro_mask,
-            fast_mode=params.RePlAce_skip_energy_flag,
-            region_id=region_id,
-            fence_regions=fence_regions,
-            node2fence_region_map=data_collections.node2fence_region_map,
-            placedb=placedb,
-        )
+
+        if side == "top":
+            return electric_potential.ElectricPotential(
+                node_size_x=data_collections.node_size_x[placedb.top_nodes_idx],
+                node_size_y=data_collections.node_size_y[placedb.top_nodes_idx],
+                bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
+                bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
+                target_density=target_density,
+                xl=placedb.xl,
+                yl=placedb.yl,
+                xh=placedb.xh,
+                yh=placedb.yh,
+                bin_size_x=bin_size_x,
+                bin_size_y=bin_size_y,
+                num_movable_nodes=placedb.num_top_movable_nodes,
+                num_terminals=placedb.num_top_fixed_nodes,
+                num_filler_nodes=placedb.num_top_filler_nodes,
+                padding=0,
+                deterministic_flag=params.deterministic_flag,
+                sorted_node_map=data_collections.sorted_node_map,
+                movable_macro_mask=[True] * placedb.num_top_movable_nodes,
+                fast_mode=params.RePlAce_skip_energy_flag,
+                region_id=region_id,
+                fence_regions=fence_regions,
+                node2fence_region_map=data_collections.node2fence_region_map,
+                placedb=placedb,
+            )
+        elif side == "btm":
+             return electric_potential.ElectricPotential(
+                node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx],
+                node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx],
+                bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
+                bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
+                target_density=target_density,
+                xl=placedb.xl,
+                yl=placedb.yl,
+                xh=placedb.xh,
+                yh=placedb.yh,
+                bin_size_x=bin_size_x,
+                bin_size_y=bin_size_y,
+                num_movable_nodes=placedb.num_btm_movable_nodes,
+                num_terminals=placedb.num_btm_fixed_nodes,
+                num_filler_nodes=placedb.num_btm_filler_nodes,
+                padding=0,
+                deterministic_flag=params.deterministic_flag,
+                sorted_node_map=data_collections.sorted_node_map,
+                movable_macro_mask=[True] * placedb.num_btm_movable_nodes,
+                fast_mode=params.RePlAce_skip_energy_flag,
+                region_id=region_id,
+                fence_regions=fence_regions,
+                node2fence_region_map=data_collections.node2fence_region_map,
+                placedb=placedb,
+            )
+        else:
+            return electric_potential.ElectricPotential(
+                node_size_x=data_collections.node_size_x,
+                node_size_y=data_collections.node_size_y,
+                bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
+                bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
+                target_density=target_density,
+                xl=placedb.xl,
+                yl=placedb.yl,
+                xh=placedb.xh,
+                yh=placedb.yh,
+                bin_size_x=bin_size_x,
+                bin_size_y=bin_size_y,
+                num_movable_nodes=placedb.num_movable_nodes,
+                num_terminals=placedb.num_terminals,
+                num_filler_nodes=placedb.num_filler_nodes,
+                padding=0,
+                deterministic_flag=params.deterministic_flag,
+                sorted_node_map=data_collections.sorted_node_map,
+                movable_macro_mask=data_collections.movable_macro_mask,
+                fast_mode=params.RePlAce_skip_energy_flag,
+                region_id=region_id,
+                fence_regions=fence_regions,
+                node2fence_region_map=data_collections.node2fence_region_map,
+                placedb=placedb,
+            )
 
     def initialize_density_weight(self, params, placedb):
         """
