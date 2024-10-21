@@ -1287,9 +1287,6 @@ row height = %g, site width = %g
                 ]
             )
             filler_size_y = self.row_height
-            placeable_area = max(
-                self.area - self.total_fixed_node_area, self.total_space_area
-            )
             top_placeable_area = max(
                 self.area - self.top_fixed_node_area, self.total_space_area
             )
@@ -1298,11 +1295,6 @@ row height = %g, site width = %g
             )
             content += "use placeable_area = %g to compute fillers\n" % (
                 placeable_area
-            )
-            self.total_filler_node_area = max(
-                placeable_area * params.target_density
-                - self.total_movable_node_area,
-                0.0,
             )
             self.top_filler_node_area = max(
                 top_placeable_area * params.target_density
@@ -1314,15 +1306,14 @@ row height = %g, site width = %g
                 - self.btm_fixed_node_area,
                 0.0,
             )
-            self.num_filler_nodes = int(
-                round(self.total_filler_node_area / (filler_size_x * filler_size_y))
-            )
+            self.total_filler_node_area = self.top_filler_node_area + self.btm_filler_node_area
             self.num_top_filler_nodes = int(
                 round(self.top_filler_node_area / (filler_size_x * filler_size_y))
             )
             self.num_btm_filler_nodes = int(
                 round(self.btm_filler_node_area / (filler_size_x * filler_size_y))
             )
+            self.num_filler_nodes = self.num_top_filler_nodes + self.num_btm_filler_nodes
             self.node_size_x = np.concatenate(
                 [
                     self.node_size_x,
