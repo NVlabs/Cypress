@@ -1007,6 +1007,8 @@ class PlaceDB(object):
         self.btm_nodes_idx = np.where(self.node_side_flag == 0)[0]
         self.num_top_movable_nodes = len(np.where(self.top_nodes_idx < self.num_movable_nodes)[0])
         self.num_btm_movable_nodes = len(np.where(self.btm_nodes_idx < self.num_movable_nodes)[0])
+        self.top_fixed_nodes_idx = np.where(self.top_nodes_idx >= self.num_movable_nodes)[0]
+        self.btm_fixed_nodes_idx = np.where(self.btm_nodes_idx >= self.num_movable_nodes)[0]
 
     def initialize(self, params):
         """
@@ -1164,34 +1166,38 @@ row height = %g, site width = %g
             )
         )
         # total fixed node area should exclude the area outside the layout and the area of terminal_NIs
-        self.total_fixed_node_area = float(
-            np.sum(
-                np.maximum(
-                    np.minimum(
-                        self.node_x[self.fixed_slice]
-                        + self.node_size_x[self.fixed_slice],
-                        self.xh,
+        def get_fixed_node_area(fixed_slice):
+            return float(
+                np.sum(
+                    np.maximum(
+                        np.minimum(
+                            self.node_x[fixed_slice]
+                            + self.node_size_x[fixed_slice],
+                            self.xh,
+                        )
+                        - np.maximum(
+                            self.node_x[fixed_slice],
+                            self.xl,
+                        ),
+                        0.0,
                     )
-                    - np.maximum(
-                        self.node_x[self.fixed_slice],
-                        self.xl,
-                    ),
-                    0.0,
-                )
-                * np.maximum(
-                    np.minimum(
-                        self.node_y[self.fixed_slice]
-                        + self.node_size_y[self.fixed_slice],
-                        self.yh,
+                    * np.maximum(
+                        np.minimum(
+                            self.node_y[fixed_slice]
+                            + self.node_size_y[fixed_slice],
+                            self.yh,
+                        )
+                        - np.maximum(
+                            self.node_y[fixed_slice],
+                            self.yl,
+                        ),
+                        0.0,
                     )
-                    - np.maximum(
-                        self.node_y[self.fixed_slice],
-                        self.yl,
-                    ),
-                    0.0,
                 )
             )
-        )
+        self.total_fixed_node_area = get_fixed_node_area(self.fixed_slice)
+        self.top_fixed_node_area = get_fixed_node_area(self.top_fixed_nodes_idx)
+        self.btm_fixed_node_area = get_fixed_node_area(self.btm_fixed_nodes_idx)
         content += (
             "total_movable_node_area = %g, total_fixed_node_area = %g, total_space_area = %g\n"
             % (
@@ -1266,157 +1272,96 @@ row height = %g, site width = %g
                 virtual_macro_for_non_fence_region
             ]
 
-        # insert filler nodes
-        if len(self.regions) > 0:
-            ### calculate fillers if there is fence region
-            self.filler_size_x_fence_region = []
-            self.filler_size_y_fence_region = []
-            self.num_filler_nodes = 0
-            self.num_filler_nodes_fence_region = []
-            self.num_movable_nodes_fence_region = []
-            self.total_movable_node_area_fence_region = []
-            self.target_density_fence_region = []
-            self.filler_start_map = None
-            filler_node_size_x_list = []
-            filler_node_size_y_list = []
-            self.total_filler_node_area = 0
-            for i in range(len(self.regions) + 1):
-                (
-                    num_filler_i,
-                    target_density_i,
-                    filler_size_x_i,
-                    filler_size_y_i,
-                    total_movable_node_area_i,
-                    num_movable_nodes_i,
-                ) = self.calc_num_filler_for_fence_region(
-                    i, self.node2fence_region_map, params.target_density
-                )
-                self.num_movable_nodes_fence_region.append(num_movable_nodes_i)
-                self.num_filler_nodes_fence_region.append(num_filler_i)
-                self.total_movable_node_area_fence_region.append(
-                    total_movable_node_area_i
-                )
-                self.target_density_fence_region.append(target_density_i)
-                self.filler_size_x_fence_region.append(filler_size_x_i)
-                self.filler_size_y_fence_region.append(filler_size_y_i)
-                self.num_filler_nodes += num_filler_i
-                filler_node_size_x_list.append(
-                    np.full(
-                        num_filler_i,
-                        fill_value=filler_size_x_i,
-                        dtype=self.node_size_x.dtype,
-                    )
-                )
-                filler_node_size_y_list.append(
-                    np.full(
-                        num_filler_i,
-                        fill_value=filler_size_y_i,
-                        dtype=self.node_size_y.dtype,
-                    )
-                )
-                filler_node_area_i = num_filler_i * (filler_size_x_i * filler_size_y_i)
-                self.total_filler_node_area += filler_node_area_i
-                content += (
-                    "Region: %2d filler_node_area = %10.2f, #fillers = %8d, filler sizes = %2.4gx%g\n"
-                    % (
-                        i,
-                        filler_node_area_i,
-                        num_filler_i,
-                        filler_size_x_i,
-                        filler_size_y_i,
-                    )
-                )
-
-            self.total_movable_node_area_fence_region = np.array(
-                self.total_movable_node_area_fence_region
-            )
-            self.num_movable_nodes_fence_region = np.array(
-                self.num_movable_nodes_fence_region
-            )
 
         if params.enable_fillers:
-            # the way to compute this is still tricky; we need to consider place_io together on how to
-            # summarize the area of fixed cells, which may overlap with each other.
-            if len(self.regions) > 0:
-                self.filler_start_map = np.cumsum(
-                    [0] + self.num_filler_nodes_fence_region
-                )
-                self.num_filler_nodes_fence_region = np.array(
-                    self.num_filler_nodes_fence_region
-                )
-                self.node_size_x = np.concatenate(
-                    [self.node_size_x] + filler_node_size_x_list
-                )
-                self.node_size_y = np.concatenate(
-                    [self.node_size_y] + filler_node_size_y_list
-                )
-                content += (
-                    "total_filler_node_area = %10.2f, #fillers = %8d, average filler sizes = %2.4gx%g\n"
-                    % (
-                        self.total_filler_node_area,
-                        self.num_filler_nodes,
-                        self.total_filler_node_area
-                        / self.num_filler_nodes
-                        / self.row_height,
-                        self.row_height,
-                    )
-                )
-            else:
-                # insert filler node here for each layer
-                node_size_order = np.argsort(self.node_size_x[self.movable_slice])
-                filler_size_x = np.mean(
-                    self.node_size_x[
-                        node_size_order[
-                            int(self.num_movable_nodes * 0.05) : int(
-                                self.num_movable_nodes * 0.95
-                            )
-                        ]
+            # insert filler node here for each layer
+            # calculate filler node size
+            node_size_order = np.argsort(self.node_size_x[self.movable_slice])
+            filler_size_x = np.mean(
+                self.node_size_x[
+                    node_size_order[
+                        int(self.num_movable_nodes * 0.05) : int(
+                            self.num_movable_nodes * 0.95
+                        )
                     ]
+                ]
+            )
+            filler_size_y = self.row_height
+            placeable_area = max(
+                self.area - self.total_fixed_node_area, self.total_space_area
+            )
+            top_placeable_area = max(
+                self.area - self.top_fixed_node_area, self.total_space_area
+            )
+            btm_placeable_area = max(
+                self.area - self.btm_fixed_node_area, self.total_space_area
+            )
+            content += "use placeable_area = %g to compute fillers\n" % (
+                placeable_area
+            )
+            self.total_filler_node_area = max(
+                placeable_area * params.target_density
+                - self.total_movable_node_area,
+                0.0,
+            )
+            self.top_filler_node_area = max(
+                top_placeable_area * params.target_density
+                - self.top_fixed_node_area,
+                0.0,
+            )
+            self.btm_filler_node_area = max(
+                btm_placeable_area * params.target_density
+                - self.btm_fixed_node_area,
+                0.0,
+            )
+            self.num_filler_nodes = int(
+                round(self.total_filler_node_area / (filler_size_x * filler_size_y))
+            )
+            self.num_top_filler_nodes = int(
+                round(self.top_filler_node_area / (filler_size_x * filler_size_y))
+            )
+            self.num_btm_filler_nodes = int(
+                round(self.btm_filler_node_area / (filler_size_x * filler_size_y))
+            )
+            self.node_size_x = np.concatenate(
+                [
+                    self.node_size_x,
+                    np.full(
+                        self.num_top_filler_nodes,
+                        fill_value=filler_size_x,
+                        dtype=self.node_size_x.dtype,
+                    ),
+                    np.full(
+                        self.num_btm_filler_nodes,
+                        fill_value=filler_size_x,
+                        dtype=self.node_size_x.dtype,
+                    ),
+                ]
+            )
+            self.node_size_y = np.concatenate(
+                [
+                    self.node_size_y,
+                    np.full(
+                        self.num_top_filler_nodes,
+                        fill_value=filler_size_y,
+                        dtype=self.node_size_y.dtype,
+                    ),
+                    np.full(
+                        self.num_btm_filler_nodes,
+                        fill_value=filler_size_y,
+                        dtype=self.node_size_y.dtype,
+                    ),
+                ]
+            )
+            content += (
+                "total_filler_node_area = %g, #fillers = %d, filler sizes = %gx%g\n"
+                % (
+                    self.total_filler_node_area,
+                    self.num_filler_nodes,
+                    filler_size_x,
+                    filler_size_y,
                 )
-                filler_size_y = self.row_height
-                placeable_area = max(
-                    self.area - self.total_fixed_node_area, self.total_space_area
-                )
-                content += "use placeable_area = %g to compute fillers\n" % (
-                    placeable_area
-                )
-                self.total_filler_node_area = max(
-                    placeable_area * params.target_density
-                    - self.total_movable_node_area,
-                    0.0,
-                )
-                self.num_filler_nodes = int(
-                    round(self.total_filler_node_area / (filler_size_x * filler_size_y))
-                )
-                self.node_size_x = np.concatenate(
-                    [
-                        self.node_size_x,
-                        np.full(
-                            self.num_filler_nodes,
-                            fill_value=filler_size_x,
-                            dtype=self.node_size_x.dtype,
-                        ),
-                    ]
-                )
-                self.node_size_y = np.concatenate(
-                    [
-                        self.node_size_y,
-                        np.full(
-                            self.num_filler_nodes,
-                            fill_value=filler_size_y,
-                            dtype=self.node_size_y.dtype,
-                        ),
-                    ]
-                )
-                content += (
-                    "total_filler_node_area = %g, #fillers = %d, filler sizes = %gx%g\n"
-                    % (
-                        self.total_filler_node_area,
-                        self.num_filler_nodes,
-                        filler_size_x,
-                        filler_size_y,
-                    )
-                )
+            )
         else:
             self.total_filler_node_area = 0
             self.num_filler_nodes = 0
