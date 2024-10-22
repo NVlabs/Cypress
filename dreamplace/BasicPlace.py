@@ -353,12 +353,16 @@ class PlaceOpCollection(object):
         self.weight_hpwl_op = None
         self.rsmt_wl_op = None
         self.density_overflow_op = None
+        self.top_density_overflow_op = None
+        self.btm_density_overflow_op = None
         self.legality_check_op = None
         self.legalize_op = None
         self.detailed_place_op = None
         self.wirelength_op = None
         self.update_gamma_op = None
         self.density_op = None
+        self.top_density_op = None
+        self.btm_density_op = None
         self.update_density_weight_op = None
         self.precondition_op = None
         self.noise_op = None
@@ -368,6 +372,8 @@ class PlaceOpCollection(object):
         self.nctugr_congestion_map_op = None
         self.adjust_node_area_op = None
         self.macro_overlap_op = None
+        self.top_macro_overlap_op = None
+        self.btm_macro_overlap_op = None
         self.update_macro_overlap_weight_op = None
         self.macro_refinement_op = None
         self.net_crossing_op = None

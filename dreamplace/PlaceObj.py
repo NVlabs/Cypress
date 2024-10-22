@@ -302,6 +302,24 @@ class PlaceObj(nn.Module):
             self.num_bins_y,
             name=name,
         )
+        self.op_collections.top_density_op = self.build_electric_potential(
+            params,
+            placedb,
+            self.data_collections,
+            self.num_bins_x,
+            self.num_bins_y,
+            name=name,
+            side="top",
+        )
+        self.op_collections.btm_density_op = self.build_electric_potential(
+            params,
+            placedb,
+            self.data_collections,
+            self.num_bins_x,
+            self.num_bins_y,
+            name=name,
+            side="btm",
+        )
         ### build multiple density op for multi-electric field
         if len(self.placedb.regions) > 0:
             (
@@ -430,7 +448,13 @@ class PlaceObj(nn.Module):
         if len(self.placedb.regions) > 0:
             self.density = self.op_collections.fence_region_density_merged_op(pos)
         else:
-            self.density = self.op_collections.density_op(pos)
+            # self.density = self.op_collections.density_op(pos)
+            num_nodes = pos.numel() // 2
+            top_pos = torch.cat((pos[self.placedb.top_nodes_idx], pos[self.placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
+            btm_pos = torch.cat((pos[self.placedb.btm_nodes_idx], pos[self.placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
+            top_density = self.op_collections.top_density_op(top_pos)
+            btm_density = self.op_collections.btm_density_op(btm_pos)
+            self.density = top_density + btm_density
 
         if self.init_density is None:
             ### record initial density
@@ -1095,6 +1119,7 @@ class PlaceObj(nn.Module):
         )
 
         if side == "top":
+            top_movable_nodes_idx = placedb.top_nodes_idx[placedb.top_nodes_idx < placedb.num_movable_nodes]
             return electric_potential.ElectricPotential(
                 node_size_x=data_collections.node_size_x[placedb.top_nodes_idx],
                 node_size_y=data_collections.node_size_y[placedb.top_nodes_idx],
@@ -1113,7 +1138,7 @@ class PlaceObj(nn.Module):
                 padding=0,
                 deterministic_flag=params.deterministic_flag,
                 sorted_node_map=data_collections.sorted_top_node_map,
-                movable_macro_mask=[True] * placedb.num_top_movable_nodes,
+                movable_macro_mask=data_collections.movable_macro_mask[top_movable_nodes_idx],
                 fast_mode=params.RePlAce_skip_energy_flag,
                 region_id=region_id,
                 fence_regions=fence_regions,
@@ -1121,6 +1146,7 @@ class PlaceObj(nn.Module):
                 placedb=placedb,
             )
         elif side == "btm":
+             btm_movable_nodes_idx = placedb.btm_nodes_idx[placedb.btm_nodes_idx < placedb.num_movable_nodes]
              return electric_potential.ElectricPotential(
                 node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx],
                 node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx],
@@ -1139,7 +1165,7 @@ class PlaceObj(nn.Module):
                 padding=0,
                 deterministic_flag=params.deterministic_flag,
                 sorted_node_map=data_collections.sorted_btm_node_map,
-                movable_macro_mask=[True] * placedb.num_btm_movable_nodes,
+                movable_macro_mask=data_collections.movable_macro_mask[btm_movable_nodes_idx],
                 fast_mode=params.RePlAce_skip_energy_flag,
                 region_id=region_id,
                 fence_regions=fence_regions,
