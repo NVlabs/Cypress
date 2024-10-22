@@ -261,6 +261,12 @@ class PlaceDataCollection(object):
             _, self.sorted_node_map = torch.sort(movable_size_x)
             self.sorted_node_map = self.sorted_node_map.to(torch.int32)
             # self.sorted_node_map = torch.arange(0, placedb.num_movable_nodes, dtype=torch.int32, device=device)
+            top_movable_idx = placedb.top_nodes_idx[placedb.top_nodes_idx < placedb.num_movable_nodes]
+            _, self.sorted_top_node_map = torch.sort(movable_size_x[top_movable_idx])
+            self.sorted_top_node_map = self.sorted_top_node_map.to(torch.int32)
+            btm_movable_idx = placedb.btm_nodes_idx[placedb.btm_nodes_idx < placedb.num_movable_nodes]
+            _, self.sorted_btm_node_map = torch.sort(movable_size_x[btm_movable_idx])
+            self.sorted_btm_node_map = self.sorted_btm_node_map.to(torch.int32)
 
             # store floorplan info for later rescaling during legalization/detailed placement
             self.fp_info = FloorplanInfo(
@@ -817,10 +823,12 @@ class BasicPlace(nn.Module):
         """
         # for movable macro legalization
         # the number of bins control the search granularity
+        top_phy_idx = placedb.top_nodes_idx[placedb.top_nodes_idx < placedb.num_physical_nodes]
+        btm_phy_idx = placedb.btm_nodes_idx[placedb.btm_nodes_idx < placedb.num_physical_nodes]
         top_ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x[placedb.top_phy_nodes_idx].contiguous(), # per layer # copy?
-            node_size_y=data_collections.node_size_y[placedb.top_phy_nodes_idx].contiguous(), # per layer
-            node_weights=data_collections.num_pins_in_nodes[placedb.top_phy_nodes_idx].contiguous(), # per layer
+            node_size_x=data_collections.node_size_x[top_phy_idx].contiguous(), # per layer # copy?
+            node_size_y=data_collections.node_size_y[top_phy_idx].contiguous(), # per layer
+            node_weights=data_collections.num_pins_in_nodes[top_phy_idx].contiguous(), # per layer
             flat_region_boxes=data_collections.flat_region_boxes,
             flat_region_boxes_start=data_collections.flat_region_boxes_start,
             node2fence_region_map=data_collections.node2fence_region_map,
@@ -828,13 +836,13 @@ class BasicPlace(nn.Module):
             num_bins_x=placedb.num_bins_x,
             num_bins_y=placedb.num_bins_y,
             num_movable_nodes=placedb.num_top_movable_nodes, 
-            num_terminal_NIs=placedb.num_terminal_NIs, # used to find the terminal slice end
-            num_filler_nodes=placedb.num_filler_nodes, # used to find the terminal slice end
+            num_terminal_NIs=0, # used to find the terminal slice end
+            num_filler_nodes=0, # used to find the terminal slice end
         )
         btm_ml = macro_legalize.MacroLegalize(
-            node_size_x=data_collections.node_size_x[placedb.btm_phy_nodes_idx], # per layer
-            node_size_y=data_collections.node_size_y[placedb.btm_phy_nodes_idx], # per layer
-            node_weights=data_collections.num_pins_in_nodes[placedb.btm_phy_nodes_idx], # per layer
+            node_size_x=data_collections.node_size_x[btm_phy_idx], # per layer
+            node_size_y=data_collections.node_size_y[btm_phy_idx], # per layer
+            node_weights=data_collections.num_pins_in_nodes[btm_phy_idx], # per layer
             flat_region_boxes=data_collections.flat_region_boxes,
             flat_region_boxes_start=data_collections.flat_region_boxes_start,
             node2fence_region_map=data_collections.node2fence_region_map,
@@ -842,8 +850,8 @@ class BasicPlace(nn.Module):
             num_bins_x=placedb.num_bins_x,
             num_bins_y=placedb.num_bins_y,
             num_movable_nodes=placedb.num_btm_movable_nodes,
-            num_terminal_NIs=placedb.num_terminal_NIs,
-            num_filler_nodes=placedb.num_filler_nodes,
+            num_terminal_NIs=0,
+            num_filler_nodes=0,
         )
         ml = macro_legalize.MacroLegalize(
             node_size_x=data_collections.node_size_x,
@@ -907,25 +915,28 @@ class BasicPlace(nn.Module):
         def build_legalization_op(pos, orient_choice):
             logging.info("Start legalization")
 
+            top_phy_idx = placedb.top_nodes_idx[placedb.top_nodes_idx < placedb.num_physical_nodes]
+            top_btm_idx = placedb.top_nodes_idx[placedb.top_nodes_idx >= placedb.num_physical_nodes]
+
             # top layer legalization
-            top_orient_choice = orient_choice[placedb.top_nodes_idx]
+            top_orient_choice = orient_choice[top_phy_idx]
             num_nodes = pos.numel() // 2
-            top_pos = torch.cat((pos[placedb.top_nodes_idx], pos[placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
+            top_pos = torch.cat((pos[top_phy_idx], pos[top_phy_idx + num_nodes]), dim=0).contiguous()
             top_pos1 = top_ml(top_pos, top_pos, top_orient_choice)
             
             # bottom layer legalization
-            btm_orient_choice = orient_choice[placedb.btm_nodes_idx]
-            btm_pos = torch.cat((pos[placedb.btm_nodes_idx], pos[placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
+            btm_orient_choice = orient_choice[btm_phy_idx]
+            btm_pos = torch.cat((pos[btm_phy_idx], pos[btm_phy_idx + num_nodes]), dim=0).contiguous()
             btm_pos1 = btm_ml(btm_pos, btm_pos, btm_orient_choice)
             
             
             pos1 = pos.clone()
             # first half of top_pos1 is x, second half is y
-            pos1[placedb.top_nodes_idx] = top_pos1[:len(placedb.top_nodes_idx)]
-            pos1[placedb.top_nodes_idx + num_nodes] = top_pos1[len(placedb.top_nodes_idx):]
+            pos1[top_phy_idx] = top_pos1[:len(top_phy_idx)]
+            pos1[top_phy_idx + num_nodes] = top_pos1[len(top_phy_idx):]
             # first half of btm_pos1 is x, second half is y
-            pos1[placedb.btm_nodes_idx] = btm_pos1[:len(placedb.btm_nodes_idx)]
-            pos1[placedb.btm_nodes_idx + num_nodes] = btm_pos1[len(placedb.btm_nodes_idx):]
+            pos1[btm_phy_idx] = btm_pos1[:len(btm_phy_idx)]
+            pos1[btm_phy_idx + num_nodes] = btm_pos1[len(btm_phy_idx):]
 
 
 
