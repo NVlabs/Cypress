@@ -152,7 +152,7 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                     # "weight_hpwl": self.op_collections.weight_hpwl_op,
                     "hpwl": self.op_collections.hpwl_op,
                     "net_crossing": self.op_collections.net_crossing_op,
-                    "overflow": self.op_collections.density_overflow_op,
+                    "overflow": self.op_collections.two_side_density_overflow_op,
                 }
                 if params.routability_opt_flag:
                     eval_ops.update(
@@ -835,6 +835,8 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                                 num_area_adjust += 1
                                 # restart Llambda
                                 model.op_collections.density_op.reset()
+                                model.op_collections.top_density_op.reset()
+                                model.op_collections.btm_density_op.reset()
                                 model.op_collections.density_overflow_op.reset()
                                 model.op_collections.pin_utilization_map_op.reset()
                                 model.initialize_density_weight(params, placedb)

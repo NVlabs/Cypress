@@ -293,6 +293,23 @@ class PlaceObj(nn.Module):
         self.op_collections.density_overflow_op = self.build_electric_overflow(
             params, placedb, self.data_collections, self.num_bins_x, self.num_bins_y
         )
+        self.op_collections.top_density_overflow_op = self.build_electric_overflow(
+            params,
+            placedb,
+            self.data_collections,
+            self.num_bins_x,
+            self.num_bins_y,
+            side="top",
+        )
+        self.op_collections.btm_density_overflow_op = self.build_electric_overflow(
+            params,
+            placedb,
+            self.data_collections,
+            self.num_bins_x,
+            self.num_bins_y,
+            side="btm",
+        )
+        self.op_collections.two_side_density_overflow_op = self.build_two_side_density_overflow(placedb)
 
         self.op_collections.density_op = self.build_electric_potential(
             params,
@@ -857,7 +874,7 @@ class PlaceObj(nn.Module):
         )
 
     def build_electric_overflow(
-        self, params, placedb, data_collections, num_bins_x, num_bins_y
+        self, params, placedb, data_collections, num_bins_x, num_bins_y, side='both'
     ):
         """
         @brief compute electric density overflow
@@ -870,26 +887,88 @@ class PlaceObj(nn.Module):
         bin_size_x = (placedb.xh - placedb.xl) / num_bins_x
         bin_size_y = (placedb.yh - placedb.yl) / num_bins_y
 
-        return electric_overflow.ElectricOverflow(
-            node_size_x=data_collections.node_size_x,
-            node_size_y=data_collections.node_size_y,
-            bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
-            bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
-            target_density=data_collections.target_density,
-            xl=placedb.xl,
-            yl=placedb.yl,
-            xh=placedb.xh,
-            yh=placedb.yh,
-            bin_size_x=bin_size_x,
-            bin_size_y=bin_size_y,
-            num_movable_nodes=placedb.num_movable_nodes,
-            num_terminals=placedb.num_terminals,
-            num_filler_nodes=0,
-            padding=0,
-            deterministic_flag=params.deterministic_flag,
-            sorted_node_map=data_collections.sorted_node_map,
-            movable_macro_mask=data_collections.movable_macro_mask,
-        )
+        if side == "top":
+            top_movable_nodes_idx = placedb.top_nodes_idx[placedb.top_nodes_idx < placedb.num_movable_nodes]
+            return electric_overflow.ElectricOverflow(
+                node_size_x=data_collections.node_size_x[placedb.top_nodes_idx],
+                node_size_y=data_collections.node_size_y[placedb.top_nodes_idx],
+                bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
+                bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
+                target_density=data_collections.target_density,
+                xl=placedb.xl,
+                yl=placedb.yl,
+                xh=placedb.xh,
+                yh=placedb.yh,
+                bin_size_x=bin_size_x,
+                bin_size_y=bin_size_y,
+                num_movable_nodes=placedb.num_top_movable_nodes,
+                num_terminals=placedb.num_top_fixed_nodes,
+                num_filler_nodes=0,
+                padding=0,
+                deterministic_flag=params.deterministic_flag,
+                sorted_node_map=data_collections.sorted_top_node_map,
+                movable_macro_mask=data_collections.movable_macro_mask[top_movable_nodes_idx],
+            )
+        elif side == "btm":
+            btm_movable_nodes_idx = placedb.btm_nodes_idx[placedb.btm_nodes_idx < placedb.num_movable_nodes]
+            return electric_overflow.ElectricOverflow(
+                node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx],
+                node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx],
+                bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
+                bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
+                target_density=data_collections.target_density,
+                xl=placedb.xl,
+                yl=placedb.yl,
+                xh=placedb.xh,
+                yh=placedb.yh,
+                bin_size_x=bin_size_x,
+                bin_size_y=bin_size_y,
+                num_movable_nodes=placedb.num_btm_movable_nodes,
+                num_terminals=placedb.num_btm_fixed_nodes,
+                num_filler_nodes=0,
+                padding=0,
+                deterministic_flag=params.deterministic_flag,
+                sorted_node_map=data_collections.sorted_btm_node_map,
+                movable_macro_mask=data_collections.movable_macro_mask[btm_movable_nodes_idx],
+            )
+        else:
+            return electric_overflow.ElectricOverflow(
+                node_size_x=data_collections.node_size_x,
+                node_size_y=data_collections.node_size_y,
+                bin_center_x=data_collections.bin_center_x_padded(placedb, 0, num_bins_x),
+                bin_center_y=data_collections.bin_center_y_padded(placedb, 0, num_bins_y),
+                target_density=data_collections.target_density,
+                xl=placedb.xl,
+                yl=placedb.yl,
+                xh=placedb.xh,
+                yh=placedb.yh,
+                bin_size_x=bin_size_x,
+                bin_size_y=bin_size_y,
+                num_movable_nodes=placedb.num_movable_nodes,
+                num_terminals=placedb.num_terminals,
+                num_filler_nodes=0,
+                padding=0,
+                deterministic_flag=params.deterministic_flag,
+                sorted_node_map=data_collections.sorted_node_map,
+                movable_macro_mask=data_collections.movable_macro_mask,
+            )
+
+    def build_two_side_density_overflow(self, placedb):
+        
+        def eval_two_side_density_overflow(pos):
+            if placedb.num_top_phy_nodes == 0:
+                top_overflow, top_max_density = torch.tensor([0], dtype=pos.dtype, device=pos.device), torch.tensor([0], dtype=pos.dtype, device=pos.device)
+            else:
+                top_overflow, top_max_density = self.op_collections.top_density_overflow_op(pos)
+            if placedb.num_btm_phy_nodes == 0:
+                btm_overflow, btm_max_density = torch.tensor([0], dtype=pos.dtype, device=pos.device), torch.tensor([0], dtype=pos.dtype, device=pos.device)
+            else:
+                btm_overflow, btm_max_density = self.op_collections.btm_density_overflow_op(pos)
+            
+            return torch.max(top_overflow, btm_overflow), torch.max(top_max_density, btm_max_density)
+
+        return eval_two_side_density_overflow
+
 
     def build_density_potential(
         self, params, placedb, data_collections, num_bins_x, num_bins_y, padding, name

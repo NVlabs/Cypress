@@ -355,6 +355,7 @@ class PlaceOpCollection(object):
         self.density_overflow_op = None
         self.top_density_overflow_op = None
         self.btm_density_overflow_op = None
+        self.two_side_density_overflow_op = None
         self.legality_check_op = None
         self.legalize_op = None
         self.detailed_place_op = None
