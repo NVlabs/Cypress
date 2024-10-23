@@ -1009,6 +1009,8 @@ class PlaceDB(object):
         self.num_btm_movable_nodes = len(np.where(self.btm_nodes_idx < self.num_movable_nodes)[0])
         self.num_top_fixed_nodes = len(np.where(self.top_nodes_idx >= self.num_movable_nodes)[0])
         self.num_btm_fixed_nodes = len(np.where(self.btm_nodes_idx >= self.num_movable_nodes)[0])
+        self.num_top_phy_nodes = self.num_top_movable_nodes + self.num_top_fixed_nodes
+        self.num_btm_phy_nodes = self.num_btm_movable_nodes + self.num_btm_fixed_nodes
         self.top_fixed_nodes_idx = np.where(self.top_nodes_idx >= self.num_movable_nodes)[0]
         self.btm_fixed_nodes_idx = np.where(self.btm_nodes_idx >= self.num_movable_nodes)[0]
         self.top_movable_macro_mask = self.movable_macro_mask[self.top_nodes_idx]

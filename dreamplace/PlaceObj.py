@@ -452,8 +452,15 @@ class PlaceObj(nn.Module):
             num_nodes = pos.numel() // 2
             top_pos = torch.cat((pos[self.placedb.top_nodes_idx], pos[self.placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
             btm_pos = torch.cat((pos[self.placedb.btm_nodes_idx], pos[self.placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
-            top_density = self.op_collections.top_density_op(top_pos)
-            btm_density = self.op_collections.btm_density_op(btm_pos)
+            # check if top_pos/btm_pos is empty, skip if no physcial node
+            if self.placedb.num_top_phy_nodes == 0:
+                top_density = torch.tensor([0], dtype=pos.dtype, device=pos.device)
+            else:
+                top_density = self.op_collections.top_density_op(top_pos)
+            if self.placedb.num_btm_phy_nodes == 0:
+                btm_density = torch.tensor([0], dtype=pos.dtype, device=pos.device)
+            else:
+                btm_density = self.op_collections.btm_density_op(btm_pos)
             self.density = top_density + btm_density
 
         if self.init_density is None:
