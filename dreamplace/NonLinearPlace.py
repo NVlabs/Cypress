@@ -834,10 +834,8 @@ class NonLinearPlace(BasicPlace.BasicPlace):
                             if adjust_area_flag:
                                 num_area_adjust += 1
                                 # restart Llambda
-                                model.op_collections.density_op.reset()
                                 model.op_collections.top_density_op.reset()
                                 model.op_collections.btm_density_op.reset()
-                                model.op_collections.density_overflow_op.reset()
                                 model.op_collections.pin_utilization_map_op.reset()
                                 model.initialize_density_weight(params, placedb)
                                 model.density_weight.mul_(0.1 / params.density_weight)

@@ -337,6 +337,7 @@ class PlaceObj(nn.Module):
             name=name,
             side="btm",
         )
+        self.op_collections.two_side_density_op = self.build_two_side_electric_potential(placedb)
         ### build multiple density op for multi-electric field
         if len(self.placedb.regions) > 0:
             (
@@ -465,20 +466,7 @@ class PlaceObj(nn.Module):
         if len(self.placedb.regions) > 0:
             self.density = self.op_collections.fence_region_density_merged_op(pos)
         else:
-            # self.density = self.op_collections.density_op(pos)
-            num_nodes = pos.numel() // 2
-            top_pos = torch.cat((pos[self.placedb.top_nodes_idx], pos[self.placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
-            btm_pos = torch.cat((pos[self.placedb.btm_nodes_idx], pos[self.placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
-            # check if top_pos/btm_pos is empty, skip if no physcial node
-            if self.placedb.num_top_phy_nodes == 0:
-                top_density = torch.tensor([0], dtype=pos.dtype, device=pos.device)
-            else:
-                top_density = self.op_collections.top_density_op(top_pos)
-            if self.placedb.num_btm_phy_nodes == 0:
-                btm_density = torch.tensor([0], dtype=pos.dtype, device=pos.device)
-            else:
-                btm_density = self.op_collections.btm_density_op(btm_pos)
-            self.density = top_density + btm_density
+            self.density = self.op_collections.two_side_density_op(pos)
 
         if self.init_density is None:
             ### record initial density
@@ -956,14 +944,18 @@ class PlaceObj(nn.Module):
     def build_two_side_density_overflow(self, placedb):
         
         def eval_two_side_density_overflow(pos):
+            # top side density overflow
             if placedb.num_top_phy_nodes == 0:
                 top_overflow, top_max_density = torch.tensor([0], dtype=pos.dtype, device=pos.device), torch.tensor([0], dtype=pos.dtype, device=pos.device)
             else:
-                top_overflow, top_max_density = self.op_collections.top_density_overflow_op(pos)
+                top_pos = torch.cat((pos[placedb.top_nodes_idx], pos[placedb.top_nodes_idx + pos.numel() // 2]), dim=0).contiguous()
+                top_overflow, top_max_density = self.op_collections.top_density_overflow_op(top_pos)
+            # btm side density overflow
             if placedb.num_btm_phy_nodes == 0:
                 btm_overflow, btm_max_density = torch.tensor([0], dtype=pos.dtype, device=pos.device), torch.tensor([0], dtype=pos.dtype, device=pos.device)
             else:
-                btm_overflow, btm_max_density = self.op_collections.btm_density_overflow_op(pos)
+                btm_pos = torch.cat((pos[placedb.btm_nodes_idx], pos[placedb.btm_nodes_idx + pos.numel() // 2]), dim=0).contiguous()
+                btm_overflow, btm_max_density = self.op_collections.btm_density_overflow_op(btm_pos)
             
             return torch.max(top_overflow, btm_overflow), torch.max(top_max_density, btm_max_density)
 
@@ -1284,6 +1276,25 @@ class PlaceObj(nn.Module):
                 node2fence_region_map=data_collections.node2fence_region_map,
                 placedb=placedb,
             )
+
+    def build_two_side_electric_potential(self, placedb):
+
+        def eval_two_side_electric_potential(pos):
+            num_nodes = pos.numel() // 2
+            top_pos = torch.cat((pos[self.placedb.top_nodes_idx], pos[self.placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
+            btm_pos = torch.cat((pos[self.placedb.btm_nodes_idx], pos[self.placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
+            # check if top_pos/btm_pos is empty, skip if no physcial node
+            if self.placedb.num_top_phy_nodes == 0:
+                top_density = torch.tensor([0], dtype=pos.dtype, device=pos.device)
+            else:
+                top_density = self.op_collections.top_density_op(top_pos)
+            if self.placedb.num_btm_phy_nodes == 0:
+                btm_density = torch.tensor([0], dtype=pos.dtype, device=pos.device)
+            else:
+                btm_density = self.op_collections.btm_density_op(btm_pos)
+            return top_density + btm_density
+
+        return eval_two_side_electric_potential
 
     def initialize_density_weight(self, params, placedb):
         """
@@ -1761,20 +1772,60 @@ class PlaceObj(nn.Module):
             self.op_collections.fence_region_density_overflow_merged_op,
         )
 
-    def build_macro_overlap(self, params, placedb, data_collections):
+    def build_macro_overlap(self, params, placedb, data_collections, side='both'):
         """
         @brief MFP macro overlap
         @param params parameters
         @param placedb placement database
         @param data_collections a collection of data and variables required for constructing ops
         """
-        return macro_overlap.MacroOverlap(
-            fp_info=data_collections.fp_info,
-            node_size_x=data_collections.node_size_x,
-            node_size_y=data_collections.node_size_y,
-            num_movable_nodes=placedb.num_movable_nodes,
-            movable_macro_mask=data_collections.movable_macro_mask,
-        )
+
+        if side == "top":
+            top_movable_nodes_idx = placedb.top_nodes_idx[placedb.top_nodes_idx < placedb.num_movable_nodes]
+            return macro_overlap.MacroOverlap(
+                fp_info=data_collections.fp_info,
+                node_size_x=data_collections.node_size_x[placedb.top_nodes_idx],
+                node_size_y=data_collections.node_size_y[placedb.top_nodes_idx],
+                num_movable_nodes=placedb.num_top_movable_nodes,
+                movable_macro_mask=data_collections.movable_macro_mask[top_movable_nodes_idx],
+            )
+        elif side == "btm":
+            btm_movable_nodes_idx = placedb.btm_nodes_idx[placedb.btm_nodes_idx < placedb.num_movable_nodes]
+            return macro_overlap.MacroOverlap(
+                fp_info=data_collections.fp_info,
+                node_size_x=data_collections.node_size_x,
+                node_size_y=data_collections.node_size_y,
+                num_movable_nodes=placedb.num_movable_nodes,
+                movable_macro_mask=data_collections.movable_macro_mask[btm_movable_nodes_idx],
+            )
+        else:
+            return macro_overlap.MacroOverlap(
+                fp_info=data_collections.fp_info,
+                node_size_x=data_collections.node_size_x,
+                node_size_y=data_collections.node_size_y,
+                num_movable_nodes=placedb.num_movable_nodes,
+                movable_macro_mask=data_collections.movable_macro_mask,
+            )
+
+    def build_two_side_macro_overlap(self, placedb):
+
+        def eval_two_side_macro_overlap(pos):
+            # top side macro overlap
+            if placedb.num_top_phy_nodes == 0:
+                top_macro_overlap = torch.tensor(0.0, dtype=pos.dtype, device=pos.device)
+            else:
+                top_pos = torch.cat((pos[self.placedb.top_nodes_idx], pos[self.placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
+                top_macro_overlap = self.op_collections.macro_overlap_top_op(top_pos)
+            # bottom side macro overlap
+            if placedb.num_btm_phy_nodes == 0:
+                btm_macro_overlap = torch.tensor(0.0, dtype=pos.dtype, device=pos.device)
+            else:
+                btm_pos = torch.cat((pos[self.placedb.btm_nodes_idx], pos[self.placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
+                btm_macro_overlap = self.op_collections.macro_overlap_btm_op(btm_pos)
+            return top_macro_overlap + btm_macro_overlap
+    
+        return eval_two_side_macro_overlap
+        
 
     def initialize_macro_overlap_weight(self, params, placedb):
         # with torch.no_grad():
