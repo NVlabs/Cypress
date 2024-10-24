@@ -283,15 +283,18 @@ class PlaceDrawer {
         }
       }
       // movable
-      for (int i = 0; i < m_num_movable_nodes; ++i) {
-        if (m_node_size_y[i] > 2 * m_row_height) {
-          
+      for (int target_side = 0; target_side < 2; target_side++) {
+        for (int i = 0; i < m_num_movable_nodes; ++i) {
           double angle = m_theta[i];
           double rect_x = m_x[i];
           double rect_y = m_y[i];
           double rect_width = m_node_size_x[i];
           double rect_height = m_node_size_y[i];
           int side = m_side[i];
+
+          if (side != target_side) {
+            continue;
+          }
 
 
           // Translate and rotate:
@@ -331,27 +334,17 @@ class PlaceDrawer {
           
           cairo_restore(c);
 
-        } else {
-          cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
-                          m_node_size_y[i]);
-          cairo_set_source_rgb(c, 140 / 255.0, 140 / 255.0, 140 / 255.0);
-          cairo_fill(c);
-          cairo_rectangle(c, m_x[i], m_y[i], m_node_size_x[i],
-                          m_node_size_y[i]);
-          cairo_set_line_width(c, m_site_width);
-          cairo_set_source_rgb(c, 140 / 255.0, 140 / 255.0, 140 / 255.0);
-          cairo_stroke(c);
-        }
-        if (m_content & NODETEXT) {
-          sprintf(buf, "%u", i);
-          cairo_set_font_size(c, m_node_size_y[i] / 20);
-          cairo_text_extents(c, buf, &extents);
-          cairo_move_to(c,
-                        (m_x[i] + m_node_size_x[i] / 2) -
-                            (extents.width / 2 + extents.x_bearing),
-                        (m_y[i] + m_node_size_y[i] / 2) -
-                            (extents.height / 2 + extents.y_bearing));
-          cairo_show_text(c, buf);
+          if (m_content & NODETEXT) {
+            sprintf(buf, "%u", i);
+            cairo_set_font_size(c, m_node_size_y[i] / 20);
+            cairo_text_extents(c, buf, &extents);
+            cairo_move_to(c,
+                          (m_x[i] + m_node_size_x[i] / 2) -
+                              (extents.width / 2 + extents.x_bearing),
+                          (m_y[i] + m_node_size_y[i] / 2) -
+                              (extents.height / 2 + extents.y_bearing));
+            cairo_show_text(c, buf);
+          }
         }
       }
     }
