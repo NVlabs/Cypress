@@ -14,13 +14,14 @@ template <typename T>
 int computeNetCrossingCudaLauncher(
     const T* x, const T* y, const int* flat_netpin,
     const int* netpin_start, const unsigned char* net_mask,
+    const int* pin_side,
     int num_nets, int num_pins, T* net_crossing,
     T *lambda_, T *mu_, T *sigma_,
     T *grad_intermediate_x, T *grad_intermediate_y
 );
 
 std::vector<at::Tensor> net_crossing_forward(at::Tensor pos, at::Tensor flat_netpin,
-                               at::Tensor netpin_start, at::Tensor net_mask,
+                               at::Tensor netpin_start, at::Tensor net_mask, at::Tensor pin_side,
                                at::Tensor lambda, at::Tensor mu, at::Tensor sigma // scalar Tensors
 ) {
   CHECK_FLAT_CUDA(pos);
@@ -32,6 +33,8 @@ std::vector<at::Tensor> net_crossing_forward(at::Tensor pos, at::Tensor flat_net
   CHECK_CONTIGUOUS(netpin_start);
   CHECK_FLAT_CUDA(net_mask);
   CHECK_CONTIGUOUS(net_mask);
+  CHECK_FLAT_CUDA(pin_side);
+  CHECK_CONTIGUOUS(pin_side);
 
   int num_nets = netpin_start.numel() - 1;
   int num_pins = pos.numel() / 2;
@@ -46,6 +49,7 @@ std::vector<at::Tensor> net_crossing_forward(at::Tensor pos, at::Tensor flat_net
         DREAMPLACE_TENSOR_DATA_PTR(flat_netpin, int),
         DREAMPLACE_TENSOR_DATA_PTR(netpin_start, int),
         DREAMPLACE_TENSOR_DATA_PTR(net_mask, unsigned char), 
+        DREAMPLACE_TENSOR_DATA_PTR(pin_side, int),
         num_nets, num_pins,
         DREAMPLACE_TENSOR_DATA_PTR(net_crossing, scalar_t),
         DREAMPLACE_TENSOR_DATA_PTR(lambda, scalar_t),

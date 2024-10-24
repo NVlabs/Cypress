@@ -137,6 +137,7 @@ class PlaceDataCollection(object):
             )
 
             self.pin2node_map = torch.from_numpy(placedb.pin2node_map).to(device)
+            self.node_side_flag = torch.from_numpy(placedb.node_side_flag).to(device)
             self.flat_node2pin_map = torch.from_numpy(placedb.flat_node2pin_map).to(
                 device
             )

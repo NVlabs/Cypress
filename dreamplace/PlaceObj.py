@@ -781,10 +781,26 @@ class PlaceObj(nn.Module):
         """
         dtype = data_collections.pos[0].dtype
         device = self.data_collections.pos[0].device
+
+        # build a pin side flag tensor, 1->top, 0->bottom
+        num_pins = data_collections.pin_offset_x.size(0)
+        indices = torch.arange(num_pins, device=device)
+        node_indices = torch.searchsorted(data_collections.flat_node2pin_start_map[1:], indices, right=True)
+        pin_side = data_collections.node_side_flag[node_indices]
+        # Note:
+        # equivalent to:
+        # for (int i = 0; i < num_nodes; i++) {
+        #     int bgn = placedb.flat_node2pin_start_map[i]
+        #     int end = placedb.flat_node2pin_start_map[i+1]
+        #     pin_side[bgn:end+1] = data_collections.node_side_flag[i]
+        # }
+
+
         return net_crossing.NetCrossing(
             flat_netpin=data_collections.flat_net2pin_map,
             netpin_start=data_collections.flat_net2pin_start_map,
             net_mask=data_collections.net_mask_ignore_large_degrees,
+            pin_side=pin_side,
             _lambda=torch.tensor(2, dtype=dtype, device=device),
             _mu=torch.tensor(2, dtype=dtype, device=device),
             _sigma=torch.tensor(1, dtype=dtype, device=device),

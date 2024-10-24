@@ -597,6 +597,7 @@ class PlaceDB(object):
         # if the node orient start with "F" that means it is on the bottom side
         # 0 for bottom side, 1 for top side
         self.node_side_flag = np.where(np.char.startswith(self.node_orient, b'F'), 0, 1) # for movable, terminal, and terminal_NI
+        self.node_side_flag = self.node_side_flag.astype(np.int32)
         self.node_size_x = np.array(pydb.node_size_x, dtype=self.dtype)
         self.node_size_y = np.array(pydb.node_size_y, dtype=self.dtype)
         self.node2orig_node_map = np.array(pydb.node2orig_node_map, dtype=np.int32)

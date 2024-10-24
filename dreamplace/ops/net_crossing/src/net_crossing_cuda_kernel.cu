@@ -18,6 +18,7 @@ __global__ void computeNetCrossing(
         const int* flat_netpin, 
         const int* netpin_start, 
         const unsigned char* net_mask, 
+        const int* pin_side,
         int num_nets, int num_pins, 
         T* net_crossing, 
         T *lambda_, T *mu_, T *sigma_,
@@ -39,6 +40,18 @@ __global__ void computeNetCrossing(
         for (int net_j_sink_pin_idx = netpin_start[j] + 1; net_j_sink_pin_idx < netpin_start[j + 1]; ++net_j_sink_pin_idx) {
             int net_j_src_pin_id = flat_netpin[netpin_start[j]];
             int net_j_sink_pin_id = flat_netpin[net_j_sink_pin_idx];
+
+            int net_i_src_pin_side = pin_side[net_i_src_pin_id];
+            int net_i_sink_pin_side = pin_side[net_i_sink_pin_id];
+            int net_j_src_pin_side = pin_side[net_j_src_pin_id];
+            int net_j_sink_pin_side = pin_side[net_j_sink_pin_id];
+
+            // if net i and net j are on different sides, skip
+            if (
+                (net_i_src_pin_side == net_i_sink_pin_side) 
+                && (net_j_src_pin_side == net_j_sink_pin_side)
+                && (net_i_src_pin_side != net_j_src_pin_side)
+            ) continue;
             
             T x1 = x[net_i_src_pin_id];
             T y1 = y[net_i_src_pin_id];
@@ -154,6 +167,7 @@ template <typename T>
 int computeNetCrossingCudaLauncher(
         const T* x, const T* y, const int* flat_netpin,
         const int* netpin_start, const unsigned char* net_mask,
+        const int* pin_side,
         int num_nets, int num_pins, T* net_crossing,
         T *lambda_, T *mu_, T *sigma_,
         T *grad_intermediate_x, T *grad_intermediate_y
@@ -169,6 +183,7 @@ int computeNetCrossingCudaLauncher(
             flat_netpin,
             netpin_start,
             net_mask,
+            pin_side,
             num_nets, num_pins,
             net_crossing,
             lambda_, mu_, sigma_,
@@ -182,6 +197,7 @@ int computeNetCrossingCudaLauncher(
     template int computeNetCrossingCudaLauncher<T>(\
             const T* x, const T* y, const int* flat_netpin, \
             const int* netpin_start, const unsigned char* net_mask, \
+            const int* pin_side, \
             int num_nets, int num_pins, T* net_crossing, \
             T *lambda_, T *mu_, T *sigma_, \
             T *grad_intermediate_x, T *grad_intermediate_y \

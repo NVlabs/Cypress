@@ -19,11 +19,11 @@ import pdb
 
 class NetCrossingFunction(Function):
     @staticmethod
-    def forward(ctx, pos, flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma):
+    def forward(ctx, pos, flat_netpin, netpin_start, net_mask, pin_side, _lambda, _mu, _sigma):
         if pos.is_cuda:
-            output = net_crossing_cuda.forward(pos.view(pos.numel()), flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma)
+            output = net_crossing_cuda.forward(pos.view(pos.numel()), flat_netpin, netpin_start, net_mask, pin_side, _lambda, _mu, _sigma)
         else:
-            output = net_crossing_cpp.forward(pos.view(pos.numel()), flat_netpin, netpin_start, net_mask, _lambda, _mu, _sigma)
+            output = net_crossing_cpp.forward(pos.view(pos.numel()), flat_netpin, netpin_start, net_mask, pin_side, _lambda, _mu, _sigma)
 
         ctx.net_mask = net_mask
         ctx.grad_intermediate = output[1]
@@ -41,7 +41,7 @@ class NetCrossingFunction(Function):
 
         if grad_pos.is_cuda:
             torch.cuda.synchronize()
-        return output, None, None, None, None, None, None
+        return output, None, None, None, None, None, None, None
 
 class NetCrossing(nn.Module):
 
@@ -49,6 +49,7 @@ class NetCrossing(nn.Module):
                 flat_netpin=None,
                 netpin_start=None,
                 net_mask=None,
+                pin_side=None,
                 _lambda=None,
                 _mu=None,
                 _sigma=None):
@@ -62,10 +63,11 @@ class NetCrossing(nn.Module):
         self.flat_netpin = flat_netpin
         self.netpin_start = netpin_start
         self.net_mask = net_mask
+        self.pin_side = pin_side
         self._lambda = _lambda
         self._mu = _mu
         self._sigma = _sigma
 
     def forward(self, pos):
         return NetCrossingFunction.apply(
-            pos, self.flat_netpin, self.netpin_start, self.net_mask, self._lambda, self._mu, self._sigma)
+            pos, self.flat_netpin, self.netpin_start, self.net_mask, self.pin_side, self._lambda, self._mu, self._sigma)
