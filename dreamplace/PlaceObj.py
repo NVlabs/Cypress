@@ -395,9 +395,13 @@ class PlaceObj(nn.Module):
 
         # MFP macro overlap
         if self.params.macro_overlap_flag:
-            self.op_collections.macro_overlap_op = self.build_macro_overlap(
-                params, placedb, self.data_collections
+            self.op_collections.top_macro_overlap_op = self.build_macro_overlap(
+                params, placedb, self.data_collections, side="top"
             )
+            self.op_collections.btm_macro_overlap_op = self.build_macro_overlap(
+                params, placedb, self.data_collections, side="btm"
+            )
+            self.op_collections.macro_overlap_op = self.build_two_side_macro_overlap(placedb)
 
             self.macro_overlap_weight = torch.tensor(
                 [0.0],
@@ -1809,9 +1813,9 @@ class PlaceObj(nn.Module):
             btm_movable_nodes_idx = placedb.btm_nodes_idx[placedb.btm_nodes_idx < placedb.num_movable_nodes]
             return macro_overlap.MacroOverlap(
                 fp_info=data_collections.fp_info,
-                node_size_x=data_collections.node_size_x,
-                node_size_y=data_collections.node_size_y,
-                num_movable_nodes=placedb.num_movable_nodes,
+                node_size_x=data_collections.node_size_x[placedb.btm_nodes_idx],
+                node_size_y=data_collections.node_size_y[placedb.btm_nodes_idx],
+                num_movable_nodes=placedb.num_btm_movable_nodes,
                 movable_macro_mask=data_collections.movable_macro_mask[btm_movable_nodes_idx],
             )
         else:
@@ -1826,18 +1830,19 @@ class PlaceObj(nn.Module):
     def build_two_side_macro_overlap(self, placedb):
 
         def eval_two_side_macro_overlap(pos):
+            num_nodes = pos.numel() // 2
             # top side macro overlap
             if placedb.num_top_phy_nodes == 0:
                 top_macro_overlap = torch.tensor(0.0, dtype=pos.dtype, device=pos.device)
             else:
                 top_pos = torch.cat((pos[self.placedb.top_nodes_idx], pos[self.placedb.top_nodes_idx + num_nodes]), dim=0).contiguous()
-                top_macro_overlap = self.op_collections.macro_overlap_top_op(top_pos)
+                top_macro_overlap = self.op_collections.top_macro_overlap_op(top_pos)
             # bottom side macro overlap
             if placedb.num_btm_phy_nodes == 0:
                 btm_macro_overlap = torch.tensor(0.0, dtype=pos.dtype, device=pos.device)
             else:
                 btm_pos = torch.cat((pos[self.placedb.btm_nodes_idx], pos[self.placedb.btm_nodes_idx + num_nodes]), dim=0).contiguous()
-                btm_macro_overlap = self.op_collections.macro_overlap_btm_op(btm_pos)
+                btm_macro_overlap = self.op_collections.btm_macro_overlap_op(btm_pos)
             return top_macro_overlap + btm_macro_overlap
     
         return eval_two_side_macro_overlap
