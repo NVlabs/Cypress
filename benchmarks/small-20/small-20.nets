@@ -1,0 +1,135 @@
+UCLA nets 1.0
+
+NumNets : 28
+NumPins : 100
+
+# small-20.nets generated on 2024-10-27T184719 using /home/scratch.niansongz_research/pcb-util/bookshelf_converter.py 1.0
+
+NetDegree : 16 N11
+	C2365 I : 9 0
+	C2542 I : 14 0
+	C1862 I : 3 0
+	C2364 I : -9 0
+	C2535 I : 14 0
+	C2543 I : 14 0
+	C2541 I : 14 0
+	C2539 I : 14 0
+	C1861 I : 3 0
+	C1859 I : 4 0
+	C2583 I : 14 0
+	C2534 I : 13 0
+	C2544 I : 13 0
+	C2540 I : 14 0
+	C1860 I : 4 0
+	C2582 I : 14 0
+NetDegree : 4 N65
+	C1297 I : 4 0
+	C839 I : 0 3
+	C2583 I : 29 15
+	C1326 I : 0 4
+NetDegree : 4 N66
+	C1296 I : 3 0
+	C1321 I : 0 3
+	C1324 I : 0 3
+	C2582 I : 29 15
+NetDegree : 1 N126
+	C2583 I : 29 -11
+NetDegree : 1 N128
+	C2582 I : 29 -11
+NetDegree : 2 N145
+	C1312 I : 0 3
+	C2583 I : 29 -15
+NetDegree : 2 N146
+	C1330 I : 4 0
+	C1312 I : 0 -3
+NetDegree : 2 N147
+	C1330 I : -4 0
+	C2583 I : 21 -19
+NetDegree : 10 N148
+	C13 I : 26 0
+	C2583 I : -28 15
+	C2583 I : -28 11
+	C2583 I : -28 6
+	C2583 I : -28 2
+	C2583 I : -28 -2
+	C2583 I : -28 -6
+	C2583 I : -28 -11
+	C2583 I : -28 -15
+	C398 I : 0 3
+NetDegree : 2 N149
+	C2434 I : 0 14
+	C398 I : 0 -3
+NetDegree : 2 N150
+	C1316 I : 0 3
+	C2582 I : 29 -15
+NetDegree : 2 N151
+	C1316 I : 0 -4
+	C1331 I : 4 0
+NetDegree : 2 N152
+	C1331 I : -4 0
+	C2582 I : 21 -18
+NetDegree : 10 N153
+	C14 I : 26 0
+	C2582 I : -28 15
+	C2582 I : -28 11
+	C2582 I : -28 6
+	C2582 I : -28 2
+	C2582 I : -28 -2
+	C2582 I : -28 -6
+	C2582 I : -28 -11
+	C2582 I : -28 -15
+	C399 I : 4 0
+NetDegree : 2 N154
+	C2433 I : 0 14
+	C399 I : -4 0
+NetDegree : 6 N940
+	C1304 I : 0 -3
+	C1297 I : -4 0
+	C1303 I : 4 0
+	C2583 I : 21 18
+	C1296 I : -4 0
+	C2582 I : 21 19
+NetDegree : 1 N1964
+	C2583 I : -1 16
+NetDegree : 1 N1965
+	C2582 I : -1 16
+NetDegree : 3 N2061
+	C1309 I : -4 0
+	C2583 I : 29 6
+	C1313 I : 0 -3
+NetDegree : 1 N2062
+	C1313 I : 0 3
+NetDegree : 1 N2063
+	C2583 I : 29 2
+NetDegree : 3 N2064
+	C1315 I : 0 -4
+	C1310 I : -4 0
+	C2582 I : 29 6
+NetDegree : 1 N2065
+	C1315 I : 0 3
+NetDegree : 1 N2066
+	C2582 I : 29 2
+NetDegree : 2 N2209
+	C839 I : 0 -3
+	C2583 I : 29 -6
+NetDegree : 2 N2210
+	C1324 I : 0 -3
+	C2582 I : 29 -6
+NetDegree : 2 N2418
+	C2583 I : 29 -2
+	C2582 I : 29 -2
+NetDegree : 14 N2482
+	C13 I : -26 0
+	C2440 I : -13 0
+	C2507 I : 14 0
+	C2510 I : 14 0
+	C2513 I : 13 0
+	C2509 I : 13 0
+	C2511 I : 13 0
+	C2512 I : 13 0
+	C2442 I : -13 0
+	C14 I : -26 0
+	C2506 I : 14 0
+	C2508 I : 14 0
+	C2441 I : -13 0
+	C2443 I : -13 0

@@ -1,0 +1,260 @@
+UCLA nets 1.0
+
+NumNets : 71
+NumPins : 182
+
+# small-13.nets generated on 2024-10-27T184513 using /home/scratch.niansongz_research/pcb-util/bookshelf_converter.py 1.0
+
+NetDegree : 1 N8
+	C1684 I : 0 3
+NetDegree : 2 N45
+	C1875 I : 0 3
+	C1702 I : 0 4
+NetDegree : 8 N64
+	C1857 I : 0 -4
+	C1815 I : 4 0
+	C1919 I : -4 0
+	C1913 I : 0 -3
+	C1681 I : -4 0
+	C1683 I : 0 4
+	C1692 I : 0 -4
+	C1822 I : 0 -4
+NetDegree : 1 N107
+	C1918 I : -4 0
+NetDegree : 2 N310
+	C1876 I : -4 0
+	C146 I : 34 -5
+NetDegree : 1 N341
+	C1858 I : 0 -4
+NetDegree : 4 N343
+	C1858 I : 0 4
+	C1823 I : 0 4
+	C1881 I : 0 3
+	C146 I : 34 -22
+NetDegree : 4 N344
+	C1824 I : 0 -4
+	C1859 I : 0 -4
+	C1881 I : 0 -4
+	C146 I : 34 -25
+NetDegree : 1 N561
+	C1872 I : 0 4
+NetDegree : 1 N562
+	C1789 I : 0 4
+NetDegree : 1 N793
+	C1823 I : 0 -4
+NetDegree : 1 N1217
+	C208 I : -9 -6
+NetDegree : 3 N1344
+	C1671 I : 0 4
+	C1692 I : 0 4
+	C146 I : -34 -10
+NetDegree : 4 N1345
+	C1687 I : 0 -4
+	C1686 I : 0 -4
+	C1702 I : 0 -4
+	C146 I : -34 1
+NetDegree : 3 N1346
+	C1775 I : 4 0
+	C1776 I : 4 0
+	C146 I : -34 5
+NetDegree : 21 N1409
+	C1698 I : 0 -3
+	C1771 I : 0 -4
+	C1682 I : 0 -4
+	C1683 I : 0 -3
+	C1861 I : 0 -3
+	C1882 I : 0 -4
+	C1883 I : 0 -4
+	C1792 I : 0 -4
+	C1805 I : 0 -4
+	C1806 I : 0 -4
+	C1726 I : 0 -4
+	C1727 I : 0 -4
+	C1748 I : 0 -4
+	C1749 I : 0 -4
+	C1766 I : 0 -4
+	C1765 I : 0 -4
+	C1674 I : 0 -4
+	C1675 I : 0 -4
+	C1673 I : -3 0
+	C1672 I : -4 0
+	C146 I : -34 14
+NetDegree : 6 N1410
+	C1820 I : -4 0
+	C1852 I : 4 0
+	C1699 I : 0 -4
+	C1698 I : 0 4
+	C1688 I : 0 -4
+	C1777 I : 0 -4
+NetDegree : 4 N1411
+	C1690 I : 0 3
+	C1777 I : 0 3
+	C1691 I : 0 3
+	C146 I : -34 -5
+NetDegree : 2 N1412
+	C513 I : 0 0
+	C146 I : 34 17
+NetDegree : 3 N1413
+	C1814 I : 4 0
+	C1848 I : 0 -4
+	C208 I : -9 0
+NetDegree : 4 N1414
+	C208 I : 9 -6
+	C1919 I : 4 0
+	C1920 I : 0 4
+	C1918 I : 3 0
+NetDegree : 2 N1415
+	C1816 I : 0 4
+	C1814 I : -4 0
+NetDegree : 4 N1416
+	C1816 I : 0 -4
+	C1849 I : 0 -3
+	C1815 I : -4 0
+	C146 I : 34 10
+NetDegree : 4 N1417
+	C1818 I : -4 0
+	C1817 I : -4 0
+	C1921 I : -4 0
+	C146 I : 34 1
+NetDegree : 5 N1418
+	C1857 I : 0 4
+	C1880 I : 0 4
+	C1879 I : 0 4
+	C1923 I : -4 0
+	C146 I : 34 -18
+NetDegree : 2 N1419
+	C1921 I : 3 0
+	C1923 I : 4 0
+NetDegree : 2 N1420
+	C1861 I : 0 4
+	C146 I : 25 -34
+NetDegree : 2 N1421
+	C1749 I : 0 4
+	C146 I : -10 -34
+NetDegree : 2 N1422
+	C1766 I : 0 4
+	C146 I : -14 -34
+NetDegree : 2 N1423
+	C1765 I : 0 4
+	C146 I : -17 -34
+NetDegree : 2 N1424
+	C1674 I : 0 4
+	C146 I : -21 -34
+NetDegree : 2 N1425
+	C1675 I : 0 4
+	C146 I : -25 -34
+NetDegree : 2 N1426
+	C1673 I : 4 0
+	C146 I : -34 -25
+NetDegree : 2 N1427
+	C1672 I : 4 0
+	C146 I : -34 -22
+NetDegree : 2 N1428
+	C1882 I : 0 4
+	C146 I : 22 -34
+NetDegree : 2 N1429
+	C1883 I : 0 4
+	C146 I : 18 -34
+NetDegree : 2 N1430
+	C1792 I : 0 4
+	C146 I : 14 -34
+NetDegree : 2 N1431
+	C1805 I : 0 4
+	C146 I : 10 -34
+NetDegree : 2 N1432
+	C1806 I : 0 4
+	C146 I : 5 -34
+NetDegree : 2 N1433
+	C1726 I : 0 4
+	C146 I : 2 -34
+NetDegree : 2 N1434
+	C1727 I : 0 4
+	C146 I : -1 -34
+NetDegree : 2 N1435
+	C1748 I : 0 4
+	C146 I : -5 -34
+NetDegree : 2 N1436
+	C208 I : 9 6
+	C1913 I : 0 4
+NetDegree : 2 N1437
+	C1875 I : 0 -4
+	C146 I : 34 14
+NetDegree : 2 N1470
+	C1819 I : 4 0
+	C146 I : 34 -2
+NetDegree : 4 N1471
+	C1703 I : 4 0
+	C1705 I : 4 0
+	C1688 I : 0 3
+	C146 I : -34 -2
+NetDegree : 1 N1472
+	C146 I : 25 34
+NetDegree : 1 N1473
+	C146 I : -10 34
+NetDegree : 1 N1474
+	C146 I : -14 34
+NetDegree : 1 N1475
+	C146 I : -17 34
+NetDegree : 1 N1476
+	C146 I : -21 34
+NetDegree : 1 N1477
+	C146 I : -25 34
+NetDegree : 1 N1478
+	C146 I : -34 25
+NetDegree : 1 N1479
+	C146 I : -34 21
+NetDegree : 1 N1480
+	C146 I : 22 34
+NetDegree : 1 N1481
+	C146 I : 18 34
+NetDegree : 1 N1482
+	C146 I : 14 34
+NetDegree : 1 N1483
+	C146 I : 10 34
+NetDegree : 1 N1484
+	C146 I : 5 34
+NetDegree : 1 N1485
+	C146 I : 2 34
+NetDegree : 1 N1486
+	C146 I : -1 34
+NetDegree : 1 N1487
+	C146 I : -5 34
+NetDegree : 2 N1489
+	C1872 I : 0 -4
+	C146 I : 34 21
+NetDegree : 2 N1490
+	C1789 I : 0 -4
+	C146 I : 34 25
+NetDegree : 2 N1491
+	C1713 I : 0 4
+	C1599 I : 0 4
+NetDegree : 5 N1492
+	C1776 I : -4 0
+	C1703 I : -3 0
+	C1700 I : 0 -4
+	C1713 I : 0 -4
+	C1704 I : 0 3
+NetDegree : 3 N1493
+	C1851 I : -3 0
+	C1852 I : -4 0
+	C146 I : 34 -10
+NetDegree : 4 N1494
+	C1820 I : 4 0
+	C1922 I : 0 4
+	C1850 I : -4 0
+	C146 I : 34 5
+NetDegree : 4 N1495
+	C1774 I : 4 0
+	C1685 I : 0 -4
+	C1684 I : 0 -4
+	C146 I : -34 10
+NetDegree : 3 N1496
+	C1821 I : 0 4
+	C1822 I : 0 4
+	C146 I : 34 -14
+NetDegree : 5 N1497
+	C1773 I : 4 0
+	C1699 I : 0 4
+	C1772 I : 4 0
+	C1681 I : 4 0
+	C146 I : -34 17

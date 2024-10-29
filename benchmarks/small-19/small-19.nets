@@ -1,0 +1,96 @@
+UCLA nets 1.0
+
+NumNets : 24
+NumPins : 65
+
+# small-19.nets generated on 2024-10-27T184702 using /home/scratch.niansongz_research/pcb-util/bookshelf_converter.py 1.0
+
+NetDegree : 15 N37
+	C2055 I : -3 0
+	C2056 I : 0 3
+	C2058 I : 0 3
+	C2469 I : 7 0
+	C2057 I : -3 0
+	C2059 I : -3 0
+	C2379 I : 0 9
+	C2158 I : -24 2
+	C2158 I : -24 -2
+	C2158 I : -17 -24
+	C2158 I : 17 -24
+	C2158 I : 17 24
+	C1947 I : -4 0
+	C1032 I : 0 -3
+	C1036 I : 0 -3
+NetDegree : 3 N38
+	C2469 I : -7 0
+	C2378 I : -9 0
+	C234 I : 4 0
+NetDegree : 5 N67
+	C2158 I : 24 2
+	C2054 I : 4 0
+	C2053 I : 3 0
+	C1983 I : 4 0
+	C1947 I : 4 0
+NetDegree : 7 N69
+	C1430 I : -4 0
+	C1429 I : 3 0
+	C1428 I : -3 0
+	C1427 I : 4 0
+	C1426 I : 0 -4
+	C234 I : -4 0
+	C1424 I : 0 4
+NetDegree : 1 N481
+	C2158 I : 2 24
+NetDegree : 1 N482
+	C2158 I : 7 24
+NetDegree : 1 N485
+	C2158 I : 24 12
+NetDegree : 1 N486
+	C2158 I : 24 7
+NetDegree : 1 N551
+	C2158 I : -12 -24
+NetDegree : 1 N562
+	C2158 I : -7 -24
+NetDegree : 1 N985
+	C2158 I : 2 -24
+NetDegree : 1 N986
+	C2158 I : 7 -24
+NetDegree : 1 N989
+	C2158 I : 24 -7
+NetDegree : 1 N990
+	C2158 I : 24 -12
+NetDegree : 4 N991
+	C2158 I : -24 12
+	C1957 I : 0 3
+	C2196 I : -8 11
+	C2032 I : 0 -3
+NetDegree : 3 N992
+	C2158 I : -24 7
+	C1957 I : 0 -3
+	C1638 I : 0 3
+NetDegree : 3 N993
+	C2196 I : 8 -10
+	C1638 I : 0 -3
+	C2033 I : 0 -3
+NetDegree : 2 N2088
+	C2158 I : -24 -7
+	C1426 I : 0 3
+NetDegree : 2 N2279
+	C2158 I : -12 24
+	C1425 I : 0 3
+NetDegree : 2 N2314
+	C1427 I : -3 0
+	C2158 I : -2 -24
+NetDegree : 2 N2315
+	C1428 I : 4 0
+	C2158 I : 24 -17
+NetDegree : 2 N2316
+	C1429 I : -4 0
+	C2158 I : 24 17
+NetDegree : 2 N2317
+	C1430 I : 3 0
+	C2158 I : -2 24
+NetDegree : 3 N2409
+	C2158 I : -17 24
+	C1424 I : 0 -3
+	C1423 I : 0 -3

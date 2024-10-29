@@ -1,0 +1,36 @@
+UCLA nodes 1.0
+
+NumNodes : 29
+NumTerminals : 0
+
+# small-19.nodes generated on 2024-10-27T184702 using /home/scratch.niansongz_research/pcb-util/bookshelf_converter.py 1.0
+
+C1036 5 10 
+C1032 5 10 
+C2378 20 13 
+C2379 13 20 
+C2059 10 5 
+C2033 5 10 
+C2058 5 10 
+C2057 10 5 
+C2056 5 10 
+C2032 5 10 
+C2055 10 5 
+C1983 10 5 
+C2054 10 5 
+C2053 10 5 
+C2469 18 10 
+C234 11 7 
+C1430 10 5 
+C1429 10 5 
+C1428 10 5 
+C1427 10 5 
+C1638 5 10 
+C1426 5 10 
+C1947 10 5 
+C1957 5 10 
+C1425 5 10 
+C1424 5 10 
+C1423 5 10 
+C2158 50 50 
+C2196 25 32 
