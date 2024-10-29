@@ -127,7 +127,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dreamplace/configure.py.in ${CMAKE_CU
 add_subdirectory(thirdparty)
 add_subdirectory(dreamplace)
 add_subdirectory(unittest)
-add_subdirectory(benchmarks)
 add_subdirectory(test)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dreamplace/configure.py DESTINATION dreamplace)
