@@ -171,16 +171,16 @@
       "type": "uniform_float",
       "log": false,
       "lower": 0.06,
-      "upper": 0.1,
-      "default": 0.07
+      "upper": 0.3,
+      "default": 0.1
     },
     {
       "name": "target_density",
       "type": "uniform_float",
       "log": false,
-      "lower": 0.5,
-      "upper": 0.7,
-      "default": 0.6
+      "lower": 1,
+      "upper": 4,
+      "default": 2
     }
   ],
   "conditions": [],
