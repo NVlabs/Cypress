@@ -19,7 +19,7 @@ RUN mkdir /root/.ssh && \
     chmod 600 /root/.ssh/id_ed25519.pub && \
     ssh-keyscan -t rsa github.com >> /root/.ssh/known_hosts
 
-RUN git clone --recursive git@github.com:nvlabs/AutoDMP /AutoDMP
+RUN git clone --recursive git@github.com:nvlabs/Cypress /Cypress
 
 RUN rm /root/.ssh/id_ed25519 && \
     rm /root/.ssh/id_ed25519.pub
@@ -73,8 +73,8 @@ RUN pip install \
 
 
 # run following command inside container and commit later
-# RUN cd /AutoDMP/build && \
-#    cmake .. -DCMAKE_INSTALL_PREFIX=/AutoDMP && \
+# RUN cd /Cypress/build && \
+#    cmake .. -DCMAKE_INSTALL_PREFIX=/Cypress && \
 #    make -j16 && \
 #    make install
 
