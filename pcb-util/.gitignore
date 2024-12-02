@@ -1,0 +1,9 @@
+**/__pycache__
+inputs
+archive_inputs
+outputs
+intermediate
+benchmark
+intermediate_archive
+ir
+visualize
