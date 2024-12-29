@@ -210,6 +210,6 @@ def convert_kicad_version(input_path, output_path):
 
 
 if __name__ == "__main__":
-    input_path = "./outputs/PB310_kicad/p39.kicad_pcb"
-    output_path = "./outputs/PB310_kicad/p39_legacy.kicad_pcb"
+    input_path = "/home/nz264/shared/Cypress/pcb-util/kicad/small-7.kicad_pcb"
+    output_path = "/home/nz264/shared/Cypress/pcb-util/kicad/small-7_legacy.kicad_pcb"
     convert_kicad_version(input_path, output_path)

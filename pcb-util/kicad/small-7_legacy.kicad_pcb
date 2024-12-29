@@ -1,0 +1,1845 @@
+
+(kicad_pcb (version 20171130) (host pcbnew "(5.1.2-1)-1")
+
+  (general
+    (thickness 1.6)
+  )
+
+  (page A4)
+  (layers
+    (0 Top signal)
+    (31 Bottom signal)
+    (32 B.Adhes user)
+    (33 F.Adhes user)
+    (34 B.Paste user)
+    (35 F.Paste user)
+    (36 B.SilkS user)
+    (37 F.SilkS user)
+    (38 B.Mask user)
+    (39 F.Mask user)
+    (40 Dwgs.User user)
+    (41 Cmts.User user)
+    (42 Eco1.User user)
+    (43 Eco2.User user)
+    (44 Edge.Cuts user)
+    (45 Margin user)
+    (46 B.CrtYd user)
+    (47 F.CrtYd user)
+    (48 B.Fab user)
+    (49 F.Fab user)
+  )
+  (setup
+    (last_trace_width 0.25)
+    (trace_clearance 0.2)
+    (zone_clearance 0.508)
+    (zone_45_only no)
+    (trace_min 0.2)
+    (via_size 0.8)
+    (via_drill 0.4)
+    (via_min_size 0.4)
+    (via_min_drill 0.3)
+    (uvia_size 0.3)
+    (uvia_drill 0.1)
+    (uvias_allowed no)
+    (uvia_min_size 0.2)
+    (uvia_min_drill 0.1)
+    (edge_width 0.05)
+    (segment_width 0.2)
+    (pcb_text_width 0.3)
+    (pcb_text_size 1.5 1.5)
+    (mod_edge_width 0.12)
+    (mod_text_size 1 1)
+    (mod_text_width 0.15)
+    (pad_size 1.524 1.524)
+    (pad_drill 0.762)
+    (pad_to_mask_clearance 0.051)
+    (solder_mask_min_width 0.25)
+    (aux_axis_origin 0 0)
+    (visible_elements FFFFEF7F)
+    (pcbplotparams
+      (layerselection 0x010fc_ffffffff)
+      (usegerberextensions false)
+      (usegerberattributes false)
+      (usegerberadvancedattributes false)
+      (creategerberjobfile false)
+      (excludeedgelayer true)
+      (linewidth 0.100000)
+      (plotframeref false)
+      (viasonmask false)
+      (mode 1)
+      (useauxorigin false)
+      (hpglpennumber 1)
+      (hpglpenspeed 20)
+      (hpglpendiameter 15.000000)
+      (psnegative false)
+      (psa4output false)
+      (plotreference true)
+      (plotvalue true)
+      (plotinvisibletext false)
+      (padsonsilk false)
+      (subtractmaskfromsilk false)
+      (outputformat 1)
+      (mirror false)
+      (drillshape 1)
+      (scaleselection 1)
+      (outputdirectory ""))
+  )
+  (net 0 "")
+  (net 1 N45)
+  (net 2 N73)
+  (net 3 N74)
+  (net 4 N430)
+  (net 5 N431)
+  (net 6 N451)
+  (net 7 N452)
+  (net 8 N455)
+  (net 9 N456)
+  (net 10 N500)
+  (net 11 N501)
+  (net 12 N525)
+  (net 13 N526)
+  (net 14 N527)
+  (net 15 N528)
+  (net 16 N535)
+  (net 17 N536)
+  (net 18 N537)
+  (net 19 N538)
+  (net 20 N1836)
+  (net 21 N1837)
+  (net 22 N3608)
+  (net 23 N3609)
+  (net 24 N3610)
+  (net 25 N3611)
+  (net 26 N3612)
+  (net 27 N3613)
+  (net 28 N3614)
+  (net 29 N3615)
+  (net 30 N3616)
+  (net 31 N3617)
+  (net 32 N3618)
+  (net 33 N3619)
+  (net 34 N4119)
+  (net 35 N4122)
+  (net 36 N4128)
+  (net 37 N4129)
+  (net 38 N4138)
+  (net 39 N4139)
+  (net 40 N4160)
+  (net 41 N4163)
+  (net 42 N4171)
+  (net 43 N4172)
+  (net 44 N4178)
+  (net 45 N4179)
+  (net 46 N4185)
+  (net 47 N4187)
+  (net 48 N4194)
+  (net 49 N4196)
+  (net 50 N4212)
+  (net 51 N4213)
+  (net 52 N4214)
+  (net 53 N4215)
+  (net 54 N4230)
+  (net 55 N4231)
+  (net 56 N4232)
+  (net 57 N4233)
+  (net 58 N4243)
+  (net 59 N4244)
+  (net 60 N4246)
+  (net 61 N4247)
+  (net 62 N4249)
+  (net 63 N4250)
+  (net 64 N4257)
+  (net 65 N4258)
+  (net 66 N4260)
+  (net 67 N4261)
+  (net 68 N4263)
+  (net 69 N4264)
+  (net 70 N4302)
+  (net 71 N4303)
+  (net 72 N4307)
+  (net 73 N4308)
+  (net 74 N4312)
+  (net 75 N4313)
+  (net 76 N4317)
+  (net 77 N4318)
+  (net 78 N4382)
+  (net 79 N4383)
+  (net 80 N4387)
+  (net 81 N4388)
+  (net 82 N4392)
+  (net 83 N4393)
+  (net 84 N4397)
+  (net 85 N4398)
+  (net 86 N4427)
+  (net 87 N4428)
+  (net 88 N4585)
+  (net 89 N4586)
+  (net 90 N4590)
+  (net 91 N4591)
+  (net 92 N4649)
+  (net 93 N4651)
+  (net 94 N4658)
+  (net 95 N4660)
+  (net_class Default ""
+    (add_net "")
+    (add_net N45)
+    (add_net N73)
+    (add_net N74)
+    (add_net N430)
+    (add_net N431)
+    (add_net N451)
+    (add_net N452)
+    (add_net N455)
+    (add_net N456)
+    (add_net N500)
+    (add_net N501)
+    (add_net N525)
+    (add_net N526)
+    (add_net N527)
+    (add_net N528)
+    (add_net N535)
+    (add_net N536)
+    (add_net N537)
+    (add_net N538)
+    (add_net N1836)
+    (add_net N1837)
+    (add_net N3608)
+    (add_net N3609)
+    (add_net N3610)
+    (add_net N3611)
+    (add_net N3612)
+    (add_net N3613)
+    (add_net N3614)
+    (add_net N3615)
+    (add_net N3616)
+    (add_net N3617)
+    (add_net N3618)
+    (add_net N3619)
+    (add_net N4119)
+    (add_net N4122)
+    (add_net N4128)
+    (add_net N4129)
+    (add_net N4138)
+    (add_net N4139)
+    (add_net N4160)
+    (add_net N4163)
+    (add_net N4171)
+    (add_net N4172)
+    (add_net N4178)
+    (add_net N4179)
+    (add_net N4185)
+    (add_net N4187)
+    (add_net N4194)
+    (add_net N4196)
+    (add_net N4212)
+    (add_net N4213)
+    (add_net N4214)
+    (add_net N4215)
+    (add_net N4230)
+    (add_net N4231)
+    (add_net N4232)
+    (add_net N4233)
+    (add_net N4243)
+    (add_net N4244)
+    (add_net N4246)
+    (add_net N4247)
+    (add_net N4249)
+    (add_net N4250)
+    (add_net N4257)
+    (add_net N4258)
+    (add_net N4260)
+    (add_net N4261)
+    (add_net N4263)
+    (add_net N4264)
+    (add_net N4302)
+    (add_net N4303)
+    (add_net N4307)
+    (add_net N4308)
+    (add_net N4312)
+    (add_net N4313)
+    (add_net N4317)
+    (add_net N4318)
+    (add_net N4382)
+    (add_net N4383)
+    (add_net N4387)
+    (add_net N4388)
+    (add_net N4392)
+    (add_net N4393)
+    (add_net N4397)
+    (add_net N4398)
+    (add_net N4427)
+    (add_net N4428)
+    (add_net N4585)
+    (add_net N4586)
+    (add_net N4590)
+    (add_net N4591)
+    (add_net N4649)
+    (add_net N4651)
+    (add_net N4658)
+    (add_net N4660)
+  )
+  (module C2153 (layer Top) (tedit 0) (tstamp 0)
+   (at 7.95 3.7)
+
+    (fp_text
+      reference
+      C0
+      (at 7.95 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C0
+      (at 7.95 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+  )
+
+  (module C2170 (layer Top) (tedit 0) (tstamp 0)
+   (at 5.95 3.7)
+
+    (fp_text
+      reference
+      C1
+      (at 5.95 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C1
+      (at 5.95 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+  )
+
+  (module C564 (layer Top) (tedit 0) (tstamp 0)
+   (at 17.55 3.7)
+
+    (fp_text
+      reference
+      C2
+      (at 17.55 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C2
+      (at 17.55 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+  )
+
+  (module C565 (layer Top) (tedit 0) (tstamp 0)
+   (at 15.55 3.7)
+
+    (fp_text
+      reference
+      C3
+      (at 15.55 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C3
+      (at 15.55 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+  )
+
+  (module C693 (layer Top) (tedit 0) (tstamp 0)
+   (at 3.95 2.6)
+
+    (fp_text
+      reference
+      C4
+      (at 3.95 2.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C4
+      (at 3.95 2.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 50 N4212)
+    )
+    (pad 1 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 51 N4213)
+    )
+  )
+
+  (module C2186 (layer Top) (tedit 0) (tstamp 0)
+   (at 2.05 5.1)
+
+    (fp_text
+      reference
+      C5
+      (at 2.05 5.1)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C5
+      (at 2.05 5.1)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 54 N4230)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 55 N4231)
+    )
+  )
+
+  (module C2173 (layer Top) (tedit 0) (tstamp 0)
+   (at 2.05 11.4)
+
+    (fp_text
+      reference
+      C6
+      (at 2.05 11.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C6
+      (at 2.05 11.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 92 N4649)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 93 N4651)
+    )
+  )
+
+  (module C2172 (layer Top) (tedit 0) (tstamp 0)
+   (at 0.95 9.1)
+
+    (fp_text
+      reference
+      C7
+      (at 0.95 9.1)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C7
+      (at 0.95 9.1)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 94 N4658)
+    )
+    (pad 1 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 95 N4660)
+    )
+  )
+
+  (module C2171 (layer Top) (tedit 0) (tstamp 0)
+   (at 2.4 8.65)
+
+    (fp_text
+      reference
+      C8
+      (at 2.4 8.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C8
+      (at 2.4 8.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 42 N4171)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 43 N4172)
+    )
+  )
+
+  (module C2156 (layer Top) (tedit 0) (tstamp 0)
+   (at 0.65 7.4)
+
+    (fp_text
+      reference
+      C9
+      (at 0.65 7.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C9
+      (at 0.65 7.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 44 N4178)
+    )
+    (pad 1 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 45 N4179)
+    )
+  )
+
+  (module C2155 (layer Top) (tedit 0) (tstamp 0)
+   (at 7.15 11.9)
+
+    (fp_text
+      reference
+      C10
+      (at 7.15 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C10
+      (at 7.15 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 38 N4138)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 39 N4139)
+    )
+  )
+
+  (module C2154 (layer Top) (tedit 0) (tstamp 0)
+   (at 5.85 14.8)
+
+    (fp_text
+      reference
+      C11
+      (at 5.85 14.8)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C11
+      (at 5.85 14.8)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 46 N4185)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 47 N4187)
+    )
+  )
+
+  (module C2141 (layer Top) (tedit 0) (tstamp 0)
+   (at 5.65 11.9)
+
+    (fp_text
+      reference
+      C12
+      (at 5.65 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C12
+      (at 5.65 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 48 N4194)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 49 N4196)
+    )
+  )
+
+  (module C2128 (layer Top) (tedit 0) (tstamp 0)
+   (at 4.05 14)
+
+    (fp_text
+      reference
+      C13
+      (at 4.05 14)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C13
+      (at 4.05 14)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 34 N4119)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 35 N4122)
+    )
+  )
+
+  (module C615 (layer Top) (tedit 0) (tstamp 0)
+   (at 2.4 7.05)
+
+    (fp_text
+      reference
+      C14
+      (at 2.4 7.05)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C14
+      (at 2.4 7.05)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 4 N430)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 5 N431)
+    )
+  )
+
+  (module C616 (layer Top) (tedit 0) (tstamp 0)
+   (at 0.65 5.9)
+
+    (fp_text
+      reference
+      C15
+      (at 0.65 5.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C15
+      (at 0.65 5.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 6 N451)
+    )
+    (pad 1 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 7 N452)
+    )
+  )
+
+  (module C623 (layer Top) (tedit 0) (tstamp 0)
+   (at 14.1 13.65)
+
+    (fp_text
+      reference
+      C16
+      (at 14.1 13.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C16
+      (at 14.1 13.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 56 N4232)
+    )
+    (pad 1 smd rect (at 0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 57 N4233)
+    )
+  )
+
+  (module C692 (layer Top) (tedit 0) (tstamp 0)
+   (at 13.75 11.9)
+
+    (fp_text
+      reference
+      C17
+      (at 13.75 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C17
+      (at 13.75 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 52 N4214)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 53 N4215)
+    )
+  )
+
+  (module C613 (layer Top) (tedit 0) (tstamp 0)
+   (at 18.85 3.7)
+
+    (fp_text
+      reference
+      C18
+      (at 18.85 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C18
+      (at 18.85 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 8 N455)
+    )
+    (pad 1 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 9 N456)
+    )
+  )
+
+  (module C511 (layer Top) (tedit 0) (tstamp 0)
+   (at 21.6 9.55)
+
+    (fp_text
+      reference
+      C19
+      (at 21.6 9.55)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C19
+      (at 21.6 9.55)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 36 N4128)
+    )
+    (pad 1 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 37 N4129)
+    )
+  )
+
+  (module C2204 (layer Top) (tedit 0) (tstamp 0)
+   (at 14.45 3.7)
+
+    (fp_text
+      reference
+      C20
+      (at 14.45 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C20
+      (at 14.45 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 3 N74)
+    )
+  )
+
+  (module C2203 (layer Top) (tedit 0) (tstamp 0)
+   (at 13.35 2.2)
+
+    (fp_text
+      reference
+      C21
+      (at 13.35 2.2)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C21
+      (at 13.35 2.2)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 3 N74)
+    )
+  )
+
+  (module C2198 (layer Top) (tedit 0) (tstamp 0)
+   (at 4.85 3.7)
+
+    (fp_text
+      reference
+      C22
+      (at 4.85 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C22
+      (at 4.85 3.7)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 2 N73)
+    )
+  )
+
+  (module C2197 (layer Top) (tedit 0) (tstamp 0)
+   (at 6 0.65)
+
+    (fp_text
+      reference
+      C23
+      (at 6 0.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C23
+      (at 6 0.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 2 N73)
+    )
+  )
+
+  (module C2125 (layer Top) (tedit 0) (tstamp 0)
+   (at 2.8 0.25)
+
+    (fp_text
+      reference
+      C24
+      (at 2.8 0.25)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C24
+      (at 2.8 0.25)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 1 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 20 N1836)
+    )
+  )
+
+  (module C2119 (layer Top) (tedit 0) (tstamp 0)
+   (at 0.25 1.1)
+
+    (fp_text
+      reference
+      C25
+      (at 0.25 1.1)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C25
+      (at 0.25 1.1)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 21 N1837)
+    )
+  )
+
+  (module C2130 (layer Top) (tedit 0) (tstamp 0)
+   (at 6 1.45)
+
+    (fp_text
+      reference
+      C26
+      (at 6 1.45)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C26
+      (at 6 1.45)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 10 N500)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 11 N501)
+    )
+  )
+
+  (module C2129 (layer Top) (tedit 0) (tstamp 0)
+   (at 6 2.25)
+
+    (fp_text
+      reference
+      C27
+      (at 6 2.25)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C27
+      (at 6 2.25)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 11 N501)
+    )
+  )
+
+  (module C2199 (layer Top) (tedit 0) (tstamp 0)
+   (at 20.1 3.35)
+
+    (fp_text
+      reference
+      C28
+      (at 20.1 3.35)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C28
+      (at 20.1 3.35)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 12 N525)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 13 N526)
+    )
+  )
+
+  (module C2192 (layer Top) (tedit 0) (tstamp 0)
+   (at 21.95 6.6)
+
+    (fp_text
+      reference
+      C29
+      (at 21.95 6.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C29
+      (at 21.95 6.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 14 N527)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 15 N528)
+    )
+  )
+
+  (module C2142 (layer Top) (tedit 0) (tstamp 0)
+   (at 20.95 7.4)
+
+    (fp_text
+      reference
+      C30
+      (at 20.95 7.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C30
+      (at 20.95 7.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 16 N535)
+    )
+    (pad 1 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 17 N536)
+    )
+  )
+
+  (module C2135 (layer Top) (tedit 0) (tstamp 0)
+   (at 21.6 8.65)
+
+    (fp_text
+      reference
+      C31
+      (at 21.6 8.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C31
+      (at 21.6 8.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 18 N537)
+    )
+    (pad 1 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 19 N538)
+    )
+  )
+
+  (module C2169 (layer Top) (tedit 0) (tstamp 0)
+   (at 7.6 13.85)
+
+    (fp_text
+      reference
+      C32
+      (at 7.6 13.85)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C32
+      (at 7.6 13.85)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 40 N4160)
+    )
+    (pad 1 smd rect (at 0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 41 N4163)
+    )
+  )
+
+  (module C2168 (layer Top) (tedit 0) (tstamp 0)
+   (at 17.3 13.65)
+
+    (fp_text
+      reference
+      C33
+      (at 17.3 13.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C33
+      (at 17.3 13.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 62 N4249)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 63 N4250)
+    )
+  )
+
+  (module C2182 (layer Top) (tedit 0) (tstamp 0)
+   (at 16.85 11.9)
+
+    (fp_text
+      reference
+      C34
+      (at 16.85 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C34
+      (at 16.85 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 68 N4263)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 69 N4264)
+    )
+  )
+
+  (module C2127 (layer Top) (tedit 0) (tstamp 0)
+   (at 9.15 2.8)
+
+    (fp_text
+      reference
+      C35
+      (at 9.15 2.8)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C35
+      (at 9.15 2.8)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 88 N4585)
+    )
+    (pad 1 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 89 N4586)
+    )
+  )
+
+  (module C2126 (layer Top) (tedit 0) (tstamp 0)
+   (at 10.4 3.35)
+
+    (fp_text
+      reference
+      C36
+      (at 10.4 3.35)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C36
+      (at 10.4 3.35)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 78 N4382)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 79 N4383)
+    )
+  )
+
+  (module C2134 (layer Top) (tedit 0) (tstamp 0)
+   (at 12.25 6.6)
+
+    (fp_text
+      reference
+      C37
+      (at 12.25 6.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C37
+      (at 12.25 6.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 82 N4392)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 83 N4393)
+    )
+  )
+
+  (module C2133 (layer Top) (tedit 0) (tstamp 0)
+   (at 10.9 7.05)
+
+    (fp_text
+      reference
+      C38
+      (at 10.9 7.05)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C38
+      (at 10.9 7.05)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 70 N4302)
+    )
+    (pad 1 smd rect (at -0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 71 N4303)
+    )
+  )
+
+  (module C2140 (layer Top) (tedit 0) (tstamp 0)
+   (at 12.55 8.2)
+
+    (fp_text
+      reference
+      C39
+      (at 12.55 8.2)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C39
+      (at 12.55 8.2)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 74 N4312)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 75 N4313)
+    )
+  )
+
+  (module C2139 (layer Top) (tedit 0) (tstamp 0)
+   (at 10.9 8.65)
+
+    (fp_text
+      reference
+      C40
+      (at 10.9 8.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C40
+      (at 10.9 8.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 90 N4590)
+    )
+    (pad 1 smd rect (at -0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 91 N4591)
+    )
+  )
+
+  (module C2138 (layer Top) (tedit 0) (tstamp 0)
+   (at 12.55 9.8)
+
+    (fp_text
+      reference
+      C41
+      (at 12.55 9.8)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C41
+      (at 12.55 9.8)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 80 N4387)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 81 N4388)
+    )
+  )
+
+  (module C2152 (layer Top) (tedit 0) (tstamp 0)
+   (at 11.25 10.6)
+
+    (fp_text
+      reference
+      C42
+      (at 11.25 10.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C42
+      (at 11.25 10.6)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 84 N4397)
+    )
+    (pad 1 smd rect (at 0.000 0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 85 N4398)
+    )
+  )
+
+  (module C2151 (layer Top) (tedit 0) (tstamp 0)
+   (at 10.5 11.75)
+
+    (fp_text
+      reference
+      C43
+      (at 10.5 11.75)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C43
+      (at 10.5 11.75)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 72 N4307)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 73 N4308)
+    )
+  )
+
+  (module C2150 (layer Top) (tedit 0) (tstamp 0)
+   (at 8.75 11.9)
+
+    (fp_text
+      reference
+      C44
+      (at 8.75 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C44
+      (at 8.75 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 76 N4317)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 77 N4318)
+    )
+  )
+
+  (module C2185 (layer Top) (tedit 0) (tstamp 0)
+   (at 19.75 11.4)
+
+    (fp_text
+      reference
+      C45
+      (at 19.75 11.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C45
+      (at 19.75 11.4)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 60 N4246)
+    )
+    (pad 1 smd rect (at 0.000 -0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 61 N4247)
+    )
+  )
+
+  (module C2184 (layer Top) (tedit 0) (tstamp 0)
+   (at 19.1 12.75)
+
+    (fp_text
+      reference
+      C46
+      (at 19.1 12.75)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C46
+      (at 19.1 12.75)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 66 N4260)
+    )
+    (pad 1 smd rect (at 0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 67 N4261)
+    )
+  )
+
+  (module C2183 (layer Top) (tedit 0) (tstamp 0)
+   (at 3.7 12.25)
+
+    (fp_text
+      reference
+      C47
+      (at 3.7 12.25)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C47
+      (at 3.7 12.25)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 86 N4427)
+    )
+    (pad 1 smd rect (at 0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 87 N4428)
+    )
+  )
+
+  (module C2191 (layer Top) (tedit 0) (tstamp 0)
+   (at 15.7 13.65)
+
+    (fp_text
+      reference
+      C48
+      (at 15.7 13.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C48
+      (at 15.7 13.65)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.500 -0.250) (xy 0.500 -0.250) (xy 0.500 0.250) (xy -0.500 0.250) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at -0.400 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 58 N4243)
+    )
+    (pad 1 smd rect (at 0.300 0.000) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 59 N4244)
+    )
+  )
+
+  (module C2190 (layer Top) (tedit 0) (tstamp 0)
+   (at 15.25 11.9)
+
+    (fp_text
+      reference
+      C49
+      (at 15.25 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C49
+      (at 15.25 11.9)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -0.250 -0.500) (xy 0.250 -0.500) (xy 0.250 0.500) (xy -0.250 0.500) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 0.000 0.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 64 N4257)
+    )
+    (pad 1 smd rect (at 0.000 -0.300) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 65 N4258)
+    )
+  )
+
+  (module C448 (layer Top) (tedit 0) (tstamp 0)
+   (at 16.35 7.55)
+
+    (fp_text
+      reference
+      C50
+      (at 16.35 7.55)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C50
+      (at 16.35 7.55)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -2.550 -2.550) (xy 2.550 -2.550) (xy 2.550 2.550) (xy -2.550 2.550) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 1.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 1 smd rect (at -0.700 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 2 smd rect (at -1.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 3 N74)
+    )
+    (pad 3 smd rect (at 2.400 -1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 9 N456)
+    )
+    (pad 4 smd rect (at -0.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 11 N501)
+    )
+    (pad 5 smd rect (at 2.400 -1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 13 N526)
+    )
+    (pad 6 smd rect (at 2.400 -0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 15 N528)
+    )
+    (pad 7 smd rect (at 2.400 -0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 17 N536)
+    )
+    (pad 8 smd rect (at 2.400 0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 19 N538)
+    )
+    (pad 9 smd rect (at 0.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 20 N1836)
+    )
+    (pad 10 smd rect (at 0.700 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 21 N1837)
+    )
+    (pad 11 smd rect (at 2.400 1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 23 N3609)
+    )
+    (pad 12 smd rect (at 2.400 1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 24 N3610)
+    )
+    (pad 13 smd rect (at -2.400 1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 25 N3611)
+    )
+    (pad 14 smd rect (at -2.400 1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 26 N3612)
+    )
+    (pad 15 smd rect (at -2.400 0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 27 N3613)
+    )
+    (pad 16 smd rect (at -2.400 0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 28 N3614)
+    )
+    (pad 17 smd rect (at -2.400 -0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 29 N3615)
+    )
+    (pad 18 smd rect (at -2.400 -0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 30 N3616)
+    )
+    (pad 19 smd rect (at -2.400 -1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 31 N3617)
+    )
+    (pad 20 smd rect (at -2.400 -1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 32 N3618)
+    )
+    (pad 21 smd rect (at 1.700 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 33 N3619)
+    )
+    (pad 22 smd rect (at 2.400 0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 37 N4129)
+    )
+    (pad 23 smd rect (at -1.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 53 N4215)
+    )
+    (pad 24 smd rect (at -1.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 57 N4233)
+    )
+    (pad 25 smd rect (at -0.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 59 N4244)
+    )
+    (pad 26 smd rect (at 1.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 61 N4247)
+    )
+    (pad 27 smd rect (at 0.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 63 N4250)
+    )
+    (pad 28 smd rect (at -0.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 65 N4258)
+    )
+    (pad 29 smd rect (at 1.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 67 N4261)
+    )
+    (pad 30 smd rect (at 0.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 69 N4264)
+    )
+  )
+
+  (module C449 (layer Top) (tedit 0) (tstamp 0)
+   (at 6.6499999999999995 7.55)
+
+    (fp_text
+      reference
+      C51
+      (at 6.6499999999999995 7.55)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+    (fp_text
+      value
+      C51
+      (at 6.6499999999999995 7.55)
+      (layer F.SilkS)
+      hide
+      (effects (font (size 1.27 1.27) (thickness 0.15))))
+
+    (fp_poly (pts (xy -2.550 -2.550) (xy 2.550 -2.550) (xy 2.550 2.550) (xy -2.550 2.550) ) (layer F.Fab) (width 0.1))
+    (pad 0 smd rect (at 1.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 1 smd rect (at -0.700 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 1 N45)
+    )
+    (pad 2 smd rect (at -1.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 2 N73)
+    )
+    (pad 3 smd rect (at -2.400 -0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 5 N431)
+    )
+    (pad 4 smd rect (at -2.400 -0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 7 N452)
+    )
+    (pad 5 smd rect (at -0.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 11 N501)
+    )
+    (pad 6 smd rect (at 0.200 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 20 N1836)
+    )
+    (pad 7 smd rect (at 0.700 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 21 N1837)
+    )
+    (pad 8 smd rect (at 1.700 -2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 22 N3608)
+    )
+    (pad 9 smd rect (at -1.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 35 N4122)
+    )
+    (pad 10 smd rect (at 0.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 39 N4139)
+    )
+    (pad 11 smd rect (at 0.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 41 N4163)
+    )
+    (pad 12 smd rect (at -2.400 0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 43 N4172)
+    )
+    (pad 13 smd rect (at -2.400 0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 45 N4179)
+    )
+    (pad 14 smd rect (at -0.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 47 N4187)
+    )
+    (pad 15 smd rect (at -0.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 49 N4196)
+    )
+    (pad 16 smd rect (at -2.400 -1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 51 N4213)
+    )
+    (pad 17 smd rect (at -2.400 -1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 55 N4231)
+    )
+    (pad 18 smd rect (at 2.400 -0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 71 N4303)
+    )
+    (pad 19 smd rect (at 1.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 73 N4308)
+    )
+    (pad 20 smd rect (at 2.400 0.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 75 N4313)
+    )
+    (pad 21 smd rect (at 1.200 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 77 N4318)
+    )
+    (pad 22 smd rect (at 2.400 -1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 79 N4383)
+    )
+    (pad 23 smd rect (at 2.400 1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 81 N4388)
+    )
+    (pad 24 smd rect (at 2.400 -0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 83 N4393)
+    )
+    (pad 25 smd rect (at 2.400 1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 85 N4398)
+    )
+    (pad 26 smd rect (at -1.700 2.400) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 86 N4427)
+    )
+    (pad 27 smd rect (at 2.400 -1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 89 N4586)
+    )
+    (pad 28 smd rect (at 2.400 0.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 91 N4591)
+    )
+    (pad 29 smd rect (at -2.400 1.700) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 93 N4651)
+    )
+    (pad 30 smd rect (at -2.400 1.200) (size 0.100 0.100) (layers Top *.Paste *.Mask)
+      (net 95 N4660)
+    )
+  )
+
+  (gr_line (start -4.090 -2.660) (end -4.090 18.292) (layer Edge.Cuts) (width 0.15) (tstamp 0))
+  (gr_line (start -4.090 18.292) (end 27.158 18.292) (layer Edge.Cuts) (width 0.15) (tstamp 0))
+  (gr_line (start 27.158 18.292) (end 27.158 -2.660) (layer Edge.Cuts) (width 0.15) (tstamp 0))
+  (gr_line (start 27.158 -2.660) (end -4.090 -2.660) (layer Edge.Cuts) (width 0.15) (tstamp 0))
+)
