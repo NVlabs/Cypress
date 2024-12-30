@@ -142,7 +142,8 @@ class KiCad4Converter:
                 net_name = element[-1]
                 net_name = net_name.value() if isinstance(net_name, sexpdata.String) else net_name
                 if net_name == "": continue
-                self.pcb.nets[net_name] = Net(net_name, None)
+                assert net_name is not None
+                self.pcb.nets[net_name] = Net(net_name, net_name)
 
             if element[0] == sexpdata.Symbol("module"):
                 # this element is a component
@@ -187,11 +188,11 @@ class KiCad4Converter:
                         abs_y = ctr_y + rltv_y
                         
                         net_name = item[-1][-1].value()
-                        pin_dict[pin_name] = Pin(pin_name, None, comp_name, net_name, rltv_x, rltv_y, abs_x, abs_y)
+                        pin_dict[pin_name] = Pin(pin_name, pin_name, comp_name, net_name, rltv_x, rltv_y, abs_x, abs_y)
                         # self.pcb.components[comp_name].pins[pin_name] = Pin(pin_name, None, comp_name, net_name, rltv_x, rltv_y, abs_x, abs_y)
         
                 # add component to pcb
-                self.pcb.components[comp_name] = Component(comp_name, None, shape, ctr_x, ctr_y, layer, None, None)
+                self.pcb.components[comp_name] = Component(comp_name, comp_name, shape, ctr_x, ctr_y, layer, 0, None)
                 for pin_name, pin in pin_dict.items():
                     self.pcb.components[comp_name].pins[pin_name] = pin
                     self.pcb.nets[pin.net].pins.append([comp_name, pin_name])
@@ -207,3 +208,5 @@ class KiCad4Converter:
 # converter = KiCad4Converter(kicad_path)
 # pcb = converter.from_kicad()
 # pcb.visualize("test_kicad4.png", draw_nets=True)
+
+
