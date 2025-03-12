@@ -32,8 +32,8 @@ class KiCadConverter:
         page_height = int(pcb.y_range[1] - pcb.y_range[0])
         self.board.paper = PageSettings(
             paperSize="User",
-            width=page_width,
-            height=page_height,
+            width=page_width * 20,
+            height=page_height * 20,
         )
 
 

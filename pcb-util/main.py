@@ -114,7 +114,36 @@ def process_results(
     if to_kicad:
         kc_converter = KiCadConverter(target_path=target_kicad_path)
         kc_converter.to_kicad(pcb_design)
+
+def bs_to_kicad():
+    # for i in range(1, 11):
+    #     bs_path = f"/Cypress/experiments/ns-place-legal/small-{i}"
+    #     kc_path = f"/Cypress/experiments/ns-place-routed/small-{i}.kicad_pcb"
+    #     # get pcb design from bookshelf
+    #     bs_converter = BookshelfConverter(
+    #         design_name=f"small-{i}",
+    #         target_folder=bs_path,
+    #         filter_fixed_on_layer=None,
+    #         movable_pages=None)
+    #     pcb_design = bs_converter.from_bookshelf()
+
+    #     kc_converter = KiCadConverter(target_path=kc_path)
+    #     kc_converter.to_kicad(pcb_design)
     
+
+    bs_path = "/Cypress/experiments/cypress/small-7"
+    kc_path = "/Cypress/experiments/cypress/small-7.kicad_pcb"
+    # get pcb design from bookshelf
+    bs_converter = BookshelfConverter(
+        design_name=f"ET095_A00",
+        target_folder=bs_path,
+        filter_fixed_on_layer=None,
+        movable_pages=None)
+    pcb_design = bs_converter.from_bookshelf()
+
+    kc_converter = KiCadConverter(target_path=kc_path)
+    kc_converter.to_kicad(pcb_design)
+
 
 def import_from_kicad(
     benchmark_name,
@@ -323,7 +352,8 @@ def generate_mesh_dataset():
 if __name__ == "__main__":
     # generate_mesh_dataset()
     # generate_small_benchmark()
-    check_bookshelf()
+    # check_bookshelf()
+    bs_to_kicad()
     # build_dataset()
     # res = report_completeness("/home/niansongz/scratch/syseng/Projects/E3631/A00/design/worklib/e3631_a00")
     # print(res)

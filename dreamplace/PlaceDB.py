@@ -1371,7 +1371,11 @@ row height = %g, site width = %g
             )
         else:
             self.total_filler_node_area = 0
+            self.top_filler_node_area = 0
+            self.btm_filler_node_area = 0
             self.num_filler_nodes = 0
+            self.num_top_filler_nodes = 0
+            self.num_btm_filler_nodes = 0
             filler_size_x, filler_size_y = 0, 0
             if len(self.regions) > 0:
                 self.filler_start_map = np.zeros(len(self.regions) + 2, dtype=np.int32)
