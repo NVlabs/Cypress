@@ -1,0 +1,37 @@
+{
+    "aux_input": "benchmarks/small-9/small-9.aux",
+    "gpu": 1,
+    "num_bins_x": 256,
+    "num_bins_y": 256,
+    "global_place_stages": [
+        {
+            "num_bins_x": 256,
+            "num_bins_y": 256,
+            "iteration": 1000000,
+            "learning_rate": 0.01,
+            "wirelength": "weighted_average",
+            "optimizer": "nesterov",
+            "Llambda_density_weight_iteration": 1,
+            "Lsub_iteration": 1
+        }
+    ],
+    "target_density": 0.7,
+    "density_weight": 8e-5,
+    "gamma": 4.0,
+    "random_seed": 42,
+    "scale_factor": 1.0,
+    "ignore_net_degree": 100,
+    "enable_fillers": 1,
+    "gp_noise_ratio": 0.025,
+    "global_place_flag": 1,
+    "legalize_flag": 1,
+    "detailed_place_flag": 0,
+    "stop_overflow": 0.001,
+    "dtype": "float32",
+    "plot_flag": 1,
+    "random_center_init_flag": 1,
+    "result_dir": "results_big",
+    "num_threads": 8,
+    "enable_rotation": 1,
+    "net_crossing_flag": 1
+}

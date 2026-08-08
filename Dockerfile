@@ -1,28 +1,7 @@
 FROM nvcr.io/nvidia/pytorch:21.10-py3
 MAINTAINER <haoxingr@nvidia.com>
 
-
-ARG ssh_prv_key
-ARG ssh_pub_key
-
-# copy pub/private ssh from command args for access to the repo
-# use these options when build docker : --build-arg ssh_prv_key="$(cat ~/.ssh/id_ed25519)" --build-arg ssh_pub_key="$(cat ~/.ssh/id_ed25519.pub)" --squash
-# if docker service does not support --squash, enable docker experimental feature as shown in https://stackoverflow.com/questions/44346322/how-to-run-docker-with-experimental-functions-on-ubuntu-16-04
-
-
-RUN echo "$ssh_prv_key"
-RUN echo "$ssh_pub_key"
-RUN mkdir /root/.ssh && \
-    echo "$ssh_prv_key" > /root/.ssh/id_ed25519 && \
-    echo "$ssh_pub_key" > /root/.ssh/id_ed25519.pub && \
-    chmod 600 /root/.ssh/id_ed25519 && \
-    chmod 600 /root/.ssh/id_ed25519.pub && \
-    ssh-keyscan -t rsa github.com >> /root/.ssh/known_hosts
-
-RUN git clone --recursive git@github.com:nvlabs/Cypress /Cypress
-
-RUN rm /root/.ssh/id_ed25519 && \
-    rm /root/.ssh/id_ed25519.pub
+WORKDIR /Cypress
 
 # update torch
 RUN pip install --upgrade pip 
@@ -35,7 +14,7 @@ RUN apt-get update \
             flex \
             libcairo2-dev 
 
-RUN wget -O boost_1_66_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.66.0/source/boost_1_66_0.tar.gz && \
+RUN wget -O boost_1_66_0.tar.gz https://archives.boost.io/release/1.66.0/source/boost_1_66_0.tar.gz && \
     tar xvf boost_1_66_0.tar.gz && \
     cd boost_1_66_0 && \
     ./bootstrap.sh  &&\
@@ -72,14 +51,9 @@ RUN pip install \
         xgboost>=1.5.1 
 
 
-# run following command inside container and commit later
-# RUN cd /Cypress/build && \
+# run following command inside container and build
+# mkdir -p build && cd build && \
 #    cmake .. -DCMAKE_INSTALL_PREFIX=/Cypress && \
 #    make -j16 && \
 #    make install
-
-# after exit from docker container
-# docker ps -a
-# docker commit [container_id] [new_image_name]
-# docker push [new_image_name]
                                       
