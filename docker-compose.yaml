@@ -1,0 +1,19 @@
+services:
+  cypress-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cypress-dev-env
+    container_name: cypress_dev_container_1
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - HOME=/root
+    user: "0:0"
+    volumes:
+      - .:/Cypress:Z
+    working_dir: /Cypress
+    stdin_open: true
+    tty: true
+    command: /bin/bash

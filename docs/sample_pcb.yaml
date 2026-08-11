@@ -1,0 +1,104 @@
+components:
+  R1:
+    anon_name: C1
+    ctr_x: 42.5
+    ctr_y: 41
+    height: 0.5
+    layer: TOP
+    name: R1
+    page: 1
+    pins:
+      '1':
+        abs_x: 41.5
+        abs_y: 41
+        anon_name: P0
+        component: R1
+        net: Net1
+        pin_name: '1'
+        rltv_x: -1
+        rltv_y: 0
+      '2':
+        abs_x: 43.5
+        abs_y: 41
+        anon_name: P1
+        component: R1
+        net: Net3
+        pin_name: '2'
+        rltv_x: 1
+        rltv_y: 0
+    shape:
+    - - 40
+      - 40
+    - - 45
+      - 40
+    - - 45
+      - 42
+    - - 40
+      - 42
+  U1:
+    anon_name: C0
+    ctr_x: 15
+    ctr_y: 15
+    height: 1.5
+    layer: TOP
+    name: U1
+    page: 1
+    pins:
+      '1':
+        abs_x: 13
+        abs_y: 13
+        anon_name: P0
+        component: U1
+        net: Net1
+        pin_name: '1'
+        rltv_x: -2
+        rltv_y: -2
+      '2':
+        abs_x: 17
+        abs_y: 17
+        anon_name: P1
+        component: U1
+        net: Net2
+        pin_name: '2'
+        rltv_x: 2
+        rltv_y: 2
+    shape:
+    - - 10
+      - 10
+    - - 20
+      - 10
+    - - 20
+      - 20
+    - - 10
+      - 20
+layers:
+- TOP
+- BOTTOM
+name: Sample_PCB
+nets:
+  Net1:
+    anon_name: N0
+    net_name: Net1
+    pins:
+    - - U1
+      - '1'
+    - - R1
+      - '1'
+  Net2:
+    anon_name: N1
+    net_name: Net2
+    pins:
+    - - U1
+      - '2'
+  Net3:
+    anon_name: N2
+    net_name: Net3
+    pins:
+    - - R1
+      - '2'
+x_range:
+- 0
+- 100
+y_range:
+- 0
+- 100
