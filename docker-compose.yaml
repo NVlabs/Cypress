@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: cypress-env:latest
-    container_name: cypress_dev_container
+    image: cypress-dev-env
+    container_name: cypress_dev_container_1
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
